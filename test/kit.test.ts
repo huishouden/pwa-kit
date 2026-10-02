@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { firebaseConfigFromEnv } from '../src/firebase';
-import { FIREBASE_RESERVED_PATHS, linkPreview, pwaApp } from '../src/vite';
+import { FIREBASE_RESERVED_PATHS, linkPreview, pwaApp, pwaWorkbox, telemetryChunks, TELEMETRY_CHUNKS } from '../src/vite';
 
 describe('firebaseConfigFromEnv', () => {
   const env = {
@@ -38,6 +38,42 @@ describe('pwaApp', () => {
     const plugins = pwaApp({ name: 'Demo', description: 'd', themeColor: '#000', backgroundColor: '#fff' });
     expect(Array.isArray(plugins)).toBe(true);
     expect(plugins.length).toBeGreaterThan(0);
+  });
+});
+
+describe('telemetryChunks', () => {
+  type Namer = (chunk: { name: string; moduleIds: string[] }) => string;
+  const namer = (user?: Parameters<ReturnType<typeof telemetryChunks>['config']>[0]) =>
+    (telemetryChunks().config(user) as { build: { rollupOptions: { output: { chunkFileNames: Namer } } } }).build.rollupOptions.output.chunkFileNames;
+  const agent = { name: 'jserrors', moduleIds: ['/app/node_modules/@newrelic/browser-agent/src/features/jserrors/index.js'] };
+  const mixed = { name: 'index', moduleIds: ['/app/src/App.tsx', '/app/node_modules/@newrelic/browser-agent/src/x.js'] };
+  const render = (template: string, chunk: { name: string }) => template.replace('[name]', chunk.name).replace('[hash]', 'abc123');
+
+  test('names chunks made only of the New Relic agent so the precache glob skips them', () => {
+    const name = namer();
+    const glob = new Bun.Glob(TELEMETRY_CHUNKS);
+    expect(glob.match(render(name(agent), agent))).toBe(true);
+    expect(glob.match(render(name(mixed), mixed))).toBe(false);
+    expect(name({ name: 'x', moduleIds: [] })).toBe('assets/[name]-[hash].js');
+    const appChunk = { name: 'nr-utils', moduleIds: ['/app/src/nr-utils.ts'] };
+    expect(glob.match(render(name(appChunk), appChunk))).toBe(false);
+  });
+
+  test('leaves an app with several outputs alone', () => {
+    expect(telemetryChunks().config({ build: { rollupOptions: { output: [{}, {}] } } })).toEqual({});
+  });
+
+  test("keeps the app's assetsDir and its own chunkFileNames for other chunks", () => {
+    const name = namer({ build: { assetsDir: 'static', rollupOptions: { output: { chunkFileNames: (c: { name: string }) => `static/js/${c.name}.js` } } } });
+    expect(name(agent)).toBe('static/hh-telemetry-[name]-[hash].js');
+    expect(name(mixed)).toBe('static/js/index.js');
+    expect(new Bun.Glob(TELEMETRY_CHUNKS).match(render(name(agent), agent))).toBe(true);
+  });
+
+  test("pwaApp's Workbox options ignore them, alongside an app's own globIgnores", () => {
+    const base = { name: 'Demo', description: 'd', themeColor: '#000', backgroundColor: '#fff' };
+    expect(pwaWorkbox(base).globIgnores).toEqual([TELEMETRY_CHUNKS]);
+    expect(pwaWorkbox({ ...base, overrides: { workbox: { globIgnores: ['**/big-*.js'] } } }).globIgnores).toEqual([TELEMETRY_CHUNKS, '**/big-*.js']);
   });
 });
 
