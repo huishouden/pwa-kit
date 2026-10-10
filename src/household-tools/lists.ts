@@ -73,6 +73,11 @@ async function applyTodo(ctx: ToolContext, id: string, which: 'done' | 'cancel')
   }));
 }
 
+/** New items go to the top of the open items, newest first; urgent ones above them (the apps' newItemPosition). */
+function newItemPosition(urgent: boolean, now: number): number {
+  return urgent ? -now - 1e13 : -now;
+}
+
 const todoId = z.string().min(3).max(250).describe('The to-do\'s `id` from `todos` or `today` ("tasks:item:abc").');
 
 export const todoDone = defineTool({
@@ -212,7 +217,7 @@ export const groceriesAdd = defineTool({
       by: ctx.session.email,
       completed: false,
       urgency,
-      position: urgency === 'Need Today' ? -now : now,
+      position: newItemPosition(urgency === 'Need Today', now),
       createdAt: now,
       updatedAt: now,
       completedAt: null,
@@ -310,7 +315,7 @@ export const tasksAdd = defineTool({
       by: ctx.session.email,
       completed: false,
       urgency: 'Standard',
-      position: now,
+      position: newItemPosition(false, now),
       createdAt: now,
       updatedAt: now,
       completedAt: null,

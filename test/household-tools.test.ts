@@ -95,6 +95,20 @@ describe('household tools', () => {
     }
   });
 
+  test('groceries_add: a new item goes to the top of the open items, urgent ones above that', async () => {
+    const position = async (args: Record<string, unknown>) => {
+      const { db, commits } = fakeDb();
+      await runTool(session(db), toolNamed('groceries_add')!, args);
+      return ((commits[0].find((w) => w.path.includes('/items/')) as { create: Record<string, unknown> }).create.position as number);
+    };
+    const standard = await position({ name: 'Oat milk' });
+    const urgent = await position({ name: 'Eggs', urgency: 'Need Today' });
+    expect(standard).toBe(-NOW);
+    expect(urgent).toBeLessThan(standard);
+    // Below the positions dragging leaves behind and older (positive timestamp) items.
+    expect(standard).toBeLessThan(1000);
+  });
+
   test("runTool: the rules' refusal is said in the person's language, never thrown", async () => {
     const { db } = fakeDb({
       query: async (_p: string, c: string) => {

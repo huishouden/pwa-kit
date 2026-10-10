@@ -824,8 +824,8 @@ export function CompletionRow({ title, meta, attention, by, byMe, at, status, le
   useKitT();
   const { done, skipped, size = 'md' } = button;
   const lg = size === 'lg';
-  // With extra actions (Skip, Late) a phone has no room for them beside the title: they take a row below.
-  const wrap = lg || (!done && !!actions);
+  // The title keeps at least 12rem (10rem beside a small Undo); when the action would squeeze it below that (a phone, a long
+  // "Mark done" in another language, extra actions like Skip) the actions take a row below, at the right.
   const heading = `${lg ? 'text-2xl sm:text-3xl tracking-tight' : 'text-lg'} leading-snug font-semibold [overflow-wrap:anywhere] ${done ? 'text-muted' : attention && lg ? 'text-attention' : 'text-ink'}`;
   const line = done ? (status ?? doneLine({ by, byMe, at, skipped })) : meta;
   const lineClass = `${lg ? 'text-lg' : 'text-base'} ${!done && attention ? 'font-semibold text-attention' : 'text-muted'}`;
@@ -836,9 +836,9 @@ export function CompletionRow({ title, meta, attention, by, byMe, at, status, le
     </>
   );
   return (
-    <li data-completion={done ? (skipped ? 'skipped' : 'done') : 'open'} className={`flex items-center gap-3 py-2.5 sm:gap-4 ${wrap ? 'flex-wrap sm:flex-nowrap' : ''}`}>
+    <li data-completion={done ? (skipped ? 'skipped' : 'done') : 'open'} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5 sm:flex-nowrap sm:gap-x-4">
       {done ? <DoneBadge skipped={skipped} size={size} /> : leading}
-      <div className="min-w-0 flex-1">
+      <div className={`min-w-0 flex-1 ${done ? 'basis-40' : 'basis-48'}`}>
         {onOpen ? (
           <button type="button" className="-mx-2 flex min-h-11 w-[calc(100%+1rem)] flex-col justify-center rounded-xl px-2 text-left hover:bg-sunken" onClick={onOpen} aria-label={openLabel}>
             {text}
@@ -848,7 +848,7 @@ export function CompletionRow({ title, meta, attention, by, byMe, at, status, le
         )}
         {children}
       </div>
-      <div className={`flex shrink-0 items-center gap-1 ${wrap ? 'w-full justify-end sm:w-auto' : ''}`}>
+      <div className="ml-auto flex shrink-0 items-center gap-1">
         {!done && actions}
         <CompleteButton {...button} />
       </div>
