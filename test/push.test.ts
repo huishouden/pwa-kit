@@ -53,7 +53,7 @@ describe('subscriptions', () => {
     expect(await pushSubscriptionId('alex@example.com', 'https://push.example.com/abc')).not.toBe(a);
   });
   test('fields the rules allow', () => {
-    expect([...PUSH_SUBSCRIPTION_FIELDS]).toEqual(['email', 'app', 'endpoint', 'keys', 'ua', 'lang', 'createdAt']);
+    expect([...PUSH_SUBSCRIPTION_FIELDS]).toEqual(['email', 'app', 'endpoint', 'keys', 'ua', 'apps', 'lang', 'createdAt']);
   });
 });
 

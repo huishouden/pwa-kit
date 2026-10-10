@@ -514,6 +514,8 @@ describe('NotificationsCard', () => {
     const props = { db: {} as never, householdId: 'h1', user: { email: 'alex@example.com' }, app: 'tasks', offText: 'Get a notification here.', onText: 'On.' };
     const first = render(<NotificationsCard {...props} vapidKey={undefined} />);
     expect(document.body.textContent).toContain('Notifications are not set up for this app yet.');
+    // Every app's card leads to the portal's one place to manage notifications.
+    expect(document.querySelector('a[href="/notifications"]')?.textContent).toBe('Manage in Huishouden');
     act(() => first.root.unmount());
     const second = render(<NotificationsCard {...props} vapidKey="key" />);
     // happy-dom has no Push API, so the device is unsupported: the reason shows, not a Turn on button.

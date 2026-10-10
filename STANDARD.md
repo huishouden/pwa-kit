@@ -253,10 +253,26 @@ and no household sets anything up.
   is the one place a server reads household records with a service account rather than as a
   member: huishouden/notify, document by document (`get`, never a list), only what
   `REMINDER_SOURCES` allows, and it counts a source only when its writer could read those records.
-- **Each person opts in per device.** A "Notify me" control calls `enablePush` from a tap; it stores
-  the device's subscription in `households/{id}/pushSubscriptions`, which only that person and the
-  sender can read. Build with `pwaApp({ push: true })` and the `VITE_VAPID_PUBLIC_KEY` repo variable
-  (the bootstrap sets it when `apps.conf` has `VAPID_PUBLIC_KEY`).
+- **One subscription per device for the whole suite.** Every app shares the origin, so the
+  portal's service worker (scope `/`) owns the push subscription, stored with `app: "suite"`. The
+  sender sends a reminder from any app to it once; a tap opens the reminder's own app path. Each
+  person opts in once per device, from the portal's Notifications panel (`DeviceNotifications`) or
+  from any app's `NotificationsCard`, which calls `enablePush` from a tap. `enablePush` also
+  deletes the member's documents for the device's older per-app subscriptions, and
+  `upgradePush` (run by the card) does that without a prompt where notifications are already
+  allowed, so a device never gets a reminder twice. A per-app subscription keeps receiving until
+  its device upgrades. A suite subscription may carry `apps` (`PUSH_SUBSCRIPTION_FIELDS`): the
+  silent move keeps the apps the device was for (a shared tablet that notified for Pet stays Pet),
+  the sender sends only those apps' reminders to it, and a tap on the panel's switch (or "Get every
+  app here") clears the limit. `PushSuiteUpgrade`, mounted once in the portal's signed-in shell,
+  runs the move on open. Release order: rules accept `apps` and the sender filters on it before a
+  kit release that writes it reaches the portal. Build with `pwaApp({ push: true })` (the portal's too) and the
+  `VITE_VAPID_PUBLIC_KEY` repo variable (the bootstrap sets it when `apps.conf` has `VAPID_PUBLIC_KEY`).
+- **One place to manage it.** The portal's Notifications panel: this device (on, off, a test
+  notification) and `AppNotificationToggles`, one switch per app for the signed-in person
+  (`notificationPrefs`, `setAppMuted`; no Bills or Health for helpers and kids, as in the apps).
+  Each app's settings carries the compact `NotificationsCard` (status, the device switch, a
+  "Manage in Huishouden" link to `/notifications`). An app that writes reminders must offer it.
 - **Say why when it can't.** `pushSupport()` gives the reason and a sentence to show. iPhone and iPad
   get notifications only from an app added to the Home Screen, on iOS/iPadOS 16.4 or later; in a
   Safari tab the app explains how to add it rather than showing a button that does nothing.

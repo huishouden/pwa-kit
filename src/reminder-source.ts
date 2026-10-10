@@ -85,6 +85,13 @@ export const REMINDER_SOURCES: Readonly<Record<string, Readonly<Record<string, S
     homeEvents: { fields: [], roles: EVERYDAY },
     homeEventPrep: { fields: [], roles: EVERYDAY },
   },
+  // A reminder is done once its record is gone, or has moved on: rescheduled, renewed, closed, serviced or paused.
+  // Appointments can be private (hidden from helpers and kids), and the sender reads them whatever the flag: staff only, so a check can't probe a record its writer may not read.
+  baby: { babyAppointments: { fields: ['at'], roles: ['admin', 'member'] } },
+  car: {
+    carRenewals: { fields: ['dueDate', 'closedAt'], roles: EVERYDAY },
+    carServiceItems: { fields: ['lastDate', 'pausedAt'], roles: EVERYDAY },
+  },
 });
 
 function deepFreeze<T>(value: T): T {

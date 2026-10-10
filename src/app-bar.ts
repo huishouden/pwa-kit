@@ -76,6 +76,9 @@ export const ASSISTANT_PATH = '/assistant';
 /** The portal's page for seeing the household in the person's own calendar app (huishouden/calendar), linked from every app's account menu. */
 export const CALENDAR_SETTINGS_PATH = '/my-calendar';
 
+/** The portal's page for notifications: this device, and which apps notify the person. Linked from every app's account menu and every app's notifications card. */
+export const NOTIFICATIONS_PATH = '/notifications';
+
 /** The privacy page on the portal `portalUrl` points at ("https://example-portal.web.app/privacy"). */
 export function privacyUrl(portalUrl: string, base: string): string {
   try {
@@ -100,6 +103,15 @@ export function calendarSettingsUrl(portalUrl: string, base: string): string {
     return new URL(CALENDAR_SETTINGS_PATH, new URL(portalUrl, base)).href;
   } catch {
     return CALENDAR_SETTINGS_PATH;
+  }
+}
+
+/** The notifications page on the portal `portalUrl` points at ("https://example-portal.web.app/notifications"). */
+export function notificationsUrl(portalUrl: string, base: string): string {
+  try {
+    return new URL(NOTIFICATIONS_PATH, new URL(portalUrl, base)).href;
+  } catch {
+    return NOTIFICATIONS_PATH;
   }
 }
 
@@ -605,7 +617,11 @@ export class HhAppBar extends Base {
     calendar.className = 'item';
     calendar.href = calendarSettingsUrl(this.portalUrl, location.href);
     calendar.textContent = kt('appBar.calendar');
-    items.append(calendar, assistant);
+    const notifications = document.createElement('a');
+    notifications.className = 'item';
+    notifications.href = notificationsUrl(this.portalUrl, location.href);
+    notifications.textContent = kt('appBar.notifications');
+    items.append(notifications, calendar, assistant);
     items.append(this.#privacyLink());
     const out = document.createElement('button');
     out.type = 'button';

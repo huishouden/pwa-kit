@@ -124,3 +124,36 @@ describe('stillDue', () => {
     expect(stillDue(two(false), docs({ 'healthPeople/p1/doses/a': null }))).toBeUndefined();
   });
 });
+
+describe('Baby and Car sources', () => {
+  const appointment: ReminderSource = { checks: [{ doc: 'babyAppointments/a1', due: [{ field: 'at', in: [1900000000000] }] }] };
+  const renewal: ReminderSource = { checks: [{ doc: 'carRenewals/r1', due: [{ field: 'closedAt', in: [null] }, { field: 'dueDate', in: ['2031-03-01'] }] }] };
+  const service: ReminderSource = { checks: [{ doc: 'carServiceItems/s1', due: [{ field: 'pausedAt', in: [null] }, { field: 'lastDate', in: ['2030-09-01'] }] }] };
+
+  test('are read as written', () => {
+    expect(readSource('baby', appointment)).toEqual(appointment);
+    expect(readSource('car', renewal)).toEqual(renewal);
+    expect(readSource('car', service)).toEqual(service);
+    expect(readSource('car', { checks: [{ doc: 'carVehicles/v1' }] })).toBeNull();
+    expect(readSource('baby', { checks: [{ doc: 'babyProfile/main' }] })).toBeNull();
+  });
+
+  test('a cancelled, rescheduled, renewed, closed, serviced or paused record is done', () => {
+    expect(stillDue(appointment, docs({ 'babyAppointments/a1': { at: 1900000000000 } }))).toBe(true);
+    expect(stillDue(appointment, docs({ 'babyAppointments/a1': { at: 1900000900000 } }))).toBe(false);
+    expect(stillDue(appointment, docs({ 'babyAppointments/a1': null }))).toBe(false);
+    expect(stillDue(renewal, docs({ 'carRenewals/r1': { dueDate: '2031-03-01' } }))).toBe(true);
+    expect(stillDue(renewal, docs({ 'carRenewals/r1': { dueDate: '2032-03-01' } }))).toBe(false);
+    expect(stillDue(renewal, docs({ 'carRenewals/r1': { dueDate: '2031-03-01', closedAt: 5 } }))).toBe(false);
+    expect(stillDue(service, docs({ 'carServiceItems/s1': { lastDate: '2030-09-01' } }))).toBe(true);
+    expect(stillDue(service, docs({ 'carServiceItems/s1': { lastDate: '2031-02-01' } }))).toBe(false);
+    expect(stillDue(service, docs({ 'carServiceItems/s1': { lastDate: '2030-09-01', pausedAt: 7 } }))).toBe(false);
+  });
+
+  test('a kid is never checked', () => {
+    expect(sourceAllowed('car', renewal, 'a@example.com', 'kid', docs({}))).toBe(false);
+    expect(sourceAllowed('baby', appointment, 'a@example.com', 'member', docs({}))).toBe(true);
+    // Baby appointments may be private: a helper's check could probe one they can't read.
+    expect(sourceAllowed('baby', appointment, 'a@example.com', 'helper', docs({}))).toBe(false);
+  });
+});
