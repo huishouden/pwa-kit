@@ -64,7 +64,7 @@ export const healthConditions = defineTool({
   name: 'health_conditions',
   title: "A person's conditions",
   description:
-    "The health conditions (diagnoses) of the people this person may see them for in Huishouden Health, grouped by medical area (neurology, cardiology, endocrinology...): name, ICD-10-CM code, status (active, managed, resolved), when diagnosed, by which doctor and where, severity, the medicines that treat it, notes. Only admins and members who care for the person (or are the person) see conditions; helper carers and kids see none. Leave out `person` for everyone; `specialty` narrows it to one area (\"Amanda's neurology conditions\").",
+    "The health conditions (diagnoses) of the people this person may see them for in Huishouden Health, grouped by medical area (neurology, cardiology, endocrinology...): name, ICD-10-CM code, status (active, managed, resolved), when diagnosed, by which doctor and where, severity, the medicines that treat it, notes. Only admins and members who care for the person (or are the person) see conditions; helper carers and kids see none. Leave out `person` for everyone; `specialty` narrows it to one area (\"Nan's neurology conditions\").",
   kind: 'read',
   health: true,
   input: {

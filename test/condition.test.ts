@@ -167,8 +167,8 @@ describe('words and grouping', () => {
     expect(partialDateWords('2019')).toBe('2019');
     expect(partialDateWords('2019-03')).toBe('March 2019');
     expect(partialDateWords('2019-03-14')).toBe('March 14, 2019');
-    expect(withLang('es', () => partialDateWords('2019-03'))).toBe('Marzo de 2019');
-    expect(withLang('nl', () => partialDateWords('2019-03'))).toBe('Maart 2019');
+    expect(withLang('es', () => partialDateWords('2019-03'))).toBe('marzo de 2019');
+    expect(withLang('nl', () => partialDateWords('2019-03'))).toBe('maart 2019');
   });
 });
 

@@ -1,4 +1,4 @@
-import { capitalize, compareText, kt } from './i18n.js';
+import { compareText, kt } from './i18n.js';
 import { formatYmd, monthYear, ymdParts } from './time.js';
 
 /**
@@ -345,10 +345,10 @@ export const specialtyLabel = (s: Specialty): string => kt(`condition.specialty.
 export const conditionStatusLabel = (s: ConditionStatus): string => kt(`condition.status.${s}`);
 export const severityLabel = (s: ConditionSeverity): string => kt(`condition.severity.${s}`);
 
-/** "2019", "March 2019", "March 14, 2019" in the current language. */
+/** "2019", "March 2019", "March 14, 2019" in the current language, as written mid-sentence ("marzo de 2019", "maart 2019"). */
 export function partialDateWords(d: PartialDate): string {
   if (!isPartialDate(d) || d.length === 4) return d;
-  if (d.length === 7) return capitalize(monthYear(`${d}-01`));
+  if (d.length === 7) return monthYear(`${d}-01`);
   return formatYmd(d, { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
