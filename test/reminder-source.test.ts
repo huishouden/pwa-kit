@@ -125,6 +125,69 @@ describe('stillDue', () => {
   });
 });
 
+describe('groups', () => {
+  const dose = (m: string) => `healthPeople/p1/doses/${m}_2031-01-15T08:00`;
+  const med = (m: string) => `healthPeople/p1/meds/${m}`;
+  const wanted = (m: string, group: number) => ({ doc: med(m), due: [{ field: 'remind', in: [true] }, { field: 'endDate', notIn: ['2031-01-14', '2031-01-13'] }], group });
+  // Due while (dose a unmarked and medicine a reminding) or (dose b unmarked and medicine b reminding).
+  const two: ReminderSource = {
+    checks: [{ doc: dose('a'), absent: true, group: 0 }, wanted('a', 0), { doc: dose('b'), absent: true, group: 1 }, wanted('b', 1)],
+    any: true,
+  };
+  const on = { remind: true };
+  const all = (over: Record<string, Record<string, unknown> | null>) => docs({ [dose('a')]: null, [med('a')]: on, [dose('b')]: null, [med('b')]: on, ...over });
+
+  test('read as written; a group is a small whole number', () => {
+    expect(readSource('health', two)).toEqual(two);
+    expect(readSource('bills', { checks: [{ doc: 'bills/b1', group: 0 }] })).toEqual({ checks: [{ doc: 'bills/b1', group: 0 }] });
+    for (const group of [-1, 1.5, 8, '0', null, true]) {
+      expect(readSource('bills', { checks: [{ doc: 'bills/b1', group }] })).toBeNull();
+      expect(readSource('bills', { checks: [{ doc: 'bills/b1', absent: true, group }] })).toBeNull();
+    }
+    expect(readSource('bills', { checks: [{ doc: 'bills/b1', absent: true, group: 1, extra: 1 }] })).toBeNull();
+  });
+
+  test('a Health medicine names only whether it still wants reminders, besides its refill', () => {
+    expect(readSource('health', { checks: [wanted('a', 0)] })).not.toBeNull();
+    expect(readSource('health', { checks: [{ doc: med('a'), due: [{ field: 'times', in: ['08:00'] }] }] })).toBeNull();
+  });
+
+  test('due while some group passes whole', () => {
+    expect(stillDue(two, all({}))).toBe(true);
+    // One medicine's reminders off: the other's unmarked dose keeps it due.
+    expect(stillDue(two, all({ [med('a')]: { remind: false } }))).toBe(true);
+    // The other's dose marked and this one's reminders off: done, though a's dose is unmarked.
+    expect(stillDue(two, all({ [med('a')]: { remind: false }, [dose('b')]: { status: 'given' } }))).toBe(false);
+    expect(stillDue(two, all({ [med('a')]: { remind: false }, [med('b')]: { remind: false } }))).toBe(false);
+    // Stopped the day before, or removed.
+    expect(stillDue(two, all({ [med('a')]: { remind: true, endDate: '2031-01-14' }, [med('b')]: null }))).toBe(false);
+    // Stopped on the dose's own day: still due that day.
+    expect(stillDue(two, all({ [med('a')]: { remind: true, endDate: '2031-01-15' }, [med('b')]: null }))).toBe(true);
+    expect(stillDue(two, all({ [dose('a')]: { status: 'given' }, [dose('b')]: { status: 'skipped' } }))).toBe(false);
+  });
+
+  test('unknown while a group that might pass was not read', () => {
+    const some = all({ [med('a')]: { remind: false } });
+    some.delete(med('b'));
+    expect(stillDue(two, some)).toBeUndefined();
+    // A group that fails on what was read settles nothing on its own; one passing does.
+    const partial = all({});
+    partial.delete(med('a'));
+    expect(stillDue(two, partial)).toBe(true);
+    partial.set(dose('b'), { status: 'given' });
+    expect(stillDue(two, partial)).toBeUndefined();
+  });
+
+  test('ungrouped checks stand alone; without any, groups change nothing', () => {
+    const mixed: ReminderSource = { checks: [{ doc: dose('a'), absent: true }, { doc: dose('b'), absent: true, group: 0 }, wanted('b', 0)], any: true };
+    expect(stillDue(mixed, all({ [dose('b')]: { status: 'given' } }))).toBe(true);
+    expect(stillDue(mixed, all({ [dose('a')]: { status: 'given' }, [med('b')]: { remind: false } }))).toBe(false);
+    const every: ReminderSource = { checks: two.checks };
+    expect(stillDue(every, all({}))).toBe(true);
+    expect(stillDue(every, all({ [med('b')]: { remind: false } }))).toBe(false);
+  });
+});
+
 describe('Baby and Car sources', () => {
   const appointment: ReminderSource = { checks: [{ doc: 'babyAppointments/a1', due: [{ field: 'at', in: [1900000000000] }] }] };
   const renewal: ReminderSource = { checks: [{ doc: 'carRenewals/r1', due: [{ field: 'closedAt', in: [null] }, { field: 'dueDate', in: ['2031-03-01'] }] }] };

@@ -246,7 +246,8 @@ and no household sets anything up.
   back into the app. Ids are idempotent, so saving the same thing twice never doubles a reminder.
 - **A reminder says what it is about.** Anything that can be done outside the app (the portal's
   To-do list, the connector, a calendar, another device) carries a `source` (`./reminder-source`):
-  the record and when it is still due (a bill's `status` not paid, a dose record not yet written).
+  the record and when it is still due (a bill's `status` not paid, a dose record not yet written
+  while its medicine still has reminders on; `any` with `group` for "this and that, or this and that").
   The sender checks it before sending and deletes the reminder unsent once it is done, without
   waiting for the app to be opened. A source names only the app's own records and done fields
   (`REMINDER_SOURCES`, mirrored by the rules' `hhSourceDoc`; add a collection in both first). This

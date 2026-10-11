@@ -14,7 +14,10 @@ import type { Role } from './role-core.js';
  *   thing is done (a dose marked given, a thing to do before an event ticked).
  *
  * The reminder is due while every check passes, or with `any: true` while at least one does (a
- * reminder for several doses at once, due while any is unmarked).
+ * reminder for several doses at once, due while any is unmarked). With `any: true`, checks that
+ * share a `group` count as one, passing while all of them do: a reminder for several doses, due
+ * while any dose is unmarked and its medicine still wants reminders. A check without a group
+ * stands alone. Without `any`, groups change nothing.
  *
  * The sender reads with its own service account (STANDARD.md "Reminders": the one place a server
  * reads household records that way), so what a source may name is limited here, and the sender
@@ -32,12 +35,12 @@ export type SourceValue = string | number | boolean | null;
 /** One condition on a field (a missing field reads as null): its value is one of `in`, or none of `notIn`. */
 export type SourceCondition = { field: string; in: SourceValue[] } | { field: string; notIn: SourceValue[] };
 
-/** One document under the household and when it keeps the reminder due. */
-export type SourceCheck = { doc: string; due?: SourceCondition[] } | { doc: string; absent: true };
+/** One document under the household and when it keeps the reminder due; `group` joins it with others (`any`). */
+export type SourceCheck = ({ doc: string; due?: SourceCondition[] } | { doc: string; absent: true }) & { group?: number };
 
 export interface ReminderSource {
   checks: SourceCheck[];
-  /** Due while any check passes, rather than all. */
+  /** Due while any check (or group of checks) passes, rather than all. */
   any?: boolean;
 }
 
@@ -46,7 +49,7 @@ export const REMINDER_SOURCE_LIMITS = { checks: 8, conditions: 4, values: 8, pat
 
 /** What a collection lets a source check, and who may. */
 export interface SourceCollection {
-  /** Fields conditions may read: the ones that say whether a record is done. */
+  /** Fields conditions may read: the ones that say whether a record is done, or still wants reminding. */
   fields: readonly string[];
   /** Writers' roles whose sources may name it. */
   roles: readonly Role[];
@@ -81,7 +84,8 @@ export const REMINDER_SOURCES: Readonly<Record<string, Readonly<Record<string, S
   },
   health: {
     'healthPeople/*/doses': { fields: [], roles: HEALTH, readers: true },
-    'healthPeople/*/meds': { fields: ['refillOrderedAt'], roles: HEALTH, readers: true },
+    // A medicine's refill order, and whether it still wants dose reminders: turned off, or stopped (`endDate`).
+    'healthPeople/*/meds': { fields: ['refillOrderedAt', 'remind', 'endDate'], roles: HEALTH, readers: true },
   },
   home: {
     homeEvents: { fields: [], roles: EVERYDAY },
@@ -133,17 +137,22 @@ function readCondition(value: unknown, fields: readonly string[]): SourceConditi
   return op === 'in' ? { field: value.field, in: [...values] } : { field: value.field, notIn: [...values] };
 }
 
+const isGroup = (v: unknown): v is number => Number.isInteger(v) && (v as number) >= 0 && (v as number) < REMINDER_SOURCE_LIMITS.checks;
+
 function readCheck(app: string, value: unknown): SourceCheck | null {
   if (!isMap(value) || typeof value.doc !== 'string') return null;
   const entry = sourceCollection(app, value.doc);
   if (!entry) return null;
-  if (value.absent !== undefined) return value.absent === true && Object.keys(value).length === 2 ? { doc: value.doc, absent: true } : null;
-  if (Object.keys(value).some((k) => k !== 'doc' && k !== 'due')) return null;
+  if (value.group !== undefined && !isGroup(value.group)) return null;
+  const group = value.group !== undefined ? { group: value.group } : {};
+  const keys = Object.keys(value).filter((k) => k !== 'group');
+  if (value.absent !== undefined) return value.absent === true && keys.length === 2 ? { doc: value.doc, absent: true, ...group } : null;
+  if (keys.some((k) => k !== 'doc' && k !== 'due')) return null;
   const raw = value.due ?? [];
   if (!Array.isArray(raw) || raw.length > REMINDER_SOURCE_LIMITS.conditions) return null;
   const due = raw.map((c) => readCondition(c, entry.fields));
   if (due.some((c) => !c)) return null;
-  return due.length ? { doc: value.doc, due: due as SourceCondition[] } : { doc: value.doc };
+  return due.length ? { doc: value.doc, due: due as SourceCondition[], ...group } : { doc: value.doc, ...group };
 }
 
 /**
@@ -236,8 +245,17 @@ const passes = (c: SourceCheck, fields: Record<string, unknown> | null) =>
  * wasn't read and the ones that were don't settle it: the sender then sends it as before.
  */
 export function stillDue(source: ReminderSource, read: SourceDocs): boolean | undefined {
-  const known = source.checks.filter((c) => read.has(c.doc));
-  const results = known.map((c) => passes(c, read.get(c.doc) ?? null));
-  if (source.any ? results.includes(true) : results.includes(false)) return !!source.any;
-  return known.length < source.checks.length ? undefined : !source.any;
+  const result = (c: SourceCheck) => (read.has(c.doc) ? passes(c, read.get(c.doc) ?? null) : undefined);
+  if (!source.any) return every(source.checks.map(result));
+  // Each group, and each check without one, is one way for the reminder to stay due.
+  const ways = new Map<string, (boolean | undefined)[]>();
+  source.checks.forEach((c, i) => {
+    const key = c.group !== undefined ? `g${c.group}` : `c${i}`;
+    ways.set(key, [...(ways.get(key) ?? []), result(c)]);
+  });
+  const results = [...ways.values()].map(every);
+  return results.includes(true) ? true : results.includes(undefined) ? undefined : false;
 }
+
+/** All of them true: false once one is false, undefined while one isn't known. */
+const every = (results: (boolean | undefined)[]): boolean | undefined => (results.includes(false) ? false : results.includes(undefined) ? undefined : true);
