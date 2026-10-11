@@ -530,6 +530,15 @@ the About screen and New Relic). Release-please and Renovate are retired.
 branch when it is behind; `hh dev bump-kit` does it by hand. Nothing bumps
 dependencies on a schedule.
 
+### Supply chain
+
+Apps install the kit from the release tarball that the kit's own CI builds from a tagged commit.
+Only accounts with write access to `huishouden/pwa-kit` can publish or replace a release asset,
+which is the same trust boundary as the source itself. Bun records no integrity hash for a URL
+tarball in `bun.lock`; that is accepted by policy, not a gap to close with a checksum. Third-party
+actions are pinned by commit SHA; the kit's own reusable workflow and actions (`@v0`) sit inside the
+same write-access boundary.
+
 ## Staging
 
 Risky changes are tried live, signed in, before they reach a household. Staging is a second
