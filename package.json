@@ -118,6 +118,10 @@
       "types": "./dist/household-tools/index.d.ts",
       "default": "./dist/household-tools/index.js"
     },
+    "./household-tools/coverage": {
+      "types": "./dist/household-tools/coverage.d.ts",
+      "default": "./dist/household-tools/coverage.js"
+    },
     "./home": {
       "types": "./dist/home.d.ts",
       "default": "./dist/home.js"
@@ -173,6 +177,10 @@
     "./pet-outings": {
       "types": "./dist/pet-outings.d.ts",
       "default": "./dist/pet-outings.js"
+    },
+    "./baby-settings": {
+      "types": "./dist/baby-settings.d.ts",
+      "default": "./dist/baby-settings.js"
     },
     "./pet-routines": {
       "types": "./dist/pet-routines.d.ts",

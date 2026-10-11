@@ -234,6 +234,29 @@ step-by-step, the API and the glossary).
   runs when the app opens uses `cachedGoogleToken` and shows a button when there is none, so an
   app never opens Google's window by itself.
 
+## Household tools
+
+Everything a person can do with the household's data in an app, an assistant can do through the
+connector and `hh data` can do on the command line: both run the kit's `household-tools` (`TOOLS`),
+which act as the signed-in person under the same rules.
+
+- **Ship the tool with the data.** A change that adds or changes user-editable data (a new
+  collection, a new field people set, a new setting), or a household task someone asked an agent to
+  do that no tool covers, ships with the matching household tool in the same change set: the kit's
+  `src/household-tools/` (with tests), then the connector (its tool count) and `hh` (its `hh data`
+  command and README), each on the new kit. It is fixed as found, the way a kit gap is: not left as
+  a follow-up, and never done instead by writing to Firestore by hand.
+- **The tool does what the app does.** The same fields, limits and ids the app writes; the roles the
+  rules and the app allow, refused up front in the person's language; and whatever the app derives
+  from the change (reminders, agenda items, to-dos) written alongside, so the app's next sync finds
+  it unchanged.
+- **Coverage is listed.** `COVERAGE` (`src/household-tools/coverage.ts`) names every collection
+  under `households/{id}` the rules let someone write: the tools that cover it, `internal` (derived,
+  or a device's or sign-in's plumbing) with why, or `gap` with what is missing. huishouden/rules'
+  test fails when the rules allow writes to a collection `COVERAGE` doesn't list, and the kit's when
+  a write tool isn't listed against its data, so a new collection can't arrive unnoticed.
+  `coverageGaps()` is the open list.
+
 ## Notifications
 
 Reminders reach people as push notifications through one shared sender,

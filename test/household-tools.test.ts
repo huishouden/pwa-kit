@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { checkArgs, runTool, Session, TOOLS, toolNamed } from '../src/household-tools';
+import { checkArgs, COVERAGE, coverageGaps, runTool, Session, TOOLS, toolNamed } from '../src/household-tools';
 
 process.env.TZ = 'UTC';
 import en from '../src/household-tools/locales/en';
@@ -39,6 +39,20 @@ describe('household tools', () => {
     expect(names).toContain('today');
     expect(names).toContain('health_log_dose');
     for (const tool of TOOLS) expect(tool.description.length).toBeGreaterThan(20);
+  });
+
+  test('coverage: every tool it names exists, and every write tool is listed against the data it changes', () => {
+    const named = new Set(Object.values(COVERAGE).flatMap((c) => ('tools' in c ? c.tools : [])));
+    for (const name of named) expect(toolNamed(name), `COVERAGE names ${name}`).toBeDefined();
+    for (const tool of TOOLS.filter((x) => x.kind === 'write')) expect(named.has(tool.name), `${tool.name} is in COVERAGE`).toBe(true);
+    for (const [col, c] of Object.entries(COVERAGE)) {
+      expect(col).toMatch(/^[a-zA-Z]+(\/[a-zA-Z]+)?$/);
+      if ('tools' in c) expect(c.tools.length, col).toBeGreaterThan(0);
+    }
+    const gaps = coverageGaps();
+    expect(gaps.find((g) => g.collection === 'lists')).toMatchObject({ kind: 'gap' });
+    expect(gaps.find((g) => g.collection === 'items')).toMatchObject({ kind: 'partly' });
+    expect(gaps.some((g) => g.collection === 'babyKickSettings')).toBe(false);
   });
 
   test('Spanish and Dutch have every key, with the same placeholders', () => {

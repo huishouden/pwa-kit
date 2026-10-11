@@ -87,6 +87,9 @@ load this entry) and a process in UTC, as Workers are: `LocalClock` moves times 
 UTC fields are the person's wall clock. `hh` sets `TZ=UTC` before it runs a tool.
 `connectionId` with a write's `idempotency_key` makes a retry land on the same record.
 
+`COVERAGE` lists every household collection the rules let someone write and the tools that reach it
+(or why none does, or what is missing); STANDARD.md "Household tools" says when a tool is due.
+
 ## Acting as the person
 
 ```ts

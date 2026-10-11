@@ -29,10 +29,12 @@ import { homeAddEvent, homeUpkeepDue } from './home.js';
 import { addAppointment, contactsAdd, contactsSearch } from './people.js';
 import { healthAppointments } from './health-visits.js';
 import { healthAddCondition, healthConditions } from './health-conditions.js';
+import { babySetContractionNote, babySetKickSettings, babySettings } from './baby.js';
 import { healthAddMedicine, healthDoctorList, healthDue, healthHistory, healthLogDose, healthMedicines, healthPeople, healthUpdateMedicine } from './health.js';
 
 export { Session, UserError, type AuditEntry, type Here, type Household, type SessionProps } from './context.js';
 export type { ToolContext, ToolDef, ToolResult } from './registry.js';
+export { COVERAGE, coverageGaps, type Coverage, type CoverageGap } from './coverage.js';
 
 /** Every tool, in the order clients list them. */
 export const TOOLS: readonly ToolDef[] = [
@@ -56,6 +58,9 @@ export const TOOLS: readonly ToolDef[] = [
   petRoutineDone,
   homeUpkeepDue,
   homeAddEvent,
+  babySettings,
+  babySetContractionNote,
+  babySetKickSettings,
   addAppointment,
   contactsSearch,
   contactsAdd,

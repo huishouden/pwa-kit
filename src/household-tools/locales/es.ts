@@ -282,6 +282,22 @@ const es: Record<keyof typeof en, string> = {
   'conditions.resolvedNeedsStatus': 'Una fecha `resolved` va con `status: "resolved"`; deja `status` fuera o ponlo en «Resuelta».',
   'conditions.unknown': '«{name}» no es una de sus afecciones. Afecciones: {conditions}.',
 
+  'baby.noKids': "Los ajustes de Bebé no están disponibles para niños.",
+  'baby.settingsStaff': "Solo los administradores y miembros pueden cambiar los ajustes de Bebé.",
+  'baby.settingsTitle': "Ajustes de Bebé",
+  'baby.note': "Instrucciones del equipo médico: \"{note}\"",
+  'baby.noNote': "Aún no hay instrucciones del equipo médico guardadas.",
+  'baby.saved': "(guardado el {date} por {who})",
+  'baby.kicks': "Contador de movimientos: cuenta hasta {target} movimientos.",
+  'baby.kicksRemind': "Recordatorio todos los días a las {time}.",
+  'baby.kicksNoRemind': "Sin recordatorio diario.",
+  'baby.kicksNothing': "Indica qué cambiar: `target`, `remind_at` o ambos.",
+  'baby.kicksSaved': "Contador de movimientos guardado: cuenta hasta {target} movimientos.",
+  'baby.noteSaved': "Instrucciones guardadas en el cronómetro de contracciones: \"{note}\" [Bebé]({url})",
+  'baby.noteCleared': "Se borraron las instrucciones del cronómetro de contracciones. [Bebé]({url})",
+  'baby.link': "Abrir Bebé: {url}",
+  'baby.kickReminderTitle': "Hora de contar movimientos",
+  'baby.kickReminderBody': "Cuenta a una hora en que el bebé suele estar activo. Abre Bebé y toca Empezar a contar.",
 };
 
 export default es;

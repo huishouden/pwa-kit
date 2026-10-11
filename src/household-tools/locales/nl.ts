@@ -282,6 +282,22 @@ const nl: Record<keyof typeof en, string> = {
   'conditions.resolvedNeedsStatus': 'Een `resolved`-datum hoort bij `status: "resolved"`; laat `status` weg of zet hem op „Genezen”.',
   'conditions.unknown': '„{name}” is geen van hun aandoeningen. Aandoeningen: {conditions}.',
 
+  'baby.noKids': "De instellingen van Baby zijn niet beschikbaar voor kinderen.",
+  'baby.settingsStaff': "Alleen beheerders en leden kunnen de instellingen van Baby wijzigen.",
+  'baby.settingsTitle': "Instellingen van Baby",
+  'baby.note': "Instructies van de zorgverlener: \"{note}\"",
+  'baby.noNote': "Nog geen instructies van de zorgverlener opgeslagen.",
+  'baby.saved': "(opgeslagen op {date} door {who})",
+  'baby.kicks': "Bewegingen tellen: telt tot {target} bewegingen.",
+  'baby.kicksRemind': "Elke dag een herinnering om {time}.",
+  'baby.kicksNoRemind': "Geen dagelijkse herinnering.",
+  'baby.kicksNothing': "Zeg wat er moet veranderen: `target`, `remind_at` of allebei.",
+  'baby.kicksSaved': "Bewegingen tellen opgeslagen: telt tot {target} bewegingen.",
+  'baby.noteSaved': "Instructies op de weeëntimer opgeslagen: \"{note}\" [Baby]({url})",
+  'baby.noteCleared': "Instructies op de weeëntimer gewist. [Baby]({url})",
+  'baby.link': "Open Baby: {url}",
+  'baby.kickReminderTitle': "Tijd om bewegingen te tellen",
+  'baby.kickReminderBody': "Tel op een moment dat de baby meestal actief is. Open Baby en tik op Begin met tellen.",
 };
 
 export default nl;
