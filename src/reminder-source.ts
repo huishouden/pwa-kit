@@ -76,6 +76,8 @@ export const REMINDER_SOURCES: Readonly<Record<string, Readonly<Record<string, S
     petOutingPlans: { fields: ['on'], roles: EVERYDAY },
     petOutings: { fields: [], roles: EVERYDAY },
     petProfiles: { fields: ['birthDate', 'birthDateApprox'], roles: EVERYDAY },
+    petRoutines: { fields: [], roles: EVERYDAY },
+    petRoutineLogs: { fields: [], roles: EVERYDAY },
   },
   health: {
     'healthPeople/*/doses': { fields: [], roles: HEALTH, readers: true },

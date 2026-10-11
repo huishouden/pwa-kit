@@ -138,6 +138,8 @@ describe('to-do documents', () => {
   test('ops are allowed only on the app\'s own collections, at most eight', () => {
     expect(todoOpsAllowed('home', [{ col: 'homeTasks', id: 'j1', data: {} }])).toBe(true);
     expect(todoOpsAllowed('pet', [{ col: 'petOutings', id: 'out-p1-2031-01-06-meal-m1', data: {} }])).toBe(true);
+    expect(todoOpsAllowed('pet', [{ col: 'petRoutineLogs', id: 'rtn-r1-2031-01-06', data: {} }])).toBe(true);
+    expect(todoOpsAllowed('pet', [{ col: 'petRoutines', id: 'r1', data: {} }])).toBe(false);
     expect(todoOpsAllowed('pet', [{ col: 'petOutingPlans', id: 'p1', data: {} }])).toBe(false);
     expect(todoOpsAllowed('home', [{ col: 'items', id: 'j1', data: {} }])).toBe(false);
     expect(todoOpsAllowed('home', [{ col: 'homeTasks', id: 'a/b', data: {} }])).toBe(false);

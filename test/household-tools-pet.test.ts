@@ -183,3 +183,60 @@ describe('pet_log_outing', () => {
     expect(docs.get(`${H}/petOutings/out-p1-2031-01-05-meal-m2`)).toMatchObject({ slot: 'meal-m2', poop: true });
   });
 });
+
+// Care routines: one litter box for two cats (a daily scoop) and a weekly litter change counted from when it was last done.
+describe('pet_routines and pet_routine_done', () => {
+  const routines = (extra: Record<string, Data> = {}) =>
+    household({}, {
+      [`${H}/petRoutines/r1`]: { name: 'Scoop litter box', kind: 'scoop', petIds: ['p2', 'p1'], mode: 'fixed', every: 1, unit: 'day', since: '2031-01-01', createdAt: 1, by: SAM },
+      [`${H}/petRoutines/r2`]: { name: 'Change litter', kind: 'litter', petIds: ['p2'], mode: 'after-done', every: 1, unit: 'week', since: '2031-01-01', createdAt: 1, by: SAM },
+      [`${H}/petRoutineLogs/rtn-r2-2031-01-01`]: { routineId: 'r2', due: '2031-01-01', on: '2031-01-04', at: NOW - 2 * 86_400_000, by: JO, createdAt: 1 },
+      ...extra,
+    });
+
+  test('lists each routine with its state, schedule and last time, for one pet or all', async () => {
+    const { db } = routines();
+    const call = await run(SAM, db, 'pet_routines', {});
+    expect(call.result.error).toBeUndefined();
+    const list = (call.result.data as { routines: { name: string; state: string; next_due: string; last_done_by?: string }[] }).routines;
+    expect(list.map((r) => [r.name, r.state])).toEqual([['Change litter', 'later'], ['Scoop litter box', 'due']]);
+    expect(list[0]).toMatchObject({ next_due: '2031-01-11', last_done_by: JO });
+    expect(call.result.text).toContain('Scoop litter box (Nori and Theo): Due today');
+    expect(call.result.text).toContain('not done yet');
+    const nori = await run(SAM, db, 'pet_routines', { pet: 'nori' });
+    expect((nori.result.data as { routines: unknown[] }).routines).toHaveLength(2);
+    const theo = await run(SAM, db, 'pet_routines', { pet: 'theo' });
+    expect((theo.result.data as { routines: unknown[] }).routines).toHaveLength(1);
+  });
+
+  test('marks the open due day done under its id, as the person; a second call writes nothing', async () => {
+    const { db, docs } = routines();
+    const call = await run(JO, db, 'pet_routine_done', { routine: 'scoop', note: 'Quick one' }, 'assistant');
+    expect(call.result.error).toBeUndefined();
+    expect(docs.get(`${H}/petRoutineLogs/rtn-r1-2031-01-06`)).toEqual({ routineId: 'r1', due: '2031-01-06', on: '2031-01-06', at: NOW, note: 'Quick one', by: JO, createdAt: NOW, via: 'assistant' });
+    expect(call.result.data).toMatchObject({ id: 'rtn-r1-2031-01-06', next_due: '2031-01-07', repeated: false });
+    const again = await run(SAM, db, 'pet_routine_done', { routine: 'Scoop litter box' });
+    expect(again.result.text).toContain('already done today');
+    expect(again.result.data).toMatchObject({ repeated: true });
+    const listed = await run(SAM, db, 'pet_routines', {});
+    expect(listed.result.text).toContain('done at 8:00 AM by jo@example.com');
+  });
+
+  test('an after-done routine can be done early: the next day is counted from today', async () => {
+    const { db, docs } = routines();
+    const call = await run(SAM, db, 'pet_routine_done', { routine: 'Change litter' });
+    expect(call.result.data).toMatchObject({ id: 'rtn-r2-2031-01-11', due: '2031-01-11', next_due: '2031-01-13' });
+    expect(docs.get(`${H}/petRoutineLogs/rtn-r2-2031-01-11`)).toMatchObject({ on: '2031-01-06' });
+  });
+
+  test('says which routines exist when the name is unknown or matches several', async () => {
+    const { db, commits } = routines({ [`${H}/petRoutines/r3`]: { name: 'Scoop the box', petIds: ['p1'], mode: 'fixed', every: 1, unit: 'day', since: '2031-01-01', createdAt: 1, by: SAM } });
+    const unknown = await run(SAM, db, 'pet_routine_done', { routine: 'Walk' });
+    expect(unknown.result.error).toBe(true);
+    expect(unknown.result.text).toContain('Change litter');
+    const several = await run(SAM, db, 'pet_routine_done', { routine: 'scoop' });
+    expect(several.result.error).toBe(true);
+    expect(several.result.text).toContain('more than one routine');
+    expect(commits).toHaveLength(0);
+  });
+});

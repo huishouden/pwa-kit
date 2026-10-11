@@ -157,3 +157,13 @@ describe('Baby and Car sources', () => {
     expect(sourceAllowed('baby', appointment, 'a@example.com', 'helper', docs({}))).toBe(false);
   });
 });
+
+describe('pet routines', () => {
+  test("a routine's reminder: the routine still there, the log for that due day not yet written", () => {
+    const routine = { checks: [{ doc: 'petRoutines/r1' }, { doc: 'petRoutineLogs/rtn-r1-2031-01-06', absent: true as const }] };
+    expect(readSource('pet', routine)).toEqual(routine);
+    expect(stillDue(routine, docs({ 'petRoutines/r1': { name: 'Scoop' }, 'petRoutineLogs/rtn-r1-2031-01-06': null }))).toBe(true);
+    expect(stillDue(routine, docs({ 'petRoutines/r1': { name: 'Scoop' }, 'petRoutineLogs/rtn-r1-2031-01-06': { by: 'a@b.c' } }))).toBe(false);
+    expect(stillDue(routine, docs({ 'petRoutines/r1': null, 'petRoutineLogs/rtn-r1-2031-01-06': null }))).toBe(false);
+  });
+});

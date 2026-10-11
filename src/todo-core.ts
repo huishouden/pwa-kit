@@ -138,7 +138,7 @@ export const TODO_COLLECTIONS: Record<string, readonly string[]> = {
   groceries: [],
   home: ['homeTasks', 'homeServiceLog', 'homeEventPrep'],
   baby: ['babyChecklists', 'babyAppointments'],
-  pet: ['petReminders', 'petDoses', 'petMedDoses', 'petOutings'],
+  pet: ['petReminders', 'petDoses', 'petMedDoses', 'petOutings', 'petRoutineLogs'],
   car: ['carRenewals', 'carServiceItems', 'carServiceLog'],
   bills: ['bills'],
 };

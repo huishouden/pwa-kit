@@ -8,6 +8,7 @@ import { UserError } from './context.js';
 import type { Doc } from '../firestore-rest.js';
 import { common, defineTool, idempotency, render, type ToolContext } from './registry.js';
 import { alreadyThere, clip, pick, recordId } from './shared.js';
+import { choosePet, num, petUrl, str, toPets, type Pet } from './pet-data.js';
 
 /**
  * Huishouden Pet, read and written as the app does (pet src/lib: today.ts, feeding.ts,
@@ -15,11 +16,6 @@ import { alreadyThere, clip, pick, recordId } from './shared.js';
  * every time is moved into the local frame (../clock) before the kit's day logic reads it.
  */
 
-interface Pet {
-  id: string;
-  name: string;
-  species: string;
-}
 interface Meal {
   id: string;
   petId: string;
@@ -50,8 +46,6 @@ interface Course {
   withFood: boolean;
 }
 
-const str = (v: unknown) => (typeof v === 'string' ? v : undefined);
-const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : undefined);
 
 const MED_KINDS = ['flea-tick', 'heartworm', 'deworming', 'medication'];
 
@@ -78,7 +72,7 @@ async function load(ctx: ToolContext, sinceLocalDay: Ymd): Promise<PetData> {
     db.query(base, 'petMedDoses', { where: [{ field: 'at', op: 'GREATER_THAN_OR_EQUAL', value: since }] }),
   ]);
   return {
-    pets: pets.map((d) => ({ id: d.id, name: String(d.data.name ?? ''), species: String(d.data.species ?? 'other') })).sort((a, b) => a.name.localeCompare(b.name)),
+    pets: toPets(pets),
     meals: meals
       .map((d) => ({ id: d.id, petId: String(d.data.petId), name: String(d.data.name ?? ''), time: String(d.data.time ?? '00:00'), food: str(d.data.food), portion: str(d.data.portion) }))
       .sort((a, b) => a.time.localeCompare(b.time) || a.name.localeCompare(b.name)),
@@ -150,14 +144,6 @@ function courseSlots(ctx: ToolContext, data: PetData, course: Course, day: Ymd, 
   });
 }
 
-function choosePet(pets: Pet[], wanted?: string): Pet[] {
-  if (!wanted) return pets;
-  const { found, ambiguous } = pick(pets, wanted, (p) => p.id, (p) => p.name);
-  if (found) return [found];
-  throw new UserError(ambiguous ? 'pet.ambiguous' : 'pet.unknown', { name: wanted, pets: pets.map((p) => p.name).join(', ') });
-}
-
-const petUrl = (ctx: ToolContext, query = '') => ctx.session.link('pet', query);
 
 // ---- Outings (bathroom breaks): the slots and ids from ../pet-outings, shared with Pet ----
 
@@ -547,4 +533,3 @@ export const petLogOuting = defineTool({
   },
 });
 
-export { petUrl };
