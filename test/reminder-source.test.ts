@@ -138,6 +138,19 @@ describe('Baby and Car sources', () => {
     expect(readSource('baby', { checks: [{ doc: 'babyProfile/main' }] })).toBeNull();
   });
 
+  test('a kick-count reminder is due until that day’s session exists', () => {
+    const kicks: ReminderSource = { checks: [{ doc: 'babyKickSessions/2031-05-14', absent: true }] };
+    expect(readSource('baby', kicks)).toEqual(kicks);
+    expect(readSource('baby', { checks: [{ doc: 'babyKickSessions/2031-05-14', due: [{ field: 'end', in: [null] }] }] })).toBeNull();
+    expect(readSource('pet', kicks)).toBeNull();
+    expect(stillDue(kicks, docs({ 'babyKickSessions/2031-05-14': null }))).toBe(true);
+    expect(stillDue(kicks, docs({ 'babyKickSessions/2031-05-14': { start: 1 } }))).toBe(false);
+    // Staff only, as for appointments: a helper's or kid's check must not probe a record the sender reads with its own account.
+    for (const [role, allowed] of [['admin', true], ['member', true], ['helper', false], ['kid', false]] as const) {
+      expect(sourceAllowed('baby', kicks, 'a@example.com', role, docs({}))).toBe(allowed);
+    }
+  });
+
   test('a cancelled, rescheduled, renewed, closed, serviced or paused record is done', () => {
     expect(stillDue(appointment, docs({ 'babyAppointments/a1': { at: 1900000000000 } }))).toBe(true);
     expect(stillDue(appointment, docs({ 'babyAppointments/a1': { at: 1900000900000 } }))).toBe(false);
