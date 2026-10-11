@@ -335,6 +335,8 @@ interface Registered {
 }
 
 const apps: Registered[] = [];
+/** The kit's own catalogues beside its base one (the household tools'): the kit tier, after every app's; kept by `resetI18nForTests`. */
+const kitCatalogues: Registered[] = [];
 const kitLoaded: Partial<Record<Lang, Messages>> = { en: kitEn as Messages };
 
 let choice: LangChoice | null = null;
@@ -355,6 +357,16 @@ export function registerMessages(en: object, loaders: Partial<Record<Exclude<Lan
   if (started && lang !== 'en') void ensure(lang).then(changed);
 }
 
+/**
+ * @internal The kit's own catalogue beside its base one (the household tools'), in the kit tier:
+ * looked up as `kt`'s messages are, after every app's in every language, and kept by
+ * `resetI18nForTests`. Not for apps (stripped from the published types).
+ */
+export function registerKitMessages(en: object, loaders: Partial<Record<Exclude<Lang, 'en'>, Loader>> = {}): void {
+  kitCatalogues.push({ en: en as Messages, loaders, loaded: { en: en as Messages } });
+  if (started && lang !== 'en') void ensure(lang).then(changed);
+}
+
 async function load(loader: Loader | undefined): Promise<Messages | undefined> {
   if (!loader) return undefined;
   try {
@@ -369,7 +381,7 @@ async function ensure(target: Lang): Promise<void> {
   if (target === 'en') return;
   const jobs: Promise<unknown>[] = [];
   if (!kitLoaded[target]) jobs.push(load(kitLoaders[target]).then((m) => m && (kitLoaded[target] = m)));
-  for (const app of apps) {
+  for (const app of [...apps, ...kitCatalogues]) {
     if (!app.loaded[target]) jobs.push(load(app.loaders[target]).then((m) => m && (app.loaded[target] = m)));
   }
   await Promise.all(jobs);
@@ -387,8 +399,14 @@ function lookupApp(key: string): string | undefined {
   return undefined;
 }
 
+/** The kit tier's message for `key` in language `l` only: the base catalogue, then the kit's other catalogues. */
+function inKitTier(key: string, l: Lang): string | undefined {
+  const base = l === 'en' ? (kitEn as Messages) : kitLoaded[l];
+  return base?.[key] ?? kitCatalogues.map((c) => c.loaded[l]?.[key]).find((m) => m !== undefined);
+}
+
 function lookupKit(key: string): string | undefined {
-  return kitLoaded[lang]?.[key] ?? (kitEn as Messages)[key];
+  return inKitTier(key, lang) ?? inKitTier(key, 'en');
 }
 
 /** The app's message for `key` (else the kit's) in the current language, formatted. Falls back to English, then the key itself. */
@@ -405,8 +423,8 @@ export function kt(key: KitKey, vars?: Vars): string {
 
 /** Whether `key` has a message in the current language's own catalogue (not the English fallback). */
 export function hasTranslation(key: MessageKey): boolean {
-  if (lang === 'en') return lookupApp(key) !== undefined || (kitEn as Messages)[key] !== undefined;
-  return apps.some((a) => a.loaded[lang]?.[key] !== undefined) || kitLoaded[lang]?.[key] !== undefined;
+  if (lang === 'en') return lookupApp(key) !== undefined || inKitTier(key, 'en') !== undefined;
+  return apps.some((a) => a.loaded[lang]?.[key] !== undefined) || inKitTier(key, lang) !== undefined;
 }
 
 /** The language this page shows. */
@@ -601,7 +619,7 @@ export async function setLangForTests(next: LangChoice, languages: readonly stri
   changed();
 }
 
-/** For tests: forget registered app catalogues and this page's state. */
+/** For tests: forget registered app catalogues (not the kit's own) and this page's state. */
 export function resetI18nForTests(): void {
   apps.length = 0;
   choice = null;

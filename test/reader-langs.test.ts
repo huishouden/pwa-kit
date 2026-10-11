@@ -4,7 +4,7 @@ import { localizeAgenda } from '../src/agenda-core';
 import { localizeTodos } from '../src/todo-core';
 import { kt, setLangForTests } from '../src/i18n';
 
-// Not resetI18nForTests: it forgets catalogues other test files registered (the household tools').
+// Only the language is reset after each test; the catalogues stay.
 afterEach(async () => {
   setReaderHousehold(null);
   await setLangForTests('en');

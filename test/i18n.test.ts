@@ -20,6 +20,8 @@ import {
   onLangChange,
   parseMessage,
   readLangChoice,
+  hasTranslation,
+  registerKitMessages,
   registerMessages,
   resetI18nForTests,
   resolveLang,
@@ -120,6 +122,18 @@ describe('the language', () => {
     await setLangForTests('nl', ['nl-NL']);
     expect(t(key('bills.hello'), { name: 'Sam' })).toBe('Hoi Sam');
     expect(kt('ui.sampleData')).toBe('Voorbeeldgegevens');
+  });
+
+  test("the kit's own catalogues (the household tools'): after every app's in every language; kept by resetI18nForTests", async () => {
+    registerKitMessages({ 'x.kit': 'Kit words', 'x.both': 'Kit English' }, { es: async () => ({ default: { 'x.kit': 'Palabras del kit', 'x.both': 'Kit en español' } }) });
+    registerMessages({ 'x.app': 'App words', 'x.both': 'App English' });
+    await setLangForTests('es', ['es-MX']);
+    expect(t(key('x.both'))).toBe('App English');
+    expect(t(key('x.kit'))).toBe('Palabras del kit');
+    expect(hasTranslation(key('x.kit'))).toBe(true);
+    resetI18nForTests();
+    expect(t(key('x.app'))).toBe('x.app');
+    expect(t(key('x.kit'))).toBe('Kit words');
   });
 
   test('setLangChoice stores, switches, sets <html lang> and tells listeners; startI18n reads the store', async () => {

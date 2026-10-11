@@ -1,11 +1,12 @@
 import en from './locales/en.js';
-import { registerMessages, t as anyT, type Vars } from '../i18n.js';
+import { registerKitMessages, t as anyT, type Vars } from '../i18n.js';
 
 /**
  * The household tools' words (English imported, Spanish and Dutch loaded on first use), registered
- * with the kit's i18n like an app's catalogue, so `withLang` and `loadLang` switch them too.
+ * as the kit's own catalogue, so `withLang` and `loadLang` switch them too and a test's
+ * `resetI18nForTests` keeps them for the test files after it.
  */
-registerMessages(en, { es: () => import('./locales/es.js'), nl: () => import('./locales/nl.js') });
+registerKitMessages(en, { es: () => import('./locales/es.js'), nl: () => import('./locales/nl.js') });
 
 export type ToolMessageKey = keyof typeof en;
 
