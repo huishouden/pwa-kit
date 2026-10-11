@@ -127,11 +127,32 @@ export async function clearHouseholdHome(db: Firestore, householdId: string): Pr
   await updateDoc(doc(db, COLLECTION, householdId), { home: deleteField() });
 }
 
-/** Starts a household with only its creator, its admin; others are invited from inside. */
-export async function createHousehold(db: Firestore, email: string, name: string): Promise<string> {
+/**
+ * Starts a household with only its creator, its admin; others are invited from inside. Pass the
+ * signed-in `user` (`auth.currentUser`, required so a stale call site fails to compile) and the household gets the id `first-<their Firebase uid>`,
+ * which the rules accept only from them: calling this twice (a double tap, a retry, a second tab)
+ * writes the same document, and the repeat, refused by the rules, returns the household already
+ * made rather than a second. When that id is not theirs to write (they were removed from their
+ * first household), or `user` is null, or its email is not `email`, a household with a random
+ * id is made, as before. Resolves to the household's id either way.
+ */
+export async function createHousehold(db: Firestore, email: string, name: string, user: { uid: string; email?: string | null } | null): Promise<string> {
   const me = normalizeEmail(email);
-  const ref = await addDoc(collection(db, COLLECTION), { name: name.trim(), members: [me], roles: { [me]: 'admin' }, createdAt: Date.now() });
-  return ref.id;
+  const data = { name: name.trim(), members: [me], roles: { [me]: 'admin' }, createdAt: Date.now() };
+  const uid = user && (!user.email || normalizeEmail(user.email) === me) ? user.uid : undefined;
+  const random = async () => (await addDoc(collection(db, COLLECTION), data)).id;
+  if (!uid) return random();
+  const id = `first-${uid}`;
+  try {
+    await setDoc(doc(db, COLLECTION, id), data);
+    return id;
+  } catch (e) {
+    if ((e as { code?: string }).code !== 'permission-denied') throw e;
+  }
+  // Refused: either the repeat of a household I made (the rules refuse an update that changes createdAt), or the id is taken.
+  const mine = await getDocs(query(collection(db, COLLECTION), where('members', 'array-contains', me)));
+  if (mine.docs.some((d) => d.id === id && (d.data() as { roles?: Record<string, unknown> }).roles?.[me] === 'admin')) return id;
+  return random();
 }
 
 type People = Pick<Household, 'id' | 'members' | 'roles'>;

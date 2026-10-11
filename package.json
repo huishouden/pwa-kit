@@ -382,7 +382,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "lint": "tsc --noEmit",
-    "test": "bun test test && bun test ./test/sdk/firestore.sdk.ts && bun test ./test/isolated/app.mocked.ts && bun test ./test/isolated/home.mocked.ts && bun test ./test/isolated/contact-positions.mocked.ts"
+    "test": "bun test test && bun test ./test/sdk/firestore.sdk.ts && bun test ./test/isolated/app.mocked.ts && bun test ./test/isolated/home.mocked.ts && bun test ./test/isolated/contact-positions.mocked.ts && bun test ./test/isolated/household-create.mocked.ts"
   },
   "peerDependencies": {
     "@playwright/test": ">=1.45",

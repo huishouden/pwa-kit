@@ -79,8 +79,9 @@ describe('roles', () => {
 
 describe('household writes', () => {
   test('a new household names its creator admin', async () => {
-    await createHousehold(db, 'Alex@Example.com', ' Home ');
+    await createHousehold(db, 'Alex@Example.com', ' Home ', { uid: 'u1', email: A });
     expect(last().data).toMatchObject({ name: 'Home', members: [A], roles: { [A]: 'admin' } });
+    expect(last().path).toBe('households/first-u1');
   });
 
   test('setting a role writes every member’s out', async () => {
