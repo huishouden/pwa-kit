@@ -186,6 +186,28 @@ describe('Health visits', () => {
     expect(JSON.stringify([...agenda, ...reminders])).not.toContain('no driving');
   });
 
+  test("what add_appointment publishes is in the writer's language, with texts only for the readers' others", async () => {
+    const { db, docs } = household();
+    const home = docs.get(H)!;
+    docs.set(H, { ...home, langs: { [SAM]: 'en', [ALEX]: 'nl' } });
+    const call = await run(SAM, db, 'add_appointment', { app: 'health', person: 'Nan', title: 'Eye exam', start: '2031-01-09T10:00', idempotency_key: 'eye-2' });
+    expect(call.lang).toBe('en');
+    const agenda = [...docs.entries()].filter(([p]) => p.startsWith(`${H}/personalAgenda/`)).map(([, d]) => d as { title: string; texts?: Record<string, unknown> });
+    expect(agenda[0].title).toBe('Appointment for Nan');
+    expect(Object.keys(agenda[0].texts ?? {})).toEqual(['nl']);
+    const reminders = [...docs.entries()].filter(([p]) => p.startsWith(`${H}/personalReminders/`)).map(([, d]) => d as { texts?: Record<string, unknown> });
+    expect(reminders.every((r) => Object.keys(r.texts ?? {}).join() === 'nl')).toBe(true);
+    // Alex's stored language is what the assistant answers Alex in.
+    expect((await run(ALEX, db, 'health_appointments', { person: 'Nan' })).lang).toBe('nl');
+    // Everyone reading English: no texts at all.
+    docs.set(H, { ...home, langs: { [SAM]: 'en', [ALEX]: 'en' } });
+    for (const p of [...docs.keys()]) if (p.startsWith(`${H}/personal`)) docs.delete(p);
+    await run(SAM, db, 'add_appointment', { app: 'health', person: 'Nan', title: 'Eye exam', start: '2031-01-10T10:00', idempotency_key: 'eye-3' });
+    const plain = [...docs.entries()].filter(([p]) => p.startsWith(`${H}/personal`)).map(([, d]) => d);
+    expect(plain.length).toBeGreaterThan(0);
+    expect(plain.every((d) => !('texts' in d))).toBe(true);
+  });
+
   test('a helper carer adds no notes; health_appointments gives notes to keepers only', async () => {
     const { db } = household({
       [`${NAN}/visits/v1`]: { personId: 'p1', kind: 'dentist', title: 'Cleaning', at: Date.UTC(2031, 0, 8, 14), remindBefore: [1440], createdAt: 1, by: SAM },

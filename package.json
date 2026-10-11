@@ -355,6 +355,14 @@
     "./bandwidth-check": {
       "types": "./dist/bandwidth-check.d.ts",
       "default": "./dist/bandwidth-check.js"
+    },
+    "./member-lang": {
+      "types": "./dist/member-lang.d.ts",
+      "default": "./dist/member-lang.js"
+    },
+    "./reader-langs": {
+      "types": "./dist/reader-langs.d.ts",
+      "default": "./dist/reader-langs.js"
     }
   },
   "bin": {

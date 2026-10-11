@@ -1,6 +1,7 @@
 import { MONEY_APPS } from './role-core.js';
 import { cleanAudience, inAudience } from './audience.js';
-import { getLang, inEveryLang, LANGS, type Lang } from './i18n.js';
+import { getLang, LANGS, localizeRecords, type Lang } from './i18n.js';
+import { langsOfReaders, type LocalizeOptions } from './reader-langs.js';
 import { cleanSource, readSource, type ReminderSource } from './reminder-source.js';
 
 /**
@@ -15,7 +16,7 @@ export interface ReminderText {
   body: string;
 }
 
-/** The same title and body per language (`en`, `es`, `nl`), for the sender to pick by the device's language. */
+/** The same title and body in the recipients' other languages (`./reader-langs`), for the sender to pick by the member's language. */
 export type ReminderTexts = Partial<Record<Lang, ReminderText>>;
 
 export interface Reminder {
@@ -24,7 +25,7 @@ export interface Reminder {
   app: string;
   title: string;
   body: string;
-  /** `title` and `body` in each language; the sender uses the device's (`./push` `lang`), else `title`/`body`. */
+  /** `title` and `body` in the recipients' other languages; the sender uses the member's (`./member-lang`), else `title`/`body`. */
   texts?: ReminderTexts;
   /** When to notify, ms since epoch. */
   at: number;
@@ -83,25 +84,24 @@ export function cleanTexts(texts: ReminderTexts | undefined | null): ReminderTex
 }
 
 /**
- * Runs `build` once per language (its `t`/`kt` and formatters in that language) and returns its
- * reminders in the page's language, each with `texts` holding every language's title and body, so
- * each device is notified in its own. `build` must be synchronous and return the same reminders in
+ * Runs `build` in the writer's language (its `t`/`kt` and formatters) and in the languages of each
+ * reminder's readers (`./reader-langs`: its named recipients, else everyone who may see it), and
+ * returns the writer's reminders, each with `texts` holding those readers' title and body, so each
+ * is notified in their own language. `build` must be synchronous and return the same reminders in
  * the same order every time (only the words differ).
  *
  * ```ts
  * syncReminders(db, id, 'car', await localizeReminders(() => carReminders(data)), me);
  * ```
  */
-export async function localizeReminders<R extends ReminderInput>(build: () => R[]): Promise<(R & { texts: ReminderTexts })[]> {
-  const all = await inEveryLang(build);
-  const base = all[getLang()];
-  return base.map((r, i) => {
-    const texts: ReminderTexts = {};
-    for (const lang of LANGS) {
-      const other = all[lang][i];
-      if (other) texts[lang] = { title: other.title, body: other.body ?? '' };
-    }
-    return { ...r, texts };
+export async function localizeReminders<R extends ReminderInput>(build: () => R[], options: LocalizeOptions = {}): Promise<(R & { texts?: ReminderTexts })[]> {
+  const writer = options.writer ?? getLang();
+  const out = await localizeRecords(build, (r) => ({ title: r.title, body: r.body ?? '' }), { langsOf: langsOfReaders(options, writer), writer });
+  // A body left empty in a language is dropped by localizeRecords; a reminder's text always has one.
+  return out.map(({ texts, ...r }) => {
+    const clean: ReminderTexts = {};
+    for (const [l, t] of Object.entries(texts ?? {}) as [Lang, { title?: string; body?: string }][]) if (t.title) clean[l] = { title: t.title, body: t.body ?? '' };
+    return (Object.keys(clean).length ? { ...r, texts: clean } : r) as R & { texts?: ReminderTexts };
   });
 }
 

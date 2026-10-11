@@ -132,15 +132,17 @@ export async function addHealthVisit(ctx: ToolContext, id: string, args: HealthV
   return { person, visit, url: visitUrl(ctx, visit), repeated };
 }
 
-/** The visit's agenda item and reminders, in every language, as Health writes them (the same ids, so its sync finds them unchanged). */
+/** The visit's agenda item and reminders, in its readers' languages, as Health writes them (the same ids, so its sync finds them unchanged). */
 async function publish(ctx: ToolContext, person: Person, visit: Visit, contacts: Contact[]): Promise<void> {
   const me = ctx.session.email;
   const options = publishOptions(ctx, person, visit, contacts);
   if (!options.audience.includes(me)) return;
   const now = ctx.clock.now();
   const base = `households/${ctx.here.id}`;
-  const [item] = await localizeAgenda(() => [visitAgendaItem(visit, options)]);
-  const reminders = await localizeReminders(() => visitReminders(visit, { ...options, recipients: recipientsOf(ctx, person), now }));
+  // In the writer's language, with `texts` for the readers' others (`../reader-langs`).
+  const localize = { household: ctx.here, writer: ctx.lang };
+  const [item] = await localizeAgenda(() => [visitAgendaItem(visit, options)], localize);
+  const reminders = await localizeReminders(() => visitReminders(visit, { ...options, recipients: recipientsOf(ctx, person), now }), localize);
   await ctx.session.db.commit([
     { path: `${base}/${PERSONAL_AGENDA}/${agendaId('health', item.ref, item.start)}`, set: personalAgendaDoc('health', item, me, now) as unknown as Record<string, unknown> },
     ...reminders.map((r) => ({ path: `${base}/${PERSONAL_REMINDERS}/${r.id ?? reminderId(r.ref ?? 'health', r.at)}`, set: personalReminderDoc({ ...r, app: 'health' }, me, now) as unknown as Record<string, unknown> })),

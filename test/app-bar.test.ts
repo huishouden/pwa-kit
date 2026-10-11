@@ -193,16 +193,21 @@ describe('<hh-app-bar>', () => {
     const { bar, $ } = mount();
     bar.user = { email: 'sam@example.com', name: 'Sam' };
     const langs = () => Array.from(bar.shadowRoot!.querySelectorAll<HTMLButtonElement>('.mode[data-lang]'));
-    expect(langs().map((b) => b.textContent)).toEqual(['Automatic', 'English', 'Español', 'Nederlands']);
-    expect(langs()[2].lang).toBe('es');
+    // Signed in, the language is the member's for every device: always a language, never Automatic.
+    expect(langs().map((b) => b.textContent)).toEqual(['English', 'Español', 'Nederlands']);
+    expect(langs()[1].lang).toBe('es');
     expect(langs()[0].getAttribute('aria-pressed')).toBe('true');
     try {
-      langs()[2].focus();
-      langs()[2].click();
+      langs()[1].focus();
+      langs()[1].click();
       await setLangChoice('es');
       expect((bar.shadowRoot!.activeElement as HTMLElement | null)?.dataset.lang).toBe('es');
       expect(localStorage.getItem('hh-lang')).toBe('es');
       expect($('button.item')!.textContent).toBe('Cerrar sesión');
+      expect(langs().map((b) => b.textContent)).toEqual(['English', 'Español', 'Nederlands']);
+      expect(langs()[1].getAttribute('aria-pressed')).toBe('true');
+      bar.user = null;
+      // Signed out, the device's own Automatic is offered too.
       expect(langs().map((b) => b.textContent)).toEqual(['Automático', 'English', 'Español', 'Nederlands']);
       expect(langs()[2].getAttribute('aria-pressed')).toBe('true');
       expect($('a.home')!.getAttribute('aria-label')).toBe('Inicio de Huishouden');

@@ -5,6 +5,8 @@ import { kt } from './i18n.js';
 import { isCurrencyCode, setCurrency } from './money.js';
 import { effectiveRoles, toRoles, type Role } from './roles.js';
 import { homeDoc, setHome, toHome, type HomeCandidate, type HouseholdHome } from './home.js';
+import { followMemberLang, type saveMyLang } from './member-lang.js';
+import { cleanMemberLangs, setReaderHousehold, type MemberLangs } from './reader-langs.js';
 
 /**
  * A household shared by every app in the family: one document per household in
@@ -13,7 +15,7 @@ import { homeDoc, setHome, toHome, type HomeCandidate, type HouseholdHome } from
  * access to members of the parent document — so adding someone here gives them every app at once.
  *
  * Shape matches the rules every app shares:
- *   { name: string, members: string[], joined?: string[], roles?: { [email]: Role }, currency?: string, home?: HouseholdHome, createdAt: number }
+ *   { name: string, members: string[], joined?: string[], roles?: { [email]: Role }, langs?: { [email]: Lang }, currency?: string, home?: HouseholdHome, createdAt: number }
  */
 export interface Household {
   id: string;
@@ -28,6 +30,8 @@ export interface Household {
   currency?: string;
   /** Where the household lives (`./home`): every member reads it; admins and members set it. */
   home?: HouseholdHome;
+  /** Each member's language (`./member-lang`), written by that member only; what published items are stored in (`./reader-langs`). */
+  langs?: MemberLangs;
   createdAt: number;
 }
 
@@ -64,10 +68,22 @@ export function pickHousehold(
 const membersQuery = (db: Firestore, email: string) =>
   query(collection(db, COLLECTION), where('members', 'array-contains', normalizeEmail(email)));
 
-/** Follows the household the signed-in person belongs to (see `pickHousehold`). */
-export function watchHousehold(db: Firestore, email: string, onChange: (state: HouseholdState) => void): Unsubscribe {
+/**
+ * Follows the household the signed-in person belongs to (see `pickHousehold`). Also keeps the
+ * page's currency, home and members' languages (`./reader-langs`) set from it, and the member's
+ * language in step with this page (`./member-lang`, which writes the member's own `langs` entry;
+ * `followLang: false` leaves it alone, `{ save }` replaces the write, for tests). Several watchers in
+ * one page write a change once.
+ */
+export function watchHousehold(
+  db: Firestore,
+  email: string,
+  onChange: (state: HouseholdState) => void,
+  { followLang = true }: { followLang?: boolean | { save: typeof saveMyLang } } = {},
+): Unsubscribe {
   onChange({ status: 'loading' });
-  return onSnapshot(
+  const lang = followLang ? followMemberLang(db, email, followLang === true ? {} : followLang) : null;
+  const stop = onSnapshot(
     membersQuery(db, email),
     { includeMetadataChanges: true },
     (snap) => {
@@ -81,10 +97,23 @@ export function watchHousehold(db: Firestore, email: string, onChange: (state: H
         setCurrency(household.currency);
         setHome(household.home);
       }
+      // What the page publishes is stored in its readers' languages, and the member's follows them.
+      setReaderHousehold(household);
+      lang?.apply(
+        household,
+        docs
+          .filter((d) => !d.pending)
+          .map((d) => toHousehold(d.id, d.data))
+          .sort((a, b) => a.createdAt - b.createdAt || a.id.localeCompare(b.id)),
+      );
       onChange(household ? { status: 'ready', household } : { status: 'none' });
     },
     (error) => onChange({ status: 'error', error }),
   );
+  return () => {
+    stop();
+    lang?.stop();
+  };
 }
 
 /** One-off lookup of the same household `watchHousehold` follows; null when not a member anywhere. */
@@ -102,6 +131,7 @@ export function toHousehold(id: string, data: Record<string, unknown>): Househol
     roles: toRoles(data.roles),
     ...(isCurrencyCode(data.currency) ? { currency: data.currency } : {}),
     ...(toHome(data.home) ? { home: toHome(data.home) } : {}),
+    ...((langs) => (langs ? { langs } : {}))(cleanMemberLangs(data.langs)),
     createdAt: typeof data.createdAt === 'number' ? data.createdAt : 0,
   };
 }
@@ -155,7 +185,7 @@ export async function createHousehold(db: Firestore, email: string, name: string
   return random();
 }
 
-type People = Pick<Household, 'id' | 'members' | 'roles'>;
+type People = Pick<Household, 'id' | 'members' | 'roles' | 'langs'>;
 
 /**
  * Invites by email (admins only): they get every app the next time they sign in with that Google
@@ -178,9 +208,9 @@ export async function inviteMember(db: Firestore, household: string | People, em
 }
 
 /**
- * Removes someone (admins only, never themselves). With the household, their role goes too and
- * everyone else's is written out, so removing the creator never makes the next person an admin by
- * position; the rules refuse a removal that would leave a role behind.
+ * Removes someone (admins only, never themselves). With the household, their role and language go
+ * too and everyone else's role is written out, so removing the creator never makes the next person
+ * an admin by position; the rules refuse a removal that would leave a role behind.
  */
 export async function removeMember(db: Firestore, household: string | People, email: string): Promise<void> {
   const address = normalizeEmail(email);
@@ -190,7 +220,12 @@ export async function removeMember(db: Firestore, household: string | People, em
   }
   const rest = household.members.filter((m) => m !== address);
   const { [address]: _gone, ...roles } = effectiveRoles(household);
-  await updateDoc(doc(db, COLLECTION, household.id), { members: rest, roles: Object.fromEntries(rest.map((m) => [m, roles[m]!])) });
+  const { [address]: _lang, ...langs } = household.langs ?? {};
+  await updateDoc(doc(db, COLLECTION, household.id), {
+    members: rest,
+    roles: Object.fromEntries(rest.map((m) => [m, roles[m]!])),
+    ...(household.langs && address in household.langs ? { langs } : {}),
+  });
 }
 
 /** Records the signed-in member's first visit; harmless to call on every sign-in. */

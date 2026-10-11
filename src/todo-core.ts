@@ -3,7 +3,8 @@ import { isSchedule, nextDueAfterDone } from './schedule.js';
 import { cleanAudience, inAudience } from './audience.js';
 import { inverseOps, type Op } from './store.js';
 import { addDays, addMonths, DAY, daysBetween, dueText, isYmd, toYmd, type Ymd } from './time.js';
-import { cleanLocalTexts, kt, localizeRecords, localized, type LocalTexts } from './i18n.js';
+import { cleanLocalTexts, getLang, kt, localizeRecords, localized, type LocalTexts } from './i18n.js';
+import { langsOfReaders, type LocalizeOptions } from './reader-langs.js';
 
 /**
  * The household's to-do list: every app's open, actionable things in one collection,
@@ -76,7 +77,7 @@ export interface TodoItem {
    */
   audience?: string[];
   /**
-   * The title, detail and button words in every language (`localizeTodos`), so the portal shows each
+   * The title, detail and button words in its readers' other languages (`localizeTodos`), so the portal shows each
    * reader their own; `title`, `detail` and the labels are the writer's language and the fallback.
    */
   texts?: TodoTexts;
@@ -104,15 +105,18 @@ export const TODO_LIMITS = { app: 40, ref: 200, title: 120, detail: 200, url: 20
 export const TODO_TEXT_LIMITS = { title: TODO_LIMITS.title, detail: TODO_LIMITS.detail, done: TODO_LIMITS.label, cancel: TODO_LIMITS.label } as const;
 
 /**
- * Runs `build` once per language and gives its to-dos with `texts` (title, detail, button words),
- * so the portal shows each reader their own language. Wrap the app's to-do builder:
+ * Runs `build` in the writer's language and in the languages of each to-do's readers
+ * (`./reader-langs`: its audience, else the members who may see it), and gives the to-dos with
+ * `texts` (title, detail, button words) in those readers' languages, so the portal shows each reader
+ * their own. Wrap the app's to-do builder:
  *
  * ```ts
  * syncTodos(db, id, 'bills', await localizeTodos(() => billTodos(bills, now)), { by: me });
  * ```
  */
-export function localizeTodos<T extends Pick<TodoInput, 'title' | 'detail' | 'done' | 'cancel'>>(build: () => T[]): Promise<(T & { texts: TodoTexts })[]> {
-  return localizeRecords(build, (t) => ({ title: t.title, detail: t.detail, done: t.done?.label, cancel: t.cancel?.label }));
+export function localizeTodos<T extends Pick<TodoInput, 'title' | 'detail' | 'done' | 'cancel'>>(build: () => T[], options: LocalizeOptions = {}): Promise<(T & { texts?: TodoTexts })[]> {
+  const writer = options.writer ?? getLang();
+  return localizeRecords(build, (t) => ({ title: t.title, detail: t.detail, done: t.done?.label, cancel: t.cancel?.label }), { langsOf: langsOfReaders(options, writer), writer });
 }
 
 /** What the portal shows of a to-do in the reader's language: its title, detail and button words. */

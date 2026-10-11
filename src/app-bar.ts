@@ -21,7 +21,7 @@
  * `undefined` while the session is being restored so neither the avatar nor Sign in flashes.
  */
 import { GLYPHS, logoSvg, type Glyph } from './logo';
-import { LANG_CHOICES, LANG_NAMES, getLangChoice, kt, onLangChange, setLangChoice, type LangChoice } from './i18n';
+import { LANG_CHOICES, LANG_NAMES, LANGS, getLang, getLangChoice, kt, onLangChange, setLangChoice, type LangChoice } from './i18n';
 import { THEME_MODES, getThemeMode, onThemeChange, setThemeMode, startTheme, type ThemeMode } from './theme';
 
 /** What the bar shows of the signed-in person. A Firebase `User` fits as it is. */
@@ -707,7 +707,12 @@ export class HhAppBar extends Base {
     return [label, modes];
   }
 
-  /** "Language" and Automatic / English / Español / Nederlands: the suite's one choice (./i18n). Each language is named in itself. */
+  /**
+   * "Language" and English / Español / Nederlands: the suite's one choice (./i18n), each language
+   * named in itself. Signed in it is the member's, stored on the household for every device
+   * (./member-lang), so it is always a language; signed out, Automatic (this device's languages) is
+   * offered too.
+   */
   #langChoice(): HTMLElement[] {
     const label = paragraph('theme-label', kt('appBar.language'));
     label.id = `${this.#menuId}-lang`;
@@ -716,8 +721,9 @@ export class HhAppBar extends Base {
     choices.setAttribute('role', 'group');
     choices.setAttribute('aria-labelledby', label.id);
     choices.setAttribute('part', 'language');
-    const chosen = getLangChoice();
-    for (const choice of LANG_CHOICES) {
+    const signedIn = !!this.#user;
+    const chosen: LangChoice = signedIn ? getLang() : getLangChoice();
+    for (const choice of signedIn ? LANGS : LANG_CHOICES) {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'mode';

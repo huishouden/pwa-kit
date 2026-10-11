@@ -1,7 +1,8 @@
 import { MONEY_APPS } from './role-core.js';
 import { cleanAudience, inAudience } from './audience.js';
 import { HOUR, daysBetween, dueText, dueWords, formatTime, longDate, startOfDay, toYmd, type Ymd, ymdToTime, addDays } from './time.js';
-import { capitalize, cleanLocalTexts, kt, localizeRecords, localized, type LocalTexts } from './i18n.js';
+import { capitalize, cleanLocalTexts, getLang, kt, localizeRecords, localized, type LocalTexts } from './i18n.js';
+import { langsOfReaders, type LocalizeOptions } from './reader-langs.js';
 import { cleanRule, isEventRule, type EventRule } from './schedule.js';
 import { isHhmm, isYmd, type Hhmm } from './time.js';
 import { ROLES, type Role } from './role-core.js';
@@ -56,7 +57,7 @@ export interface AgendaItem {
    * one person's care. Absent on the shared agenda.
    */
   audience?: string[];
-  /** The title and detail in every language (`localizeAgenda`); `title`/`detail` are the writer's and the fallback. */
+  /** The title and detail in its readers' other languages (`localizeAgenda`); `title`/`detail` are the writer's and the fallback. */
   texts?: AgendaTexts;
   /**
    * One occurrence of something on a schedule (garbage pickup every Thursday): the schedule, so a
@@ -169,15 +170,18 @@ export const AGENDA_LIMITS = { app: 40, ref: 200, title: 120, detail: 200, calen
 export const AGENDA_TEXT_LIMITS = { title: AGENDA_LIMITS.title, detail: AGENDA_LIMITS.detail } as const;
 
 /**
- * Runs `build` once per language and gives its items with `texts` (title and detail), so the
- * portal shows each reader their own language:
+ * Runs `build` in the writer's language and in the languages of each item's readers
+ * (`./reader-langs`: its audience, else the members who may see it), and gives the items with
+ * `texts` (title and detail) in those readers' languages, so the portal and calendars show each
+ * reader their own:
  *
  * ```ts
  * syncAgenda(db, id, 'bills', await localizeAgenda(() => billAgenda(bills)), { by: me });
  * ```
  */
-export function localizeAgenda<T extends Pick<AgendaInput, 'title' | 'detail'>>(build: () => T[]): Promise<(T & { texts: AgendaTexts })[]> {
-  return localizeRecords(build, (item) => ({ title: item.title, detail: item.detail }));
+export function localizeAgenda<T extends Pick<AgendaInput, 'title' | 'detail'>>(build: () => T[], options: LocalizeOptions = {}): Promise<(T & { texts?: AgendaTexts })[]> {
+  const writer = options.writer ?? getLang();
+  return localizeRecords(build, (item) => ({ title: item.title, detail: item.detail }), { langsOf: langsOfReaders(options, writer), writer });
 }
 
 /** An item's title and detail in the reader's language. */

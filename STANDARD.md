@@ -198,8 +198,10 @@ step-by-step, the API and the glossary).
   `navigator.language`. Money is in the household's currency.
 - **Data stays as entered.** Names, notes and other household data are never translated; sample
   data may stay English.
-- **Notifications** are read on other devices: reminder text is built with `inEveryLang` and
-  stored as the reminder's `texts`, so each device gets its own language.
+- **Text other members read** (reminders, to-dos, agenda items) is built with `localizeReminders`,
+  `localizeTodos` and `localizeAgenda`: the writer's words plus `texts` in the other languages its
+  readers use (each member's stored language, `households/{id}.langs`; docs/i18n.md), never every
+  language the suite speaks.
 - **Tests**: each app's e2e has an `i18n.spec.ts` with `expectLocalized` for Spanish and Dutch;
   PRs that change UI show phone screenshots in each language.
 

@@ -5,6 +5,7 @@ import { cleanAudience, inAudience } from './audience.js';
 import { kt } from './i18n.js';
 import { atClock } from './time.js';
 import { readSource } from './reminder-source.js';
+import type { LocalizeOptions } from './reader-langs.js';
 import { cleanTexts, localizeReminders, PERSONAL_REMINDERS, personalReminderDoc, reminderDoc, reminderId, toReminder, type PersonalReminderInput, type Reminder, type ReminderInput, type ReminderTexts } from './reminder-core.js';
 import { fingerprint, forgetPublished, publishedKey, publishedStore, unlessPublished, type PublishedStorage } from './published.js';
 
@@ -17,11 +18,12 @@ export * from './reminder-core.js';
  * minutes for reminders that are due and not yet sent, pushes them to the recipients' devices,
  * and marks them sent. Apps never send anything themselves.
  *
- * Each device is notified in its own language. A reminder's `title` and `body` are in the writer's
- * language; `texts` carries the same title and body in every language the suite speaks, and the
- * sender shows the one matching the device's push subscription (`./push` `lang`), falling back to
- * `title`/`body`. Kit builders fill `texts` (`remindersForCourseInEveryLang`); an app wraps its own
- * reminder builder with `localizeReminders(() => build())`, which runs it once per language.
+ * Each member is notified in their own language. A reminder's `title` and `body` are in the writer's
+ * language; `texts` carries the same title and body in the other languages its recipients use
+ * (`./reader-langs`, from each member's stored language), and the sender shows the recipient's,
+ * falling back to `title`/`body`. Kit builders fill `texts` (`remindersForCourseInEveryLang`); an
+ * app wraps its own reminder builder with `localizeReminders(() => build())`, which runs it once
+ * per language needed.
  *
  * Fields match the rules exactly (see REMINDER_FIELDS); keep them in step.
  */
@@ -324,8 +326,8 @@ export function remindersForCourse(course: MedCourse & { id: string }, options: 
   }));
 }
 
-/** `remindersForCourse` with `texts` in every language (`localizeReminders`), so each device is notified in its own. */
-export function remindersForCourseInEveryLang(course: MedCourse & { id: string }, options: CourseReminderOptions): Promise<ReminderInput[]> {
+/** `remindersForCourse` with `texts` in its readers' languages (`localizeReminders`), so each is notified in their own. */
+export function remindersForCourseInEveryLang(course: MedCourse & { id: string }, options: CourseReminderOptions, localize: LocalizeOptions = {}): Promise<ReminderInput[]> {
   const now = options.now ?? Date.now();
-  return localizeReminders(() => remindersForCourse(course, { ...options, now }));
+  return localizeReminders(() => remindersForCourse(course, { ...options, now }), localize);
 }

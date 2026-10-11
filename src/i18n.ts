@@ -1,8 +1,10 @@
 /**
  * Every app in the language its reader chose (docs/i18n.md). English, Spanish and Dutch; one choice
- * for the whole suite, Automatic (the device's languages) or a language, kept in localStorage under
- * `hh-lang`. Every app lives on the suite's one origin (docs/one-site.md), so choosing Español in one
- * app turns every app Spanish, and open tabs follow at once (the `storage` event).
+ * for the whole suite. Signed in it is the member's, stored on the household for every device
+ * (./member-lang); this page keeps it in localStorage under `hh-lang` as the boot cache, Automatic
+ * (the device's languages) until a member's is known. Every app lives on the suite's one origin
+ * (docs/one-site.md), so choosing Español in one app turns every app Spanish, and open tabs follow
+ * at once (the `storage` event).
  *
  * Text lives in catalogues, flat JSON objects of ICU-style messages: the kit's own (`./locales`) and
  * each app's `src/locales/{en,es,nl}.json`, registered with `registerMessages`. English is bundled;
@@ -510,13 +512,18 @@ export function withLang<T>(target: Lang, fn: () => T): T {
 }
 
 /**
- * `fn`'s result in every language, for text that leaves the device and is read on others: a
- * reminder's notification is shown in each device's own language (./reminders `texts`).
- * Loads the catalogues first.
+ * `fn`'s result in each of `langs`, for text that leaves the device and is read on others (a
+ * reminder's notification in each reader's language, ./reminders `texts`). Loads the catalogues first.
  */
+export async function inLangs<T>(langs: readonly Lang[], fn: () => T): Promise<Partial<Record<Lang, T>>> {
+  const wanted = LANGS.filter((l) => langs.includes(l));
+  await Promise.all(wanted.map((l) => ensure(l)));
+  return Object.fromEntries(wanted.map((l) => [l, withLang(l, fn)])) as Partial<Record<Lang, T>>;
+}
+
+/** `fn`'s result in every language the suite speaks (`inLangs(LANGS, fn)`). */
 export async function inEveryLang<T>(fn: () => T): Promise<Record<Lang, T>> {
-  await Promise.all(LANGS.map((l) => ensure(l)));
-  return Object.fromEntries(LANGS.map((l) => [l, withLang(l, fn)])) as Record<Lang, T>;
+  return (await inLangs(LANGS, fn)) as Record<Lang, T>;
 }
 
 /** Words of a stored record in other languages: `{ es: { title: '…' }, nl: { … } }` (to-dos, agenda items). */
@@ -553,22 +560,31 @@ export function localized<F extends string>(item: { texts?: LocalTexts<F> }, fie
 }
 
 /**
- * Runs `build` once per language and returns its records in the page's language, each with
- * `texts` holding what `pick` takes from it in every language. `build` must be synchronous and
- * return the same records in the same order each time (only the words differ). Used by
- * `localizeTodos` and `localizeAgenda`.
+ * Runs `build` in the writer's language (default the page's) and in each language `langsOf` names
+ * for any record, and returns the writer's records, each with `texts` holding what `pick` takes from
+ * it in the languages `langsOf` gives for that record (the writer's left out: those are the record's
+ * own words). `langsOf` returning undefined means every language. `texts` is left off a record
+ * that needs none. `build` must be synchronous and return the same records in the same order each
+ * time (only the words differ). Used by `localizeTodos`, `localizeAgenda` and `localizeReminders`,
+ * which work out `langsOf` from the household's members (`./reader-langs`).
  */
-export async function localizeRecords<T, F extends string>(build: () => T[], pick: (item: T) => Partial<Record<F, string | undefined>>): Promise<(T & { texts: LocalTexts<F> })[]> {
-  const all = await inEveryLang(build);
-  return all[lang].map((item, i) => {
+export async function localizeRecords<T, F extends string>(
+  build: () => T[],
+  pick: (item: T) => Partial<Record<F, string | undefined>>,
+  { langsOf, writer = lang }: { langsOf?: (item: T) => readonly Lang[] | undefined; writer?: Lang } = {},
+): Promise<(T & { texts?: LocalTexts<F> })[]> {
+  const [base] = Object.values(await inLangs([writer], build)) as T[][];
+  const per = base.map((item) => (langsOf?.(item) ?? LANGS).filter((l) => l !== writer));
+  const others = await inLangs([...new Set(per.flat())], build);
+  return base.map((item, i) => {
     const texts: LocalTexts<F> = {};
-    for (const l of LANGS) {
-      const other = all[l][i];
+    for (const l of per[i]) {
+      const other = others[l]?.[i];
       if (!other) continue;
       const words = Object.fromEntries(Object.entries(pick(other)).filter(([, v]) => typeof v === 'string' && v)) as Partial<Record<F, string>>;
       if (Object.keys(words).length) texts[l] = words;
     }
-    return { ...item, texts };
+    return (Object.keys(texts).length ? { ...item, texts } : { ...item }) as T & { texts?: LocalTexts<F> };
   });
 }
 

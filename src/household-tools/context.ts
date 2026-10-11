@@ -3,6 +3,7 @@ import { isLang, loadLang, type Lang } from '../i18n.js';
 import { LocalClock, isTimeZone } from '../local-clock.js';
 import { FirestoreRest, FirestoreError, type Doc } from '../firestore-rest.js';
 import { toHome, type HouseholdHome } from '../home.js';
+import { cleanMemberLangs, type MemberLangs } from '../reader-langs.js';
 import type { ToolMessageKey } from './i18n.js';
 
 /** Who a session acts as, and how (the connector's grant, the `hh` command line's sign-in). */
@@ -33,6 +34,8 @@ export interface Household {
   currency?: string;
   /** Where the household lives (`households/{id}.home`): every member reads it. */
   home?: HouseholdHome;
+  /** Each member's language (`households/{id}.langs`), set by that member in the apps. */
+  langs?: MemberLangs;
   createdAt: number;
 }
 
@@ -40,6 +43,7 @@ export function toHousehold(id: string, d: Record<string, unknown>): Household {
   const strings = (v: unknown) => (Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []);
   const roles = d.roles && typeof d.roles === 'object' ? (d.roles as Record<string, Role>) : undefined;
   const home = toHome(d.home);
+  const langs = cleanMemberLangs(d.langs);
   return {
     id,
     name: typeof d.name === 'string' ? d.name : '',
@@ -48,6 +52,7 @@ export function toHousehold(id: string, d: Record<string, unknown>): Household {
     ...(roles ? { roles } : {}),
     ...(typeof d.currency === 'string' ? { currency: d.currency } : {}),
     ...(home ? { home } : {}),
+    ...(langs ? { langs } : {}),
     createdAt: typeof d.createdAt === 'number' ? d.createdAt : 0,
   };
 }
@@ -160,10 +165,14 @@ export class Session {
     return p;
   }
 
-  /** The language to answer in: the call's, the profile's, the one at sign-in, else English. Loaded. */
+  /**
+   * The language to answer in: the call's, the member's in the household (the apps' Language
+   * setting), the profile's, the one at sign-in, else English. Loaded.
+   */
   async lang(householdId: string | undefined, asked?: string): Promise<Lang> {
-    const profile = householdId ? await this.profile(householdId) : {};
-    const lang = isLang(asked) ? asked : (profile.lang ?? this.props.lang ?? 'en');
+    const member = householdId && !isLang(asked) ? (await this.households()).find((h) => h.id === householdId)?.langs?.[this.email] : undefined;
+    const profile = householdId && !isLang(asked) && !member ? await this.profile(householdId) : {};
+    const lang = isLang(asked) ? asked : (member ?? profile.lang ?? this.props.lang ?? 'en');
     await loadLang(lang);
     return lang;
   }

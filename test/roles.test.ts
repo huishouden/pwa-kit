@@ -108,4 +108,13 @@ describe('household writes', () => {
     await removeMember(db, shared, A);
     expect(last().data).toEqual({ members: [B, H], roles: { [B]: 'admin', [H]: 'helper' } });
   });
+
+  test('removing someone takes their language with them, and only theirs', async () => {
+    const spoken = toHousehold('h1', { members: [A, B, H], langs: { [A]: 'en', [H]: 'es', [B]: 'fr' } });
+    expect(spoken.langs).toEqual({ [A]: 'en', [H]: 'es' });
+    await removeMember(db, spoken, H);
+    expect(last().data).toEqual({ members: [A, B], roles: { [A]: 'admin', [B]: 'member' }, langs: { [A]: 'en' } });
+    await removeMember(db, spoken, B);
+    expect(last().data).not.toHaveProperty('langs');
+  });
 });

@@ -23,8 +23,9 @@ import { getLang, isLang, kt, onLangChange, type Lang } from './i18n.js';
  * iPhone and iPad: push works only in an app added to the Home Screen, on iOS/iPadOS 16.4 or
  * later; `pushSupport()` says so, so the app can explain instead of showing a dead button.
  *
- * Each subscription carries the device's language (`lang`, ./i18n), so the sender shows a
- * reminder's `texts` in it (./reminders). `enablePush` writes it; `syncPushLang` (or
+ * Each subscription carries the page's language (`lang`, ./i18n), which follows the member's stored
+ * one (./member-lang); the sender uses the member's stored language first and this one for a member
+ * with none, to pick a reminder's `texts` (./reminders). `enablePush` writes it; `syncPushLang` (or
  * `watchPushLang`, running for as long as the app is open) rewrites it when the language changes.
  *
  * Fields match the rules exactly (see PUSH_SUBSCRIPTION_FIELDS); keep them in step.

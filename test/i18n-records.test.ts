@@ -26,7 +26,7 @@ describe('to-dos and agenda items in every language', () => {
     ];
     const [input] = await localizeTodos(build);
     expect(input.title).toBe('Pay Electric');
-    expect(input.texts.nl).toEqual({ title: 'Electric betalen', done: 'Betaald', cancel: 'Annuleren' });
+    expect(input.texts?.nl).toEqual({ title: 'Electric betalen', done: 'Betaald', cancel: 'Annuleren' });
     const stored = todoDoc('bills', input, 'sam@example.com', 5);
     const item = toTodoItem('bills:bill:b1', stored as unknown as Record<string, unknown>);
     expect(todoWords(item).title).toBe('Pay Electric');

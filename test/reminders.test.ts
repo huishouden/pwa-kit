@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, mock, test } from 'bun:test';
+import { afterAll, afterEach, beforeAll, describe, expect, mock, test } from 'bun:test';
 import * as real from 'firebase/firestore';
 
 // An in-memory stand-in for the few Firestore calls reminders.ts makes (no emulator in this repo;
@@ -38,6 +38,7 @@ mock.module('firebase/firestore', () => ({
 
 const { PERSONAL_REMINDER_FIELDS, personalReminderDoc, syncPersonalReminders, REMINDER_FIELDS, cancelReminder, cancelReminders, reminderDoc, reminderId, remindersForCourse, replaceReminders, syncReminders, toReminder, upsertReminder } = await import('../src/reminders');
 const { memoryNotes, withoutPageStorage } = await import('./published-notes');
+const { setReaderHousehold } = await import('../src/reader-langs');
 withoutPageStorage(beforeAll, afterAll);
 
 const db = {} as real.Firestore;
@@ -290,16 +291,36 @@ describe('reminders for named members only', () => {
 const { localizeReminders, remindersForCourseInEveryLang, cleanTexts } = await import('../src/reminders');
 const { kt, resetI18nForTests, setLangForTests } = await import('../src/i18n');
 
-describe('reminders in every language', () => {
-  test('course reminders carry texts in en, es and nl; title and body stay in the page language', async () => {
+describe('reminders in their readers\' languages', () => {
+  afterEach(() => setReaderHousehold(null));
+
+  test('with no household known, course reminders carry texts in every other language; title and body stay in the page language', async () => {
     const list = await remindersForCourseInEveryLang(course, options);
     expect(list[0].title).toBe('Biscuit: Carprofen 75 mg');
     expect(list[0].body).toBe('1 tablet at 8 PM, with food');
     expect(list[0].texts).toEqual({
-      en: { title: 'Biscuit: Carprofen 75 mg', body: '1 tablet at 8 PM, with food' },
       es: { title: 'Biscuit: Carprofen 75 mg', body: '1 tablet a las 8 p.m., con comida' },
       nl: { title: 'Biscuit: Carprofen 75 mg', body: '1 tablet om 20:00, bij het eten' },
     });
+  });
+
+  test('a household that reads one language stores no texts; a Spanish reader adds only Spanish', async () => {
+    setReaderHousehold({ members: ['alex@example.com', 'sam@example.com'], langs: { 'alex@example.com': 'en' } });
+    const [one] = await remindersForCourseInEveryLang(course, options);
+    expect(one.texts).toBeUndefined();
+    setReaderHousehold({ members: ['alex@example.com', 'sam@example.com'], langs: { 'alex@example.com': 'en', 'sam@example.com': 'es' } });
+    const [two] = await remindersForCourseInEveryLang(course, options);
+    expect(two.texts).toEqual({ es: { title: 'Biscuit: Carprofen 75 mg', body: '1 tablet a las 8 p.m., con comida' } });
+    // Only the recipients' languages: Sam isn't one.
+    const [three] = await remindersForCourseInEveryLang(course, { ...options, recipients: ['alex@example.com'] });
+    expect(three.texts).toBeUndefined();
+  });
+
+  test('a writer in Dutch writes Dutch words and English texts for an English reader', async () => {
+    const h = { members: ['alex@example.com', 'sam@example.com'], langs: { 'alex@example.com': 'nl' as const, 'sam@example.com': 'en' as const } };
+    const [r] = await localizeReminders(() => [{ app: 'car', title: kt('time.dueToday'), body: kt('agenda.allDay'), at: at(20, 9), url: 'https://car.example.com/' }], { household: h, writer: 'nl' });
+    expect(r.title).toBe('Vandaag');
+    expect(r.texts).toEqual({ en: { title: 'Due today', body: 'All day' } });
   });
 
   test('the course text follows the language; without a dose or a name it still reads', async () => {
@@ -316,7 +337,7 @@ describe('reminders in every language', () => {
     }
   });
 
-  test('localizeReminders runs the builder once per language', async () => {
+  test('localizeReminders runs the builder once per language needed', async () => {
     const list = await localizeReminders(() => [{ app: 'car', title: kt('time.dueToday'), body: kt('agenda.allDay'), at: at(20, 9), url: 'https://car.example.com/' }]);
     expect(list[0].title).toBe('Due today');
     expect(list[0].texts?.es).toEqual({ title: 'Vence hoy', body: 'Todo el día' });
