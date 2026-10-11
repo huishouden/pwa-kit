@@ -7,7 +7,7 @@ const savedWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
 if (ownWindow) Object.defineProperty(globalThis, 'window', { configurable: true, writable: true, value: new EventTarget() });
 
 const { followMemberLang, resetMemberLangForTests } = await import('../src/member-lang');
-const { getLang, getLangChoice, resetI18nForTests, setLangChoice, setLangForTests } = await import('../src/i18n');
+const { getLang, getLangChoice, setLangChoice, setLangForTests } = await import('../src/i18n');
 
 const db = {} as Firestore;
 const ME = 'sam@example.com';
@@ -17,8 +17,9 @@ const memory = () => {
 };
 const settle = () => new Promise((r) => setTimeout(r, 0));
 
-afterEach(() => {
-  resetI18nForTests();
+// Not resetI18nForTests: it forgets catalogues other test files registered (the household tools').
+afterEach(async () => {
+  await setLangForTests('en');
   resetMemberLangForTests();
 });
 afterAll(() => {

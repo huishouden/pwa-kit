@@ -2,11 +2,12 @@ import { afterEach, describe, expect, test } from 'bun:test';
 import { cleanMemberLangs, itemReaders, readerLangs, setReaderHousehold } from '../src/reader-langs';
 import { localizeAgenda } from '../src/agenda-core';
 import { localizeTodos } from '../src/todo-core';
-import { kt, resetI18nForTests } from '../src/i18n';
+import { kt, setLangForTests } from '../src/i18n';
 
-afterEach(() => {
+// Not resetI18nForTests: it forgets catalogues other test files registered (the household tools').
+afterEach(async () => {
   setReaderHousehold(null);
-  resetI18nForTests();
+  await setLangForTests('en');
 });
 
 const ADMIN = 'ana@example.com';
