@@ -572,11 +572,15 @@ nothing deployed or tested there can read or write real household data.
   the staging site under test) runs the same specs against staging outside CI: a run id of its own
   (`e2e-local-<you>-<time>`), the staging service account's token through `gcloud` impersonation
   (Service Account Token Creator on it; or `HH_STAGING_ACCESS_TOKEN`), the quota check, the
-  command, then the cleanup. Nothing in the specs or the kit depends on CI.
+  command, then the cleanup. Nothing in the specs or the kit depends on CI. It stops first, before a
+  token is minted, when `VITE_FIREBASE_PROJECT_ID` (bun loads `.env.local` into the process) or
+  `BASE_URL` names production.
 - **Signing in**: `hh.signIn(page, 'helper')` (or `signInTestUser(page, { as, household })`) mints a
   custom token with the staging deploy account (IAM `signJwt`, keyless), runs `signInWithCustomToken`
   on the site's own origin and opens the app signed in. It throws if the build's or the site's
-  Firebase config names any project but `huishouden-staging` (or neither names one), and only the
+  Firebase config names any project but `huishouden-staging` (or neither names one), on the
+  emulators too if the build's project or `BASE_URL` is production (`assertNotProduction`,
+  `assertNotProductionUrl`, before the page is touched), and only the
   staging account can sign the token, so it cannot sign anyone in to production. `useTestHousehold`
   skips the file where neither staging credentials nor the emulators are there.
 - **Emulators first**: the same specs run on the Auth and Firestore emulators with the household's

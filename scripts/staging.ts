@@ -14,7 +14,7 @@
 //             Creator on it), the quota check, the command (`bun run e2e:signed-in`), then cleanup
 import { spawnSync } from 'node:child_process';
 import { userInfo } from 'node:os';
-import { STAGING_PROJECT, StagingQuotaError, checkStagingQuota, cleanupTestRun, localRunId, seedTestHousehold, sweepStaging, testRunId } from '../src/staging';
+import { STAGING_PROJECT, StagingQuotaError, assertNotProduction, assertNotProductionUrl, checkStagingQuota, cleanupTestRun, localRunId, seedTestHousehold, sweepStaging, testRunId } from '../src/staging';
 
 const argv = process.argv.slice(2);
 const [command] = argv;
@@ -33,6 +33,14 @@ async function run(cmd: string[]): Promise<number> {
     return 2;
   }
   const env = process.env;
+  // First, before a token is minted or anything runs. bun loads .env.local into this process, so a production value there stops the run rather than being kept by the `||=` below.
+  try {
+    assertNotProduction(env.VITE_FIREBASE_PROJECT_ID, 'VITE_FIREBASE_PROJECT_ID (an .env file or the environment)');
+    assertNotProductionUrl(env.BASE_URL);
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : e);
+    return 1;
+  }
   env.HH_STAGING_SA ||= DEFAULT_SA;
   env.HH_STAGING_RUN ||= localRunId(env.USER || userInfo().username);
   if (!env.HH_STAGING_ACCESS_TOKEN) {

@@ -19,6 +19,7 @@
  * Runs in Node or bun (CI, Playwright), never in an app bundle.
  */
 import { decodeFields, encodeFields, type Value } from './firestore-rest.js';
+import { SUITE_SITE } from './suite.js';
 
 export const STAGING_PROJECT = 'huishouden-staging';
 /** The emulators' project in the kit's app-tests job: `demo-` projects never reach Google. */
@@ -61,7 +62,34 @@ export function e2eProject(env: Env = processEnv()): string {
   return project;
 }
 
+/** The production Firebase project, which no test, seed or sign-in helper may ever touch. */
+export const PRODUCTION_PROJECT = SUITE_SITE;
+
+const PRODUCTION_HINT =
+  'That is production. A .env.local (bun and Vite both read it) or an exported VITE_FIREBASE_* with the production values is the usual cause: delete it and run `hh dev verify` or `hh dev evidence`, which build with an explicit staging or emulator env.';
+
+/** Throws, before any sign-in or write, when `projectId` is the production project. */
+export function assertNotProduction(projectId: string | undefined, what = 'Firebase project'): void {
+  if (projectId === PRODUCTION_PROJECT) throw new Error(`${what} is "${projectId}"; tests never run against production. ${PRODUCTION_HINT}`);
+}
+
+/** Throws when `url` is the production site (huishouden-piekstra.web.app or .firebaseapp.com). */
+export function assertNotProductionUrl(url: string | undefined, what = 'BASE_URL'): void {
+  if (!url) return;
+  let host: string;
+  try {
+    host = new URL(url).hostname;
+  } catch {
+    // A safety check fails closed: a value that cannot be read cannot be shown not to be production.
+    throw new Error(`${what} is not a URL: "${url}"`);
+  }
+  if (host === `${PRODUCTION_PROJECT}.web.app` || host === `${PRODUCTION_PROJECT}.firebaseapp.com`) {
+    throw new Error(`${what} is the production site (${host}); tests run on the emulators or ${STAGING_PROJECT}, never production`);
+  }
+}
+
 export function assertStagingProject(projectId: string | undefined, what = 'Firebase project'): void {
+  assertNotProduction(projectId, what);
   if (projectId !== STAGING_PROJECT) {
     throw new Error(`${what} is ${projectId ? `"${projectId}"` : 'unknown'}; test sign-in and seeding only run against ${STAGING_PROJECT}`);
   }
@@ -522,6 +550,7 @@ export function stagingWebConfig(env: Env, site: { apiKey?: string; projectId?: 
 
 /** The web config of an app built for the emulators (the kit's app-tests job builds with these). */
 export function emulatorWebConfig(env: Env = processEnv()): StagingWebConfig {
+  assertNotProduction(env.VITE_FIREBASE_PROJECT_ID, "The app's Firebase project");
   return { apiKey: env.VITE_FIREBASE_API_KEY || 'demo-key', projectId: e2eProject(env), authDomain: 'localhost' };
 }
 

@@ -4,6 +4,9 @@ import claimsFixture from './fixtures/staging/sign-jwt-claims.json';
 import partialError from './fixtures/staging/batch-create-partial-error.json';
 import authUsers from './fixtures/staging/auth-users.json';
 import {
+  assertNotProduction,
+  assertNotProductionUrl,
+  emulatorWebConfig,
   checkStagingQuota,
   ciRunId,
   localRunId,
@@ -283,5 +286,28 @@ describe('the web config a test signs in with', () => {
 
   test('needs an API key', () => {
     expect(() => stagingWebConfig({ VITE_FIREBASE_PROJECT_ID: 'huishouden-staging' }, null)).toThrow(/No Firebase API key/);
+  });
+});
+
+describe('production is never a test target', () => {
+  test('a production project id is refused with the cause named', () => {
+    expect(() => assertNotProduction('huishouden-piekstra', "The app's Firebase project")).toThrow(/never run against production.*\.env\.local.*hh dev verify/s);
+    expect(() => assertNotProduction('huishouden-staging')).not.toThrow();
+    expect(() => assertNotProduction('demo-huishouden')).not.toThrow();
+    expect(() => assertNotProduction(undefined)).not.toThrow();
+  });
+
+  test('the production site, either host, is refused as a BASE_URL', () => {
+    expect(() => assertNotProductionUrl('https://huishouden-piekstra.web.app/baby/')).toThrow(/production site/);
+    expect(() => assertNotProductionUrl('https://huishouden-piekstra.firebaseapp.com/')).toThrow(/production site/);
+    expect(() => assertNotProductionUrl('https://huishouden-staging.web.app/baby/')).not.toThrow();
+    expect(() => assertNotProductionUrl('http://localhost:4400/baby/')).not.toThrow();
+    expect(() => assertNotProductionUrl(undefined)).not.toThrow();
+    expect(() => assertNotProductionUrl('not a url')).toThrow(/not a URL/);
+  });
+
+  test('an emulator run whose build names production fails before any sign-in', () => {
+    expect(() => emulatorWebConfig({ HH_E2E_TARGET: 'emulator', VITE_FIREBASE_PROJECT_ID: 'huishouden-piekstra' })).toThrow(/production/);
+    expect(emulatorWebConfig({ HH_E2E_TARGET: 'emulator', VITE_FIREBASE_PROJECT_ID: 'demo-huishouden' }).projectId).toBe('demo-huishouden');
   });
 });

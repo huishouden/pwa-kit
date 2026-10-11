@@ -1,6 +1,7 @@
 import { expect, type APIRequestContext, type Browser, type BrowserContext, type Page, type TestType } from '@playwright/test';
 import { CONTENT_SECURITY_POLICY, permissionsPolicy, type DeviceFeatures } from './security-headers.js';
 import {
+  assertNotProductionUrl,
   e2eTarget,
   emulatorWebConfig,
   getTestDoc,
@@ -600,6 +601,8 @@ export async function signInTestUser(page: Page, { as, email, household, path = 
   const user = as ? hh.users[as] : email ? testUserByEmail(hh, email) : undefined;
   if (!user) throw new Error('signInTestUser needs `as` (a role) or `email`');
   const emulator = e2eTarget(env) === 'emulator';
+  // Before the page is touched or a token is minted: neither target may be production.
+  assertNotProductionUrl(env.BASE_URL);
   let config: StagingWebConfig;
   let serviceAccount: string | undefined;
   let accessToken: string | undefined;
@@ -608,6 +611,7 @@ export async function signInTestUser(page: Page, { as, email, household, path = 
     // The preview server's 404 for it: same origin, no app code. A response from the local server
     // (not page.route's), or Chrome would hold the page public and refuse its calls to the emulator.
     await page.goto('/__/firebase/init.json');
+    assertNotProductionUrl(page.url(), "The page's address");
   } else {
     ({ accessToken, serviceAccount } = stagingCredentialsFromEnv(env));
     const res = await page.goto('/__/firebase/init.json');
