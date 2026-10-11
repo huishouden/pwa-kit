@@ -462,16 +462,20 @@ Every app's `.github/workflows/ci.yml` calls `pwa-kit/.github/workflows/pwa.yml@
 | `build` | push to `main` | the next version from the commit titles (see Versions; embedded as `VITE_APP_VERSION`), `bun install --frozen-lockfile`, `pwa-bandwidth-check`, lint (`tsc --noEmit`), `pwa-design-check`, `pwa-write-check`, `pwa-headers-check`, unit tests, build |
 | `release` | push to `main`, after `build` and `leak-scan` | the version's annotated tag and its GitHub release with generated notes, when the commit titles since the last tag call for one (nothing is committed; see Versions) |
 | `publish` | push to `main`, with `base` | The build (and a staging build) as `site.tar.gz` / `site-staging.tar.gz` on the repo's `hosting` pre-release |
-| `deploy` | push to `main`; a manual run with `reconcile` | Keyless via Workload Identity Federation for Firebase; the Cloudflare token only in the portal's `production` environment; with `base`, `pwa-site assemble` (every app's latest asset under its path, the combined `firebase.json`); in an app (no token) the CDN only for builds it already holds (`--cdn-held`, the rest from the site until the portal's next deploy); in the portal the assets to the asset CDN (`pwa-site cdn`, `wrangler deploy`, then `pwa-site cdn-check`, which uploads again, up to three times, if another repo's upload replaced them; docs/one-site.md "Asset CDN") and then `firebase deploy`, `cdn-check` once more after the pages are live, rechecked for builds published meanwhile; without, `firebase deploy --only hosting:<target>`. |
+| `deploy` | push to `main`; a manual run with `reconcile` | Keyless via Workload Identity Federation for Firebase; the Cloudflare token only in the portal's `production` environment (of the PWA repos; the Workers hold their own for `wrangler deploy`); with `base`, `pwa-site assemble` (every app's latest asset under its path, the combined `firebase.json`); in an app (no token) the CDN only for builds it already holds (`--cdn-held`, the rest from the site until the portal's next deploy); in the portal the assets to the asset CDN (`pwa-site cdn`, `wrangler deploy`, then `pwa-site cdn-check`, which uploads again, up to three times, if another repo's upload replaced them; docs/one-site.md "Asset CDN") and then `firebase deploy`, `cdn-check` once more after the pages are live, rechecked for builds published meanwhile; without, `firebase deploy --only hosting:<target>`. |
 | `smoke` | after `deploy` | One HTTP check of the live app path (index.html, a hashed asset on the CDN with its CORS and caching headers and the site's own copy, the manifest, `sw.js`, their caching and compression); no browser (docs/one-site.md "Bandwidth") |
 | `staging-build`, `staging-site`, `staging` | manual runs with `staging-ref` | Build against the staging project (no credentials); assemble the suite, serving its own assets (no job that builds a ref holds the Cloudflare token; nothing from the ref runs); deploy to the app's staging site, `e2e` and `e2e:signed-in` there in households of the run's own, then remove them (see Staging) |
 
 - Repo variables (not secrets; the Firebase web config is public by design): `GCP_WIF_PROVIDER`,
   `GCP_DEPLOY_SA`, `VITE_FIREBASE_*` (the bootstrap sets them). No app repo holds a Cloudflare
   token: `CLOUDFLARE_API_TOKEN` (Workers Scripts edit) and `CLOUDFLARE_ACCOUNT_ID` are secrets of the
-  portal's `production` environment (deployment branches: `main` only), the one deploy that uploads
-  to the asset CDN; apps' deploys keep the CDN only for builds it already holds (docs/one-site.md
-  "Asset CDN"). Callers pass no secrets (never `inherit`, which would hand pwa.yml every repo secret);
+  portal's `production` environment (deployment branches: `main` only), the one PWA deploy that uploads
+  to the asset CDN (the Workers repos, notify, connector and calendar, hold the same two in their own
+  `production` environments for `wrangler deploy`); apps' deploys keep the CDN only for builds it already holds (docs/one-site.md
+  "Asset CDN"). The bootstrap creates the `production` environment (main only) of every repo and places
+  the Cloudflare token and account id in the portal's and the Workers' with `hh ops secret push cloudflare`,
+  and the portal's repo secret `NEW_RELIC_API_KEY` (monitoring) with `hh ops secret push newrelic-user`,
+  all from the keychain (`hh ops secret store <name>` puts them there; never paste one in chat). Callers pass no secrets (never `inherit`, which would hand pwa.yml every repo secret);
   the variable `HH_ASSET_CDN=off` (repo or organization) turns the CDN off. Apps on the suite's site need no
   `VITE_NEWRELIC_*`: the deploy serves their New Relic settings (see Observability).
 - Deploy waits on `leak-scan` and `build`. `concurrency: cancel-in-progress` on every workflow.

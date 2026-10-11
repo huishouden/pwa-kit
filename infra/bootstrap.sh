@@ -34,6 +34,9 @@
 #   ALERT_EMAIL=<address> (environment) — production only: an email when Firestore reads in 24 hours
 #   pass 60% of the free plan's 50,000 (infra/read-alert.sh, docs/one-site.md "Budgets").
 #
+# Production environment (STANDARD.md "Pull requests"): every repo gets a `production` environment
+# deployable from main only; the secrets it holds are placed by `hh ops secret push` (cloudflare, newrelic-user).
+#
 # Prerequisites (once per machine), all as the same Google account:
 #   npx firebase-tools login ; gcloud auth login ; gh auth login
 set -euo pipefail
@@ -215,6 +218,16 @@ JSON
 {"deployment_branch_policy": {"protected_branches": false, "custom_branch_policies": true}}
 JSON
     gh api -X POST "repos/$GITHUB_OWNER/$repo/environments/production/deployment-branch-policies" -f name=main -f type=branch >/dev/null 2>&1 || true
+    # Secrets the repo is expected to hold, placed from the keychain by hh's registry (never from this
+    # script's environment): the Cloudflare token and account id in the `production` environment of the
+    # portal and the Workers, and the portal's repo secret NEW_RELIC_API_KEY (what monitoring.yml
+    # reads; docs/observability.md). --expected skips every other repo; --soft skips a secret the
+    # keychain does not hold yet (`hh ops secret store <name>`). Nothing is printed.
+    if command -v hh >/dev/null 2>&1 && [[ "$GITHUB_OWNER" == huishouden ]]; then
+      for secret in cloudflare newrelic-user; do
+        hh ops secret push "$secret" --repos "$repo" --expected --soft || echo "  hh ops secret push $secret failed for $repo; run it by hand" >&2
+      done
+    fi
   fi
   # release-please opens release PRs with GITHUB_TOKEN; the default token stays read-only.
   # An organization must allow this first (org admin): Settings > Actions > Workflow permissions.

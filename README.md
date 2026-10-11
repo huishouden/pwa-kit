@@ -75,7 +75,7 @@ apps that each live in their own repo. Every piece exists because an app hit the
 | Leak scan | `actions/leak-scan` | gitleaks on the commits a PR or push adds; secrets plus personal mailbox addresses |
 | Pre-commit hook | `templates/githooks/pre-commit` | the same scan before a commit exists |
 | Icons | `bunx pwa-icons` | renders `public/icon.svg` to the 192, 512, maskable and Apple touch PNGs |
-| Bootstrap | `infra/bootstrap.sh [--staging] apps.conf` | creates the Firebase project, a Hosting site and web app per repo, Workload Identity Federation for GitHub, and the repo variables; `--staging` does the same for the staging project with `STAGING_` variables |
+| Bootstrap | `infra/bootstrap.sh [--staging] apps.conf` | creates the Firebase project, a Hosting site and web app per repo, Workload Identity Federation for GitHub, the repo variables, a main-only `production` environment per repo and (production only) the expected secrets from the keychain via `hh ops secret push` (Cloudflare token and account id, the portal's `NEW_RELIC_API_KEY`); `--staging` does the same for the staging project with `STAGING_` variables |
 | Templates | `templates/` | `ci.yml`, `firebase.json`, `playwright.config.ts` for a new app |
 
 The conventions behind these are in [STANDARD.md](STANDARD.md).
