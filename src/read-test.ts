@@ -69,7 +69,7 @@ export interface ReadCounter {
   /** Sets or clears the hook run before each read. */
   setBeforeRead(hook: BeforeRead | null): void;
   /** Set when a `beforeRead` hook ran MAX_HOOK_RUNS times (it reads through the counter). */
-  readonly runaway: Error | undefined;
+  readonly runaway: ReadCountError | undefined;
 }
 
 type SnapLike = { metadata?: { fromCache?: boolean }; size?: number; docChanges?: () => { type: string }[]; data?: () => Record<string, unknown> };
@@ -78,7 +78,7 @@ export function readCounter({ beforeRead = null as BeforeRead | null } = {}): Re
   const tally: ReadTally = { reads: 0, requests: 0, byKind: {} };
   let hook = beforeRead;
   let n = 0;
-  let runaway: Error | undefined;
+  let runaway: ReadCountError | undefined;
   const add = (kind: ReadKind, reads: number) => {
     const k = (tally.byKind[kind] ??= { requests: 0, reads: 0 });
     k.requests++;
@@ -93,7 +93,7 @@ export function readCounter({ beforeRead = null as BeforeRead | null } = {}): Re
     if (!hook) return;
     if (n >= MAX_HOOK_RUNS) {
       // Kept as well as thrown: a client may turn the throw into its own error ("unreachable").
-      runaway ??= new Error(`beforeRead ran ${MAX_HOOK_RUNS} times in one count: does the hook read through the counter? Use raw.fetch (or another client) for its own reads and writes.`);
+      runaway ??= new ReadCountError('runaway', `beforeRead ran ${MAX_HOOK_RUNS} times in one count: does the hook read through the counter? Use raw.fetch (or another client) for its own reads and writes.`);
       throw runaway;
     }
     await hook(++n, kind, raw);
@@ -206,24 +206,39 @@ export interface ExpectReadsOptions {
   beforeRead?: BeforeRead;
 }
 
-export class ReadBudgetExceeded extends Error {
-  /** `over` the ceiling, or `under` the floor. */
-  readonly reason: 'over' | 'under';
+/** Why a read count can't be judged: a hook that reads through the counter, a browser build without the meter. */
+export class ReadCountError extends Error {
   constructor(
+    readonly code: 'runaway' | 'no-meter',
+    message: string,
+  ) {
+    super(message);
+    this.name = 'ReadCountError';
+  }
+}
+
+export class ReadBudgetExceeded extends Error {
+  /**
+   * `reason`: `over` the ceiling, `under` the floor, or `unsettled` (still rising after
+   * `unsettledAfterMs`); decided by the caller that judged the count.
+   */
+  constructor(
+    readonly reason: 'over' | 'under' | 'unsettled',
     readonly tally: ReadTally,
     readonly options: ExpectReadsOptions,
+    readonly unsettledAfterMs?: number,
   ) {
     const kinds = Object.entries(tally.byKind)
       .map(([k, v]) => `${k} ${v.requests}× (${v.reads} reads)`)
       .join(', ');
     const what = options.label ? `${options.label}: ` : '';
-    super(
-      tally.reads > options.max
-        ? `${what}${tally.reads} Firestore reads billed, over the budget of ${options.max} [${kinds}]. Find the extra reads, or raise the budget with the reason in the PR (STANDARD.md "Read budgets").`
-        : `${what}${tally.reads} Firestore reads billed, under the floor of ${options.min} [${kinds}]: is the counter still on the code path?`,
-    );
+    const message = {
+      over: `${what}${tally.reads} Firestore reads billed, over the budget of ${options.max} [${kinds}]. Find the extra reads, or raise the budget with the reason in the PR (STANDARD.md "Read budgets").`,
+      under: `${what}${tally.reads} Firestore reads billed, under the floor of ${options.min ?? 0} [${kinds}]: is the counter still on the code path?`,
+      unsettled: `${what}the Firestore reads kept rising for ${unsettledAfterMs ?? 0} ms (${tally.reads} so far) [${kinds}]: a listener re-subscribing or re-reading in a loop?`,
+    }[reason];
+    super(message);
     this.name = 'ReadBudgetExceeded';
-    this.reason = tally.reads > options.max ? 'over' : 'under';
   }
 }
 
@@ -247,7 +262,8 @@ export async function expectReads<T>(fn: (meter: (inner: Fetch) => Fetch) => Pro
   }
   if (counter.runaway) throw counter.runaway;
   const tally: ReadTally = { reads: counter.tally.reads, requests: counter.tally.requests, byKind: structuredClone(counter.tally.byKind) };
-  if (tally.reads > options.max || tally.reads < (options.min ?? 0)) throw new ReadBudgetExceeded(tally, options);
+  if (tally.reads > options.max) throw new ReadBudgetExceeded('over', tally, options);
+  if (tally.reads < (options.min ?? 0)) throw new ReadBudgetExceeded('under', tally, options);
   return { value, reads: tally.reads, tally };
 }
 

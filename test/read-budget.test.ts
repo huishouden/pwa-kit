@@ -15,7 +15,7 @@ import {
   untilNextQuotaDay,
   type SqlLike,
 } from '../src/read-budget';
-import { expectReads, readCounter, ReadBudgetExceeded, writeBeforeEachRead } from '../src/read-test';
+import { expectReads, readCounter, ReadBudgetExceeded, ReadCountError, writeBeforeEachRead } from '../src/read-test';
 import runQuery3 from './fixtures/firestore-rest/run-query-3.json';
 import runQueryEmpty from './fixtures/firestore-rest/run-query-empty.json';
 import aggregation2500 from './fixtures/firestore-rest/aggregation-2500.json';
@@ -391,9 +391,12 @@ describe('expectPageReads', () => {
   test('a count that never settles fails, as does a build without the meter', async () => {
     const { expectPageReads, resetPageReads } = await import('../src/e2e');
     const rising = Array.from({ length: 50 }, (_, i) => i + 1);
-    await expect(expectPageReads(page(rising), async () => {}, { max: 1000, settleMs: 1, settleTimeoutMs: 0 })).rejects.toThrow('kept rising');
-    await expect(expectPageReads(page([null]), async () => {}, { max: 5 })).rejects.toThrow('does not count its reads');
-    await expect(resetPageReads(page([null]))).rejects.toThrow('does not count its reads');
+    const unsettled = await expectPageReads(page(rising), async () => {}, { max: 1000, settleMs: 1, settleTimeoutMs: 0 }).catch((e) => e);
+    expect(unsettled).toBeInstanceOf(ReadBudgetExceeded);
+    expect((unsettled as ReadBudgetExceeded).reason).toBe('unsettled');
+    const noMeter = await expectPageReads(page([null]), async () => {}, { max: 5 }).catch((e) => e);
+    expect([noMeter instanceof ReadCountError, (noMeter as ReadCountError).code]).toEqual([true, 'no-meter']);
+    expect(((await resetPageReads(page([null])).catch((e) => e)) as ReadCountError).code).toBe('no-meter');
   });
 });
 
@@ -409,7 +412,9 @@ describe('a hook that reads through the counter', () => {
       },
       { max: 10, beforeRead: async () => void (await db.get('households/h1')) },
     );
-    await expect(looping).rejects.toThrow(`beforeRead ran ${MAX_HOOK_RUNS} times`);
+    const runaway = await looping.catch((e) => e);
+    expect([runaway instanceof ReadCountError, (runaway as ReadCountError).code]).toEqual([true, 'runaway']);
+    expect((runaway as Error).message).toContain(`beforeRead ran ${MAX_HOOK_RUNS} times`);
     let raw = 0;
     await expectReads(
       async (meter) => {

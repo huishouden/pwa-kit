@@ -19,7 +19,7 @@ import {
   type TestRole,
   type TestUser,
 } from './staging.js';
-import { PAGE_READS_KEY, ReadBudgetExceeded, type PageReadMeter, type ReadTally } from './read-test.js';
+import { PAGE_READS_KEY, ReadBudgetExceeded, ReadCountError, type PageReadMeter, type ReadTally } from './read-test.js';
 
 // Paths: every helper's default is `./`, which is BASE_URL itself. On the suite's one site BASE_URL
 // is the app's path (`https://<site>/pet/`), so pass relative paths (`?tab=care`, `settings`): a
@@ -849,7 +849,7 @@ const NO_METER = 'This build does not count its reads: page read budgets run on 
 
 export async function pageReads(page: Pick<Page, 'evaluate'>): Promise<ReadTally> {
   const tally = await page.evaluate((key) => (globalThis as unknown as Record<string, PageReadMeter | undefined>)[key]?.tally() ?? null, PAGE_READS_KEY);
-  if (!tally) throw new Error(NO_METER);
+  if (!tally) throw new ReadCountError('no-meter', NO_METER);
   return tally;
 }
 
@@ -860,7 +860,7 @@ export async function resetPageReads(page: Pick<Page, 'evaluate'>): Promise<void
     meter?.reset();
     return !!meter;
   }, PAGE_READS_KEY);
-  if (!done) throw new Error(NO_METER);
+  if (!done) throw new ReadCountError('no-meter', NO_METER);
 }
 
 export interface PageReadsOptions {
@@ -900,9 +900,10 @@ export async function expectPageReads(
     // Still moving: a listener re-billing in a loop is the runaway this budget is for.
     if (Date.now() >= deadline || tally.reads > max) {
       if (tally.reads > max) break;
-      throw new Error(`${label ? `${label}: ` : ''}the page's Firestore reads kept rising for ${settleTimeoutMs} ms (${tally.reads} so far): a listener re-subscribing or re-reading in a loop?`);
+      throw new ReadBudgetExceeded('unsettled', tally, { max, min, ...(label ? { label } : {}) }, settleTimeoutMs);
     }
   }
-  if (tally.reads > max || tally.reads < min) throw new ReadBudgetExceeded(tally, { max, min, ...(label ? { label } : {}) });
+  if (tally.reads > max) throw new ReadBudgetExceeded('over', tally, { max, min, ...(label ? { label } : {}) });
+  if (tally.reads < min) throw new ReadBudgetExceeded('under', tally, { max, min, ...(label ? { label } : {}) });
   return tally;
 }
