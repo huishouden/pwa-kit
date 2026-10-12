@@ -14,7 +14,7 @@ import { allDayOf, clockIn, dayIn, firstOccurrence, icsCalendar, icsDate, icsLoc
  *
  * Who sees what follows the household's rules, and is checked here again: helpers and kids only
  * items not marked private and nothing about money; personal items (Health) only their audience.
- * Each person's settings (`CalendarSettings`) then leave out apps, to-dos or bills, and keep Health
+ * Each person's settings (`CalendarSettings`) then leave out apps (Bills among them), to-dos or done things, and keep Health
  * items to "Medicine for Ana" or "Appointment for Ana" unless they ask for the detail, since calendars
  * are often shared.
  *
@@ -25,12 +25,10 @@ import { allDayOf, clockIn, dayIn, firstOccurrence, icsCalendar, icsDate, icsLoc
 // ---- Settings: `households/{id}/calendarSettings/{email}` ----
 
 export interface CalendarSettings {
-  /** Apps left out of the calendar ("pet"). */
+  /** Apps left out of the calendar ("pet"). "bills" stands for the household's money items (Bills and Spending). */
   hiddenApps: string[];
   /** To-dos with a due day. */
   todos: boolean;
-  /** Bills and other money items (admins and members only see them at all). */
-  bills: boolean;
   /** Health items with their detail; off, they read "Medicine for Ana" or "Appointment for Ana" and nothing more. */
   healthDetail: boolean;
   /** Things already done (a ticked task, a given dose). */
@@ -38,23 +36,25 @@ export interface CalendarSettings {
 }
 
 export const CALENDAR_SETTINGS = 'calendarSettings';
-export const CALENDAR_SETTINGS_FIELDS = ['hiddenApps', 'todos', 'bills', 'healthDetail', 'done', 'updatedAt', 'by'] as const;
-export const DEFAULT_CALENDAR_SETTINGS: Readonly<CalendarSettings> = { hiddenApps: [], todos: true, bills: true, healthDetail: false, done: true };
+export const CALENDAR_SETTINGS_FIELDS = ['hiddenApps', 'todos', 'healthDetail', 'done', 'updatedAt', 'by'] as const;
+export const DEFAULT_CALENDAR_SETTINGS: Readonly<CalendarSettings> = { hiddenApps: [], todos: true, healthDetail: false, done: true };
 
-/** Stored settings read defensively; anything missing takes its default. */
+/** Stored settings read defensively; anything missing takes its default. A stored `bills: false` (the old separate switch) reads as Bills (and with it Spending) hidden. */
 export function toCalendarSettings(data: unknown): CalendarSettings {
   const d = (data && typeof data === 'object' ? data : {}) as Record<string, unknown>;
   const flag = (k: keyof CalendarSettings) => (typeof d[k] === 'boolean' ? (d[k] as boolean) : (DEFAULT_CALENDAR_SETTINGS[k] as boolean));
+  const hidden = Array.isArray(d.hiddenApps) ? d.hiddenApps.filter((a): a is string => typeof a === 'string' && /^[a-z]{1,40}$/.test(a)) : [];
+  if (d.bills === false) hidden.push('bills');
+  // The money set has one key, "bills" (the only Bills checkbox); a stored "spending" reads as it.
   return {
-    hiddenApps: Array.isArray(d.hiddenApps) ? [...new Set(d.hiddenApps.filter((a): a is string => typeof a === 'string' && /^[a-z]{1,40}$/.test(a)))].slice(0, 30) : [],
+    hiddenApps: [...new Set(hidden.map((a) => (a === 'spending' ? 'bills' : a)))].slice(0, 30),
     todos: flag('todos'),
-    bills: flag('bills'),
     healthDetail: flag('healthDetail'),
     done: flag('done'),
   };
 }
 
-/** The stored document for settings, as the rules accept it. */
+/** The stored document for settings, as the rules accept it. Write it as a full `set` (no merge) so a legacy `bills` field is dropped. */
 export function calendarSettingsDoc(settings: CalendarSettings, by: string, now = Date.now()) {
   const s = toCalendarSettings(settings);
   return { ...s, updatedAt: now, by: by.trim().toLowerCase() };
@@ -173,8 +173,8 @@ export function visibleTo(item: Pick<AgendaItem, 'app' | 'kind' | 'private' | 'a
   const email = me.trim().toLowerCase();
   if (item.audience && !item.audience.includes(email)) return false;
   if (RESTRICTED.includes(role) && (item.private !== false || MONEY_APPS.includes(item.app))) return false;
-  if (settings.hiddenApps.includes(item.app)) return false;
-  if (!settings.bills && (item.kind === 'bill' || MONEY_APPS.includes(item.app))) return false;
+  // Spending and Bills are one money set: hiding either hides both.
+  if (settings.hiddenApps.includes(item.app) || (MONEY_APPS.includes(item.app) && MONEY_APPS.some((a) => settings.hiddenApps.includes(a)))) return false;
   if (!settings.done && item.status === 'done') return false;
   return true;
 }

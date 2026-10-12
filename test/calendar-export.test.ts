@@ -5,7 +5,7 @@ import { toAgendaItem, type AgendaItem } from '../src/agenda-core';
 import { toTodoItem, type TodoItem } from '../src/todo-core';
 import type { Role } from '../src/role-core';
 import {
-  DEFAULT_CALENDAR_SETTINGS, addToCalendarIcs, exportEvents, exportIcs, exportUid, googleTemplateUrl, isExportedEvent, loadExportLang, toCalendarSettings,
+  DEFAULT_CALENDAR_SETTINGS, addToCalendarIcs, exportEvents, exportIcs, calendarSettingsDoc, exportUid, googleTemplateUrl, isExportedEvent, loadExportLang, toCalendarSettings, visibleTo,
   type CalendarSettings, type ExportInput,
 } from '../src/calendar-export';
 import { toMatch } from '../src/calendar';
@@ -62,16 +62,46 @@ describe('who sees what', () => {
 
 describe('settings', () => {
   test('defaults: everything on except Health detail', () => {
-    expect(toCalendarSettings(undefined)).toEqual({ hiddenApps: [], todos: true, bills: true, healthDetail: false, done: true });
+    expect(toCalendarSettings(undefined)).toEqual({ hiddenApps: [], todos: true, healthDetail: false, done: true });
     expect(toCalendarSettings({ hiddenApps: ['pet', 'BAD', 3], todos: 'yes' }).hiddenApps).toEqual(['pet']);
   });
 
   test('hidden apps, bills, to-dos and done things can be left out', () => {
     expect(keys('admin@example.com', { hiddenApps: ['home'] }).some((k) => k.startsWith('home|'))).toBe(false);
-    expect(keys('admin@example.com', { bills: false })).not.toContain('bills|bill:power');
+    expect(keys('admin@example.com', { hiddenApps: ['bills'] })).not.toContain('bills|bill:power');
     expect(keys('admin@example.com', { todos: false }).some((k) => k.startsWith('todo|'))).toBe(false);
     const done = exportEvents(input('admin@example.com', { done: false })).filter((e) => e.status === 'done');
     expect(done).toHaveLength(0);
+  });
+
+  test('a stored bills: false (the old switch) reads as Bills and Spending hidden; true or missing changes nothing', () => {
+    expect(toCalendarSettings({ bills: false, hiddenApps: ['pet'] }).hiddenApps).toEqual(['pet', 'bills']);
+    expect(toCalendarSettings({ bills: false, hiddenApps: ['bills'] }).hiddenApps).toEqual(['bills']);
+    expect(toCalendarSettings({ bills: true, hiddenApps: ['pet'] }).hiddenApps).toEqual(['pet']);
+    expect(toCalendarSettings({ hiddenApps: ['pet'] }).hiddenApps).toEqual(['pet']);
+    expect(toCalendarSettings({ bills: false })).not.toHaveProperty('bills');
+    expect(calendarSettingsDoc(toCalendarSettings({ bills: false }), 'A@b.c')).not.toHaveProperty('bills');
+    expect(keys('admin@example.com', toCalendarSettings({ bills: false }))).not.toContain('bills|bill:power');
+    expect(keys('admin@example.com', toCalendarSettings({ bills: true }))).toContain('bills|bill:power');
+  });
+
+  test('hiding Bills (or Spending) hides the whole money set, Spending to-dos included', () => {
+    const item = { kind: 'bill', private: true, status: 'upcoming' } as const;
+    const base = { me: 'admin@example.com', role: 'admin' as const };
+    expect(visibleTo({ ...item, app: 'spending' }, { ...base, settings: { ...DEFAULT_CALENDAR_SETTINGS, hiddenApps: ['bills'] } })).toBe(false);
+    expect(visibleTo({ ...item, app: 'bills' }, { ...base, settings: { ...DEFAULT_CALENDAR_SETTINGS, hiddenApps: ['spending'] } })).toBe(false);
+    expect(visibleTo({ ...item, app: 'bills' }, { ...base, settings: DEFAULT_CALENDAR_SETTINGS })).toBe(true);
+  });
+
+  test('a stored spending reads as bills, so unticking Bills clears the money set', () => {
+    expect(toCalendarSettings({ hiddenApps: ['spending', 'bills', 'pet'] }).hiddenApps).toEqual(['bills', 'pet']);
+  });
+
+  test('re-saving after a legacy bills: false with Bills ticked again shows Bills', () => {
+    const legacy = toCalendarSettings({ bills: false });
+    const resaved = calendarSettingsDoc({ ...legacy, hiddenApps: legacy.hiddenApps.filter((a) => a !== 'bills') }, 'a@b.c');
+    expect(resaved).not.toHaveProperty('bills');
+    expect(toCalendarSettings(resaved).hiddenApps).toEqual([]);
   });
 
   test('Health without detail: "Medicine for Ana" and no medicine name anywhere', async () => {

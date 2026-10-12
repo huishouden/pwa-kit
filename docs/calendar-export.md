@@ -17,10 +17,10 @@ Plus an **Add to calendar** button on single items (`AddToCalendar`), which need
 
 - Helpers and kids: only items with `private: false`, and nothing from Bills or Spending.
 - Personal items (Health) only for their `audience`: the person, their carers and the admins.
-- Their settings (`calendarSettings/{email}`, `CalendarSettings`): apps left out, to-dos with a due
-  day (on by default), bills (on), finished things (on), and Health's detail, **off by default**: a
+- Their settings (`calendarSettings/{email}`, `CalendarSettings`): apps left out (Bills among them: hiding it hides Bills and Spending items), to-dos with a due
+  day (on by default), finished things (on), and Health's detail, **off by default**: a
   Health item then reads "Medicine for Ana" or "Appointment for Ana" with nothing else, since calendars are often shared
-  with people outside the household.
+  with people outside the household. A stored `bills: false` from before Bills became an app choice reads as `hiddenApps` including `bills`.
 - Their language: each item's `texts` in it, the words the export adds in it.
 
 Every event has a stable `key` (`app|ref`, `app|ref|start` when a record has several items,
