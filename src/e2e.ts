@@ -1,4 +1,5 @@
 import { expect, type APIRequestContext, type Browser, type BrowserContext, type Page, type TestType } from '@playwright/test';
+import { COMPLETE_OPEN, completeSelector } from './complete.js';
 import { CONTENT_SECURITY_POLICY, permissionsPolicy, type DeviceFeatures } from './security-headers.js';
 import {
   assertNotProductionUrl,
@@ -746,7 +747,9 @@ export async function runPortalTodo(page: Page, title: string, { action = 'done'
   await page.goto(path);
   const row = page.getByRole('listitem', { name: title, exact: true });
   await expect(row, `"${title}" on the portal's To-do list`).toBeVisible({ timeout });
-  await row.locator(`[data-todo-action="${action}"]`).click();
+  // Done is the kit's CompleteButton since the portal adopted it; Cancel keeps `data-todo-action`.
+  const button = action === 'done' ? row.locator(`[data-todo-action="done"], ${completeSelector(COMPLETE_OPEN)}`) : row.locator('[data-todo-action="cancel"]');
+  await button.first().click();
   if (action === 'cancel') await page.getByRole('dialog').locator('[data-todo-confirm]').click();
   await expect(row, `"${title}" leaves the To-do list`).toHaveCount(0, { timeout: 15_000 });
 }

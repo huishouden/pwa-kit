@@ -18,6 +18,7 @@ import { personColour, personInitial, personName } from '../people';
 import { clockWords, toHhmm } from '../time';
 import { useKitT } from './i18n';
 import { kt } from '../i18n';
+import { COMPLETE_OPEN, COMPLETE_UNDO } from '../complete';
 
 export const inputClass =
   'w-full min-h-11 rounded-xl border border-line bg-white px-3 py-2.5 text-base text-ink outline-none focus:border-forest-500 focus:ring-2 focus:ring-forest-200 dark:bg-forest-900 dark:focus:ring-forest-700';
@@ -741,7 +742,7 @@ export function CompleteButton({ done, name, onDone, onUndo, verb, label, undoLa
     return (
       <button
         type="button"
-        data-complete="undo"
+        data-complete={COMPLETE_UNDO}
         className={`${undoDoneButton} ${className}`}
         onClick={onUndo}
         disabled={disabled}
@@ -754,7 +755,7 @@ export function CompleteButton({ done, name, onDone, onUndo, verb, label, undoLa
   return (
     <button
       type="button"
-      data-complete="open"
+      data-complete={COMPLETE_OPEN}
       className={`${completeButton} ${size === 'lg' ? completeButtonLg : ''} ${className}`}
       onClick={onDone}
       disabled={disabled}
