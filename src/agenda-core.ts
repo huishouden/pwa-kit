@@ -1,12 +1,13 @@
 import { MONEY_APPS } from './role-core.js';
 import { cleanAudience, inAudience } from './audience.js';
 import { HOUR, daysBetween, dueText, dueWords, formatTime, longDate, startOfDay, toYmd, type Ymd, ymdToTime, addDays } from './time.js';
-import { capitalize, cleanLocalTexts, getLang, kt, localizeRecords, localized, type LocalTexts } from './i18n.js';
+import { capitalize, cleanLocalTexts, DEFAULT_LOCALES, formatList, getLang, kt, LANGS, localizeRecords, localized, type Lang, type LocalTexts } from './i18n.js';
 import { langsOfReaders, type LocalizeOptions } from './reader-langs.js';
 import { cleanRule, isEventRule, type EventRule } from './schedule.js';
 import { isHhmm, isYmd, type Hhmm } from './time.js';
 import { ROLES, type Role } from './role-core.js';
 import type { Op } from './store.js';
+import { cleanMerge, mergedTitle, mergeIdentity, MERGE_LIMITS, type MergeSpec } from './merge.js';
 
 /**
  * The household's agenda: dated things from every app in one collection,
@@ -77,15 +78,20 @@ export interface AgendaItem {
    * rest of the item, only its readers can read it.
    */
   calendarDetail?: string;
+  /**
+   * May show as one with the app's other items that have the same `merge.key`, start, end and
+   * readers (`mergeAgenda`, `./merge`): garbage and recycling on the same morning.
+   */
+  merge?: MergeSpec;
   updatedAt: number;
   /** Lowercase email of the member whose app wrote it. */
   by: string;
 }
 
-/** What an agenda item says, per language. */
-export type AgendaTexts = LocalTexts<'title' | 'detail'>;
+/** What an agenda item says, per language: its title and detail, and its merge's part and title. */
+export type AgendaTexts = LocalTexts<'title' | 'detail' | 'mergePart' | 'mergeTitle'>;
 
-export const AGENDA_FIELDS = ['app', 'ref', 'kind', 'title', 'start', 'end', 'allDay', 'detail', 'url', 'who', 'status', 'private', 'texts', 'series', 'edit', 'calendarDetail', 'updatedAt', 'by'] as const;
+export const AGENDA_FIELDS = ['app', 'ref', 'kind', 'title', 'start', 'end', 'allDay', 'detail', 'url', 'who', 'status', 'private', 'texts', 'series', 'edit', 'calendarDetail', 'merge', 'updatedAt', 'by'] as const;
 
 /**
  * An occurrence's schedule. Each occurrence of the series carries the same `rule`, `time` and
@@ -167,7 +173,7 @@ export const PERSONAL_AGENDA_FIELDS = [...AGENDA_FIELDS, 'audience'] as const;
 export const AGENDA_LIMITS = { app: 40, ref: 200, title: 120, detail: 200, calendarDetail: 200, url: 2000, who: 60, by: 254 } as const;
 
 /** Limits inside `texts`, the same as the fields they translate. */
-export const AGENDA_TEXT_LIMITS = { title: AGENDA_LIMITS.title, detail: AGENDA_LIMITS.detail } as const;
+export const AGENDA_TEXT_LIMITS = { title: AGENDA_LIMITS.title, detail: AGENDA_LIMITS.detail, mergePart: MERGE_LIMITS.part, mergeTitle: MERGE_LIMITS.title } as const;
 
 /**
  * Runs `build` in the writer's language and in the languages of each item's readers
@@ -179,9 +185,9 @@ export const AGENDA_TEXT_LIMITS = { title: AGENDA_LIMITS.title, detail: AGENDA_L
  * syncAgenda(db, id, 'bills', await localizeAgenda(() => billAgenda(bills)), { by: me });
  * ```
  */
-export function localizeAgenda<T extends Pick<AgendaInput, 'title' | 'detail'>>(build: () => T[], options: LocalizeOptions = {}): Promise<(T & { texts?: AgendaTexts })[]> {
+export function localizeAgenda<T extends Pick<AgendaInput, 'title' | 'detail' | 'merge'>>(build: () => T[], options: LocalizeOptions = {}): Promise<(T & { texts?: AgendaTexts })[]> {
   const writer = options.writer ?? getLang();
-  return localizeRecords(build, (item) => ({ title: item.title, detail: item.detail }), { langsOf: langsOfReaders(options, writer), writer });
+  return localizeRecords(build, (item) => ({ title: item.title, detail: item.detail, mergePart: item.merge?.part, mergeTitle: item.merge?.title }), { langsOf: langsOfReaders(options, writer), writer });
 }
 
 /** An item's title and detail in the reader's language. */
@@ -230,6 +236,8 @@ export function agendaDoc(app: string, input: AgendaInput, by: string, now = Dat
   const series = input.series === undefined ? undefined : cleanSeries(input.series);
   if (input.series !== undefined && !series) throw new Error('Agenda series is not a schedule the rules accept.');
   const edit = input.edit === undefined ? undefined : cleanEdit(app, input.edit);
+  const merge = input.merge === undefined ? undefined : cleanMerge(input.merge);
+  if (input.merge !== undefined && !merge) throw new Error('Agenda merge needs a key, a part, and a title with {parts}.');
   return {
     app,
     ref: input.ref.slice(0, AGENDA_LIMITS.ref),
@@ -247,6 +255,7 @@ export function agendaDoc(app: string, input: AgendaInput, by: string, now = Dat
     ...(series ? { series } : {}),
     ...(edit ? { edit } : {}),
     ...(calendarDetail ? { calendarDetail } : {}),
+    ...(merge ? { merge } : {}),
     updatedAt: now,
     by: by.trim().toLowerCase(),
   };
@@ -444,6 +453,7 @@ export function toAgendaItem(id: string, data: Record<string, unknown>): AgendaI
   const texts = cleanLocalTexts(data.texts, AGENDA_TEXT_LIMITS);
   const series = cleanSeries(data.series);
   const edit = readEdit(str(data.app) ?? '', data.edit);
+  const merge = cleanMerge(data.merge);
   return {
     id,
     app: str(data.app) ?? '',
@@ -464,6 +474,7 @@ export function toAgendaItem(id: string, data: Record<string, unknown>): AgendaI
     ...(series ? { series } : {}),
     ...(edit ? { edit } : {}),
     ...(str(data.calendarDetail) ? { calendarDetail: str(data.calendarDetail) } : {}),
+    ...(merge ? { merge } : {}),
     updatedAt: num(data.updatedAt) ?? 0,
     by: str(data.by) ?? '',
   };
@@ -494,6 +505,123 @@ export function agendaInRange(items: readonly AgendaItem[], { from, to, apps }: 
   return items.filter((i) => i.start < to && (!apps || apps.includes(i.app)) && (i.status === 'overdue' || (i.end ?? i.start) >= from)).sort(byStart);
 }
 
+
+// ---- Merging: things that show as one (`./merge`) ----
+
+/**
+ * An item `mergeAgenda` made, standing for `members` (each still its own record, with its own
+ * edits). Its `id` and `ref` name no stored document: act on the members (`isMergedItem`).
+ */
+export interface MergedAgendaItem extends AgendaItem {
+  members: AgendaItem[];
+  series?: undefined;
+  edit?: undefined;
+}
+
+export const isMergedItem = (item: AgendaItem): item is MergedAgendaItem => Array.isArray((item as Partial<MergedAgendaItem>).members);
+
+/**
+ * What items merge under: `mergeIdentity` (the same app, `merge.key` and kind, the same readers,
+ * both done or both not) and the same start, end and all-day. Null for an item without a merge.
+ */
+export function agendaMergeKey(item: Pick<AgendaItem, 'app' | 'kind' | 'start' | 'end' | 'allDay' | 'status' | 'private' | 'audience' | 'merge'>): string | null {
+  const identity = mergeIdentity(item);
+  return identity && `${identity}|${item.allDay ? 'day' : 'time'}|${item.start}|${item.end ?? ''}`;
+}
+
+/**
+ * The items that merge, by key: each group of two or more items (from different records) that
+ * `agendaMergeKey` puts together, its members in the order of their parts.
+ */
+export function agendaMergeGroups(items: readonly AgendaItem[]): Map<string, AgendaItem[]> {
+  const groups = new Map<string, AgendaItem[]>();
+  for (const item of items) {
+    const key = agendaMergeKey(item);
+    if (!key) continue;
+    const list = groups.get(key);
+    if (list) list.push(item);
+    else groups.set(key, [item]);
+  }
+  for (const [key, list] of groups) {
+    const records = new Set(list.map((i) => `${i.app}|${i.ref}`));
+    if (records.size < 2) groups.delete(key);
+    else list.sort((a, b) => a.merge!.part.localeCompare(b.merge!.part) || a.ref.localeCompare(b.ref) || a.id.localeCompare(b.id));
+  }
+  return groups;
+}
+
+const STATUS_RANK: Record<AgendaStatus, number> = { overdue: 0, upcoming: 1, done: 2 };
+const same = <T>(values: T[]): T | undefined => (values.every((v) => v === values[0]) ? values[0] : undefined);
+
+/** The words of a merged item in `lang`: the combined title, and each member's detail. */
+export function mergedWords(members: readonly AgendaItem[], lang: Lang): { title: string; detail?: string } {
+  const template = members[0].texts?.[lang]?.mergeTitle ?? members[0].merge!.title;
+  const parts = members.map((m) => m.texts?.[lang]?.mergePart ?? m.merge!.part);
+  const title = mergedTitle(template, parts, lang);
+  const own = members.map((m) => ({ title: m.texts?.[lang]?.title ?? m.title, detail: m.texts?.[lang]?.detail ?? m.detail }));
+  const details = own.map((o) => o.detail ?? '');
+  const shared = same(details);
+  const detail = shared !== undefined ? shared || undefined : own.filter((o) => o.detail).map((o) => `${o.title}: ${o.detail}`).join(' · ');
+  return { title, ...(detail ? { detail } : {}) };
+}
+
+/** One item standing for `members` (a merge group): the combined words in every language, `members` kept. */
+export function mergedItem(key: string, members: readonly AgendaItem[], lang: Lang = getLang()): MergedAgendaItem {
+  const first = members[0];
+  const latest = [...members].sort((a, b) => b.updatedAt - a.updatedAt)[0];
+  const texts: AgendaTexts = {};
+  for (const l of LANGS) texts[l] = mergedWords(members, l);
+  const { title, detail } = mergedWords(members, lang);
+  // Members link to the same view of their app (Home's regular events, Pet's Today) or each to its own record: then the first's.
+  const url = same(members.map((m) => m.url)) ?? first.url;
+  const whos = [...new Set(members.map((m) => m.who).filter((w): w is string => !!w))];
+  const statuses = members.map((m) => m.status).filter((s): s is AgendaStatus => !!s);
+  const status = statuses.sort((a, b) => STATUS_RANK[a] - STATUS_RANK[b])[0];
+  return {
+    id: `merge:${key}`,
+    app: first.app,
+    ref: `merge:${first.merge!.key}`,
+    kind: first.kind,
+    title,
+    start: first.start,
+    ...(first.end !== undefined ? { end: first.end } : {}),
+    allDay: first.allDay,
+    ...(detail ? { detail } : {}),
+    url,
+    ...(whos.length === 1 ? { who: whos[0] } : whos.length > 1 ? { who: formatList(whos, { loc: DEFAULT_LOCALES[lang] }) } : {}),
+    ...(status ? { status } : {}),
+    private: members.some((m) => m.private !== false),
+    ...(first.audience ? { audience: first.audience } : {}),
+    texts,
+    merge: first.merge,
+    members: [...members],
+    updatedAt: latest.updatedAt,
+    by: latest.by,
+  };
+}
+
+/**
+ * The items as they show: those that merge (`agendaMergeGroups`) as one item each, in the place of
+ * the first of them, the rest as they are. Titles in `lang` (default the page's), with `texts` in
+ * every language. Each merged item keeps its `members`, so a screen can still act on each record.
+ */
+export function mergeAgenda(items: readonly AgendaItem[], lang: Lang = getLang()): (AgendaItem | MergedAgendaItem)[] {
+  const groups = agendaMergeGroups(items);
+  if (!groups.size) return [...items];
+  const groupOf = new Map<string, string>();
+  for (const [key, members] of groups) for (const m of members) groupOf.set(m.id, key);
+  const out: (AgendaItem | MergedAgendaItem)[] = [];
+  const placed = new Set<string>();
+  for (const item of items) {
+    const key = groupOf.get(item.id);
+    if (!key) out.push(item);
+    else if (!placed.has(key)) {
+      placed.add(key);
+      out.push(mergedItem(key, groups.get(key)!, lang));
+    }
+  }
+  return out;
+}
 
 // ---- Reading the agenda: Today and days ----
 

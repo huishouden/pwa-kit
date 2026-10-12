@@ -67,6 +67,31 @@ calendar when they turn on detail. Health puts a dose's medicine names here, and
 doctor, place and what to bring (`./visit` `visitAgendaItem`), since `detail` shows on the portal,
 which may be on a wall tablet.
 
+## Merged events
+
+Items an app marks with the same `merge.key` (`./merge`) that start and end together, are of the
+same kind and are read by the same people (the same `private` flag and `audience`) show as one
+event: "Garbage and recycling pickup" instead of two all-day events on the same day. Done and not-done
+items don't merge with each other, Health's never do (their words depend on the person's detail
+setting), and items of different apps never do. Each member keeps its own record and edits.
+
+- **One-off items** (Home's things to do before a pickup, Pet's meals) become one event whose key is
+  `merge|<app>|<key>|<kind>|<readers>|<done>|<day or start>|<end>` (`<readers>` a hash of the privacy flag and audience): a member added or removed updates the
+  same event; a group down to one item goes back to that item's own event (the merged one deleted).
+- **Series that share days** (garbage every Tuesday and Friday, recycling every Tuesday) become one
+  repeating event for the shared days and each series repeating on its own other days
+  (`splitRules`: the same rule, or weekly rules with the same `every`, counted from the same weeks,
+  without an end). The merged series' key is the same identity, the shared rule's RRULE and the time,
+  so a third series joining on the same days updates it. A shared day where only some of them
+  happen (recycling skipped) is an occurrence of the merged series with those words; one moved by
+  all of them together (a holiday) is a moved occurrence; skipped by all, an EXDATE. Schedules that
+  can't be split that way merge day by day within the published window, and stand apart after it.
+- **Changes from Google Calendar** to a merged event go to each member (huishouden/calendar): a move
+  or a skip is applied to every item; a new title or notes can't be said for several records and are
+  put back.
+- **Exporting in parts**: `exportClusters(items, input)` gives the items that must be exported
+  together (a record's items, and the records it merges with).
+
 ## Add to calendar
 
 ```tsx

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { agendaDays, agendaInRange, agendaTime, agendaWords, todayItems, type AgendaItem } from '../agenda-core.js';
+import { agendaDays, agendaInRange, agendaTime, agendaWords, mergeAgenda, todayItems, type AgendaItem } from '../agenda-core.js';
 import { canDo, olderThan, sortTodos, todoDueText, todoOverdue, todoWords, type TodoItem, type TodoSort } from '../todo-core.js';
 import { roleLabel } from '../role-core.js';
 import { LANG_NAMES } from '../i18n.js';
@@ -143,7 +143,7 @@ export const today = defineTool({
       'due',
     );
     return render(ctx.lang, () => {
-      const entries = todayItems(agenda, now);
+      const entries = todayItems(mergeAgenda(agenda, ctx.lang), now);
       const groups = (['overdue', 'today', 'soon'] as const).map((g) => ({ g, items: entries.filter((e) => e.group === g) }));
       const lines = [`**${t('today.title', { day: longDate(toYmd(now)) })}** · ${ctx.here.name}`];
       for (const { g, items } of groups) {
@@ -191,7 +191,7 @@ export const calendar = defineTool({
     const now = ctx.clock.localNow();
     const range = agendaInRange(agenda, { from: ymdToTime(from), to: ymdToTime(addDays(to, 1)), apps: args.apps });
     return render(ctx.lang, () => {
-      const days = agendaDays(range, now, { from, to });
+      const days = agendaDays(mergeAgenda(range, ctx.lang), now, { from, to });
       const lines = [`**${t('calendar.title', { from: longDate(from), to: longDate(to) })}** · ${ctx.here.name}`];
       for (const day of days) lines.push('', `**${day.label}**`, ...day.items.map((i) => agendaLine(i, agendaTime(i))));
       if (!days.length) lines.push('', t('calendar.nothing'));

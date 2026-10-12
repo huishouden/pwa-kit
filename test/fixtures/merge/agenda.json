@@ -1,0 +1,48 @@
+{
+  "timeZone": "America/New_York",
+  "members": {
+    "admin@example.com": "admin",
+    "helper@example.com": "helper"
+  },
+  "series": [
+    { "app": "home", "ref": "event:garbage", "kind": "other", "title": "Garbage pickup", "detail": "Every Tuesday and Friday", "url": "https://example.com/home/#regular", "private": false,
+      "merge": { "key": "collection", "part": "garbage", "title": "{parts} pickup" },
+      "texts": { "nl": { "title": "Afval ophalen", "detail": "Elke dinsdag en vrijdag", "mergePart": "afval", "mergeTitle": "{parts} ophalen" } },
+      "rule": { "freq": "week", "every": 1, "start": "2031-09-02", "days": [2, 5] }, "through": "2031-10-30",
+      "edit": { "skip": { "ops": [{ "col": "homeEvents", "id": "garbage", "data": { "exceptions": { "$original": { "skipped": true } }, "updatedAt": "$now" }, "merge": true }], "roles": ["admin", "member"] } },
+      "updatedAt": 1949000000000, "by": "admin@example.com" },
+    { "app": "home", "ref": "event:recycling", "kind": "other", "title": "Recycling pickup", "detail": "Every Tuesday", "url": "https://example.com/home/#regular", "private": false,
+      "merge": { "key": "collection", "part": "recycling", "title": "{parts} pickup" },
+      "texts": { "nl": { "title": "Recycling ophalen", "detail": "Elke dinsdag", "mergePart": "recycling", "mergeTitle": "{parts} ophalen" } },
+      "rule": { "freq": "week", "every": 1, "start": "2031-09-02" }, "through": "2031-10-30",
+      "updatedAt": 1949000000000, "by": "admin@example.com" },
+    { "app": "home", "ref": "event:yard", "kind": "other", "title": "Yard waste pickup", "detail": "Every Tuesday", "url": "https://example.com/home/#regular", "private": false,
+      "merge": { "key": "collection", "part": "yard waste", "title": "{parts} pickup" },
+      "rule": { "freq": "week", "every": 1, "start": "2031-09-02" }, "through": "2031-10-30",
+      "updatedAt": 1949000000000, "by": "admin@example.com" }
+  ],
+  "items": [
+    { "id": "home_prep_garbage_2031-10-06", "app": "home", "ref": "prep:garbage", "kind": "task", "title": "Take the garbage out", "start": "2031-10-06T19:00:00-04:00", "end": "2031-10-06T23:59:00-04:00", "allDay": false, "detail": "Before garbage pickup tomorrow", "url": "https://example.com/home/#regular", "status": "upcoming", "private": false,
+      "merge": { "key": "prep", "part": "garbage", "title": "Take the {parts} out" }, "updatedAt": 1949000000000, "by": "admin@example.com" },
+    { "id": "home_prep_recycling_2031-10-06", "app": "home", "ref": "prep:recycling", "kind": "task", "title": "Put the recycling out", "start": "2031-10-06T19:00:00-04:00", "end": "2031-10-06T23:59:00-04:00", "allDay": false, "detail": "Before recycling pickup tomorrow", "url": "https://example.com/home/#regular", "status": "upcoming", "private": false,
+      "merge": { "key": "prep", "part": "recycling", "title": "Take the {parts} out" }, "updatedAt": 1949000000000, "by": "admin@example.com" },
+    { "id": "pet_meal_a", "app": "pet", "ref": "meal:a:2031-10-07", "kind": "feeding", "title": "Feed Theo · AM", "start": "2031-10-07T09:00:00-04:00", "allDay": false, "url": "https://example.com/pet/", "who": "Theo", "status": "upcoming", "private": false,
+      "merge": { "key": "meal:am", "part": "Theo", "title": "Feed {parts} · AM" },
+      "texts": { "nl": { "title": "Theo voeren · AM", "mergePart": "Theo", "mergeTitle": "{parts} voeren · AM" } }, "updatedAt": 1949000000000, "by": "admin@example.com" },
+    { "id": "pet_meal_b", "app": "pet", "ref": "meal:b:2031-10-07", "kind": "feeding", "title": "Feed Milo · AM", "start": "2031-10-07T09:00:00-04:00", "allDay": false, "url": "https://example.com/pet/", "who": "Milo", "status": "upcoming", "private": false,
+      "merge": { "key": "meal:am", "part": "Milo", "title": "Feed {parts} · AM" },
+      "texts": { "nl": { "title": "Milo voeren · AM", "mergePart": "Milo", "mergeTitle": "{parts} voeren · AM" } }, "updatedAt": 1949000000000, "by": "admin@example.com" },
+    { "id": "pet_meal_private", "app": "pet", "ref": "meal:c:2031-10-07", "kind": "feeding", "title": "Feed Pip · AM", "start": "2031-10-07T09:00:00-04:00", "allDay": false, "url": "https://example.com/pet/", "who": "Pip", "status": "upcoming", "private": true,
+      "merge": { "key": "meal:am", "part": "Pip", "title": "Feed {parts} · AM" }, "updatedAt": 1949000000000, "by": "admin@example.com" },
+    { "id": "baby_other_app", "app": "baby", "ref": "feed:x", "kind": "feeding", "title": "Feed the baby · AM", "start": "2031-10-07T09:00:00-04:00", "allDay": false, "url": "https://example.com/baby/", "status": "upcoming", "private": false,
+      "merge": { "key": "meal:am", "part": "the baby", "title": "Feed {parts} · AM" }, "updatedAt": 1949000000000, "by": "admin@example.com" }
+  ],
+  "reminders": [
+    { "app": "home", "title": "Take the garbage out", "body": "Garbage pickup tomorrow", "at": 1949108400000, "recipients": "all", "private": false,
+      "merge": { "key": "prep", "part": "garbage", "title": "Take the {parts} out" },
+      "texts": { "nl": { "title": "Afval buiten zetten", "body": "Morgen afval ophalen", "mergePart": "afval", "mergeTitle": "Zet het {parts} buiten" } } },
+    { "app": "home", "title": "Put the recycling out", "body": "Recycling pickup tomorrow", "at": 1949108400000, "recipients": "all", "private": false,
+      "merge": { "key": "prep", "part": "recycling", "title": "Take the {parts} out" },
+      "texts": { "nl": { "title": "Recycling buiten zetten", "body": "Morgen recycling ophalen", "mergePart": "recycling", "mergeTitle": "Zet het {parts} buiten" } } }
+  ]
+}

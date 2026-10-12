@@ -1,9 +1,11 @@
-import { SERIES_DEFAULT_MINUTES, type AgendaItem, type AgendaKind, type AgendaSeries, type AgendaStatus } from './agenda-core.js';
+import { SERIES_DEFAULT_MINUTES, agendaMergeGroups, mergedWords, type AgendaItem, type AgendaKind, type AgendaSeries, type AgendaStatus } from './agenda-core.js';
+import { contentHash } from './hash.js';
+import { mergeIdentity } from './merge.js';
 import type { TodoItem } from './todo-core.js';
 import { MONEY_APPS, type Role } from './role-core.js';
 import { kt, loadLang, withLang, type Lang } from './i18n.js';
-import { ruleOccurrences, type EventRule } from './schedule.js';
-import { addDays, isYmd, type Hhmm, type Ymd } from './time.js';
+import { cleanRule, fitsRule, ruleOccurrences, type EventRule } from './schedule.js';
+import { addDays, daysBetween, isYmd, weekday, type Hhmm, type Ymd } from './time.js';
 import { allDayOf, clockIn, dayIn, firstOccurrence, icsCalendar, icsDate, icsLocal, lastOccurrence, ruleToRrule, zonedTime, type IcsEvent } from './ics.js';
 
 /**
@@ -143,26 +145,19 @@ export interface ExportEvent {
   series?: ExportSeries;
   /** On an override: the day the schedule put it on. */
   original?: Ymd;
-  /** The agenda items it stands for (several for a series), or the to-do. */
+  /** The agenda items it stands for (several for a series, or for things that merged), or the to-do. */
   items: AgendaItem[];
+  /**
+   * Things that merged (`./merge`): one event for items of several records, so a change made to it
+   * in a calendar goes to each of them.
+   */
+  merged?: boolean;
   todo?: TodoItem;
   /** Changes whenever anything a calendar shows changes. */
   hash: string;
 }
 
-/** A short, stable, non-cryptographic hash (cyrb53) as hex, for noticing changes. */
-export function contentHash(text: string): string {
-  let h1 = 0xdeadbeef;
-  let h2 = 0x41c6ce57;
-  for (let i = 0; i < text.length; i++) {
-    const ch = text.charCodeAt(i);
-    h1 = Math.imul(h1 ^ ch, 2654435761);
-    h2 = Math.imul(h2 ^ ch, 1597334677);
-  }
-  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16).padStart(14, '0');
-}
+export { contentHash } from './hash.js';
 
 const RESTRICTED: readonly Role[] = ['helper', 'kid'];
 const SHORT_KINDS: readonly string[] = ['task', 'medicine', 'feeding'];
@@ -237,58 +232,253 @@ function occursAt(item: AgendaItem, timeZone: string): { date: Ymd; time?: Hhmm 
   return item.allDay ? { date: allDayOf(item.start, timeZone) } : { date: dayIn(item.start, timeZone), time: clockIn(item.start, timeZone) };
 }
 
-function seriesEvent(items: AgendaItem[], key: string, input: ExportInput): ExportEvent | null {
-  const latest = [...items].sort((a, b) => b.updatedAt - a.updatedAt)[0];
-  const s = latest.series as AgendaSeries;
-  const rule = s.rule;
-  const first = firstOccurrence(rule);
+/** Occurrences of a series by the day the schedule put them on, and the days known to be skipped. */
+interface SeriesPlan {
+  rule: EventRule;
+  time?: Hhmm;
+  minutes: number;
+  through: Ymd;
+  /** The day from which skipped days are known: the earliest an occurrence happens on. */
+  known?: Ymd;
+  /** The occurrence on its own day and time, standing as the series says. */
+  plain: Set<Ymd>;
+  /** Occurrences that differ from the series (moved, or with other words), by their original day. */
+  overrides: Map<Ymd, ExportEvent>;
+}
+
+function seriesOf(plan: SeriesPlan, base: Omit<ExportEvent, 'series' | 'hash' | 'allDay' | 'startDate' | 'endDate' | 'start' | 'end'>, input: ExportInput): ExportEvent | null {
+  const first = firstOccurrence(plan.rule);
   if (!first) return null;
-  const minutes = s.minutes ?? SERIES_DEFAULT_MINUTES;
   const tz = input.timeZone;
-  const byOriginal = new Map<Ymd, AgendaItem>();
-  for (const i of items) if (i.series && isYmd(i.series.original)) byOriginal.set(i.series.original, i);
-  const through = s.through;
-  // Days the app published through, with no item: skipped. The window starts at the earliest day an
-  // item happens on (an occurrence moved from a past day to a later one still names its past day,
-  // which says nothing about the days between); before it nothing is known, so those days stand as
-  // the schedule says.
-  const firstShown = items.map((i) => occursAt(i, input.timeZone).date).sort()[0];
-  const exdates = firstShown ? ruleOccurrences(rule, firstShown, through).filter((d) => !byOriginal.has(d)) : [];
-  const plain = items.find((i) => {
-    const at = occursAt(i, tz);
-    return at.date === i.series!.original && (at.time ?? '') === (s.time ?? '');
-  }) ?? latest;
-  const { title, description } = words(plain, input);
-  const start = s.time ? zonedTime(first, s.time, tz) : zonedTime(first, undefined, tz);
-  const end = s.time ? start + minutes * MINUTE : zonedTime(addDays(first, 1), undefined, tz);
-  const overrides: ExportEvent[] = [];
-  for (const [original, item] of byOriginal) {
-    const at = occursAt(item, tz);
-    const moved = at.date !== original || (at.time ?? '') !== (s.time ?? '') || item.allDay !== !s.time;
-    if (!moved) continue;
-    const o = single(item, key, input);
+  // Days the apps published through, with no occurrence: skipped. Before the earliest day an
+  // occurrence happens on nothing is known (one moved from a past day to a later one still names its
+  // past day), so those days stand as the schedule says; after `through` too.
+  const exdates = plan.known ? ruleOccurrences(plan.rule, plan.known, plan.through).filter((d) => !plan.plain.has(d) && !plan.overrides.has(d)) : [];
+  const overrides = [...plan.overrides.entries()].map(([original, o]) => {
     const { items: _i, updatedAt: _u, hash: _h, ...rest } = o;
-    const withOriginal = { ...rest, original };
-    overrides.push({ ...withOriginal, items: [item], updatedAt: item.updatedAt, hash: hashOf(withOriginal) });
-  }
+    const withOriginal = { ...rest, key: base.key, original };
+    return { ...withOriginal, items: o.items, updatedAt: o.updatedAt, hash: hashOf(withOriginal) };
+  });
   overrides.sort((a, b) => (a.original! < b.original! ? -1 : 1));
-  const series: ExportSeries = { rule, ...(s.time ? { time: s.time } : {}), minutes, first, exdates, overrides };
+  const series: ExportSeries = { rule: plan.rule, ...(plan.time ? { time: plan.time } : {}), minutes: plan.minutes, first, exdates, overrides };
+  const start = plan.time ? zonedTime(first, plan.time, tz) : zonedTime(first, undefined, tz);
+  const end = plan.time ? start + plan.minutes * MINUTE : zonedTime(addDays(first, 1), undefined, tz);
+  const { items, updatedAt, merged, ...words } = base;
+  const head = { ...words, allDay: !plan.time, ...(plan.time ? {} : { startDate: first, endDate: addDays(first, 1) }), start, end, series };
+  return { ...head, updatedAt, items, ...(merged ? { merged } : {}), hash: hashOf(head) };
+}
+
+/** Whether an occurrence is on its own day at the series' time. */
+function isPlain(item: AgendaItem, tz: string, time = item.series?.time): boolean {
+  const at = occursAt(item, tz);
+  return !!item.series && at.date === item.series.original && (at.time ?? '') === (time ?? '') && item.allDay === !time;
+}
+
+function seriesEvent(items: AgendaItem[], key: string, input: ExportInput, rule?: EventRule, orphans: AgendaItem[] = []): ExportEvent | null {
+  const latest = [...items, ...orphans].sort((a, b) => b.updatedAt - a.updatedAt)[0];
+  const s = latest.series as AgendaSeries;
+  const tz = input.timeZone;
+  const plan: SeriesPlan = { rule: rule ?? s.rule, ...(s.time ? { time: s.time } : {}), minutes: s.minutes ?? SERIES_DEFAULT_MINUTES, through: s.through, plain: new Set(), overrides: new Map() };
+  const shown = [...items, ...orphans].map((i) => occursAt(i, tz).date).sort()[0];
+  if (shown) plan.known = shown;
+  const plainItem = items.find((i) => isPlain(i, tz, s.time));
+  for (const item of items) {
+    const original = item.series!.original;
+    if (!isYmd(original)) continue;
+    if (isPlain(item, tz, s.time)) plan.plain.add(original);
+    else plan.overrides.set(original, single(item, key, input));
+  }
+  const { title, description } = words(plainItem ?? latest, input);
+  return seriesOf(
+    plan,
+    { key, app: latest.app, ref: latest.ref, kind: latest.kind, title, description, url: latest.url, ...locationOf(latest.app, input), updatedAt: Math.max(...items.map((i) => i.updatedAt)), items },
+    input,
+  );
+}
+
+// ---- Merging (`./merge`) ----
+
+/**
+ * For series that merge on some of their days (garbage every Monday and Thursday, recycling every
+ * Monday): the schedule of the days they share, and each one's own days apart from those, so the
+ * calendar shows one repeating event for the shared days and each series repeating on the rest, for
+ * as long as the schedules run. Null when that can't be said as schedules: the same rule for every
+ * series, or weekly rules counted the same way (the same `every` and weeks) without an end.
+ */
+export function splitRules(rules: readonly EventRule[]): { shared: EventRule; rest: (EventRule | null)[] } | null {
+  if (rules.length < 2) return null;
+  const clean = rules.map(cleanRule);
+  if (clean.every((r) => JSON.stringify(r) === JSON.stringify(clean[0]))) return { shared: clean[0], rest: clean.map(() => null) };
+  if (!clean.every((r) => r.freq === 'week' && !r.until && r.every === clean[0].every)) return null;
+  const weekOne = (r: EventRule) => addDays(r.start, -weekday(r.start));
+  if (!clean.every((r) => (((daysBetween(weekOne(clean[0]), weekOne(r)) / 7) % r.every) + r.every) % r.every === 0)) return null;
+  const daysOf = (r: EventRule) => (r.days?.length ? r.days : [weekday(r.start)]);
+  const sharedDays = daysOf(clean[0]).filter((d) => clean.every((r) => daysOf(r).includes(d)));
+  if (!sharedDays.length) return null;
+  const start = clean.map((r) => r.start).sort()[clean.length - 1];
+  const shared = cleanRule({ freq: 'week', every: clean[0].every, start, days: sharedDays });
+  const rest = clean.map((r) => {
+    const own = daysOf(r).filter((d) => !sharedDays.includes(d));
+    return own.length ? cleanRule({ freq: 'week', every: r.every, start: r.start, days: own }) : null;
+  });
+  return { shared, rest };
+}
+
+/** Apps whose items don't merge in a calendar: what Health's say depends on the person's detail setting. */
+const UNMERGED_APPS: readonly string[] = ['health'];
+
+/** What several members say together: the combined title, and each one's detail on its own line. */
+function mergedEventWords(members: AgendaItem[], input: ExportInput): { title: string; description: string; url: string } {
+  const { title } = mergedWords(members, input.lang);
+  const lines = members.map((m) => {
+    const own = textIn(m, input.lang);
+    return own.detail ? `${own.title}: ${own.detail}` : own.title;
+  });
+  const url = members[0].url;
+  const done = members.every((m) => m.status === 'done');
+  return { title: done ? kt('calendarExport.done', { title }) : title, description: [lines.join('\n'), url].filter(Boolean).join('\n\n'), url };
+}
+
+/** One event for a merge group: its key from the merge key, the time and the readers, so members coming and going keep it. */
+function mergedSingle(members: AgendaItem[], input: ExportInput, key = mergedKey(members[0], input)): ExportEvent {
+  const first = members[0];
+  const { title, description, url } = mergedEventWords(members, input);
+  const when = times(first, input.timeZone);
+  const open = members.some((m) => m.status !== 'done');
+  const statuses = members.map((m) => m.status);
+  const status: AgendaStatus | undefined = statuses.includes('overdue') ? 'overdue' : statuses.includes('upcoming') ? 'upcoming' : statuses.includes('done') ? 'done' : undefined;
+  const alarmMinutes = first.kind === 'task' && !when.allDay && open ? 0 : undefined;
   const base = {
     key,
-    app: latest.app,
-    ref: latest.ref,
-    kind: latest.kind,
+    app: first.app,
+    ref: `merge:${first.merge!.key}`,
+    kind: first.kind,
     title,
     description,
-    url: latest.url,
-    ...locationOf(latest.app, input),
-    allDay: !s.time,
-    ...(s.time ? {} : { startDate: first, endDate: addDays(first, 1) }),
-    start,
-    end,
-    series,
+    url,
+    ...locationOf(first.app, input),
+    ...when,
+    ...(status ? { status } : {}),
+    ...(alarmMinutes !== undefined ? { alarmMinutes } : {}),
   };
-  return { ...base, updatedAt: Math.max(...items.map((i) => i.updatedAt)), items, hash: hashOf(base) };
+  return { ...base, updatedAt: Math.max(...members.map((m) => m.updatedAt)), items: members, merged: true, hash: hashOf(base) };
+}
+
+const mergedKey = (item: AgendaItem, input: ExportInput) => {
+  const when = item.allDay ? allDayOf(item.start, input.timeZone) : String(item.start);
+  return `merge|${mergeIdentity(item)}|${when}|${item.end ?? ''}`;
+};
+
+/** What a whole merge group's members share, but their day: which groups make one repeating event. */
+const bundleOf = (members: AgendaItem[]) => `${mergeIdentity(members[0])}|${members[0].series?.time ?? ''}|${members.map((x) => x.ref).join(',')}`;
+
+interface MergedSeries {
+  key: string;
+  refs: string[];
+  shared: EventRule;
+  rest: Map<string, EventRule | null>;
+  plan: SeriesPlan;
+  members: AgendaItem[];
+  /** A group the series stands for, for its words. */
+  sample: AgendaItem[];
+}
+
+/**
+ * Everything the calendar shows of items that merge, and what is left for each record's own
+ * events: the items still shown on their own, and for a series that merges on some days, the rule
+ * of its other days (null: none).
+ */
+function mergeForExport(visible: AgendaItem[], input: ExportInput): { events: ExportEvent[]; left: AgendaItem[]; rules: Map<string, EventRule | null>; orphans: Map<string, AgendaItem[]> } {
+  const tz = input.timeZone;
+  const groups = [...agendaMergeGroups(visible.filter((i) => !UNMERGED_APPS.includes(i.app))).values()];
+  const used = new Set<string>();
+  const events: ExportEvent[] = [];
+  const rules = new Map<string, EventRule | null>();
+  const latestSeries = (ref: string, app: string) => visible.filter((i) => i.app === app && i.ref === ref && i.series).sort((a, b) => b.updatedAt - a.updatedAt)[0]?.series;
+
+  // Groups of occurrences of series, each on its own day: one repeating event per set of series.
+  const bundles = new Map<string, AgendaItem[][]>();
+  for (const g of groups) {
+    const time = g[0].series?.time;
+    if (!g.every((m) => m.series && m.series.time === time && isPlain(m, tz) && m.series.original === g[0].series!.original)) continue;
+    const k = bundleOf(g);
+    bundles.set(k, [...(bundles.get(k) ?? []), g]);
+  }
+  const accepted: MergedSeries[] = [];
+  const keys = new Set<string>();
+  for (const days of [...bundles.values()].sort((a, b) => b.length - a.length)) {
+    const sample = days[0];
+    const refs = sample.map((m) => m.ref);
+    const latest = refs.map((r) => latestSeries(r, sample[0].app)!);
+    // One merged series per record: a record in two would need its days split twice.
+    if (refs.some((r) => rules.has(`${sample[0].app}|${r}`))) continue;
+    const split = splitRules(latest.map((s) => s.rule));
+    if (!split) continue;
+    const key = `merge|${mergeIdentity(sample[0])}|${ruleToRrule(split.shared)}|${latest[0].time ?? ''}`;
+    if (keys.has(key)) continue;
+    keys.add(key);
+    const through = latest.map((s) => s.through).sort()[0];
+    const plan: SeriesPlan = { rule: split.shared, ...(latest[0].time ? { time: latest[0].time } : {}), minutes: latest[0].minutes ?? SERIES_DEFAULT_MINUTES, through, plain: new Set(), overrides: new Map() };
+    const members: AgendaItem[] = [];
+    for (const g of days) {
+      if (!fitsRule(split.shared, g[0].series!.original) || g[0].series!.original < split.shared.start) continue;
+      plan.plain.add(g[0].series!.original);
+      members.push(...g);
+      for (const m of g) used.add(m.id);
+    }
+    refs.forEach((r, i) => rules.set(`${sample[0].app}|${r}`, split.rest[i]));
+    accepted.push({ key, refs, shared: split.shared, rest: new Map(refs.map((r, i) => [r, split.rest[i]])), plan, members, sample });
+  }
+
+  const seriesFor = (app: string, ref: string, original: Ymd | undefined) =>
+    original ? accepted.find((a) => a.sample[0].app === app && a.refs.includes(ref) && fitsRule(a.shared, original) && original >= a.shared.start) : undefined;
+
+  // Other groups: an occurrence of a merged series that differs (moved together: a holiday), else one event of their own.
+  for (const g of groups) {
+    if (g.some((m) => used.has(m.id))) continue;
+    const original = g[0].series?.original;
+    const into = g.every((m) => m.series?.original === original) ? seriesFor(g[0].app, g[0].ref, original) : undefined;
+    if (into && original && !into.plan.plain.has(original) && !into.plan.overrides.has(original) && g.every((m) => into.refs.includes(m.ref))) {
+      into.plan.overrides.set(original, mergedSingle(g, input, into.key));
+      into.members.push(...g);
+    } else events.push(mergedSingle(g, input));
+    for (const m of g) used.add(m.id);
+  }
+
+  // Occurrences of a merged series' records on its days that didn't merge (one skipped, or moved
+  // alone): an occurrence of the merged series with their own words, or their own event.
+  const orphans = new Map<string, AgendaItem[]>();
+  const left: AgendaItem[] = [];
+  for (const item of visible) {
+    if (used.has(item.id)) continue;
+    const into = item.series ? seriesFor(item.app, item.ref, item.series.original) : undefined;
+    if (!into) {
+      left.push(item);
+      continue;
+    }
+    const original = item.series!.original;
+    if (!into.plan.plain.has(original) && !into.plan.overrides.has(original)) {
+      into.plan.overrides.set(original, single(item, into.key, input));
+      into.members.push(item);
+    } else {
+      const k = `${item.app}|${item.ref}`;
+      orphans.set(k, [...(orphans.get(k) ?? []), item]);
+    }
+  }
+
+  for (const a of accepted) {
+    const shown = a.members.map((i) => occursAt(i, tz).date).sort()[0];
+    if (shown) a.plan.known = shown;
+    const { title, description, url } = mergedEventWords(a.sample, input);
+    const first = a.sample[0];
+    const e = seriesOf(
+      a.plan,
+      { key: a.key, app: first.app, ref: `merge:${first.merge!.key}`, kind: first.kind, title, description, url, ...locationOf(first.app, input), updatedAt: Math.max(...a.members.map((i) => i.updatedAt)), items: a.members, merged: true },
+      input,
+    );
+    if (e) events.push(e);
+  }
+  return { events, left, rules, orphans };
 }
 
 function todoEvent(todo: TodoItem, input: ExportInput): ExportEvent {
@@ -319,32 +509,62 @@ function todoEvent(todo: TodoItem, input: ExportInput): ExportEvent {
  */
 export function exportEvents(input: ExportInput): ExportEvent[] {
   return withLang(input.lang, () => {
+    const visible = input.agenda.filter((item) => visibleTo(item, input));
+    const records = new Set(visible.map((i) => `${i.app}|${i.ref}`));
+    const merged = mergeForExport(visible, input);
     const groups = new Map<string, AgendaItem[]>();
-    for (const item of input.agenda) {
-      if (!visibleTo(item, input)) continue;
+    for (const item of merged.left) {
       const k = `${item.app}|${item.ref}`;
       groups.set(k, [...(groups.get(k) ?? []), item]);
     }
-    const out: ExportEvent[] = [];
+    for (const k of merged.rules.keys()) if (!groups.has(k) && merged.orphans.has(k)) groups.set(k, []);
+    const out: ExportEvent[] = [...merged.events];
     for (const [k, items] of groups) {
       const inSeries = items.filter((i) => i.series);
-      if (inSeries.length) {
-        const e = seriesEvent(inSeries, k, input);
+      // A series that merges on some of its days: its other days, when it has any.
+      const rule = merged.rules.get(k);
+      const split = merged.rules.has(k);
+      if (inSeries.length && (!split || rule)) {
+        const e = seriesEvent(inSeries, k, input, rule ?? undefined);
         if (e) out.push(e);
       }
-      const rest = items.filter((i) => !i.series).sort((a, b) => a.start - b.start);
-      for (const item of rest) out.push(single(item, rest.length === 1 && !inSeries.length ? k : `${k}|${item.start}`, input));
+      const rest = [...items.filter((i) => !i.series || (split && !rule)), ...(merged.orphans.get(k) ?? [])].sort((a, b) => a.start - b.start);
+      for (const item of rest) out.push(single(item, rest.length === 1 && !inSeries.length && !split ? k : `${k}|${item.start}`, input));
     }
     if (input.settings.todos) {
       for (const todo of input.todos ?? []) {
         if (todo.status !== 'open' || todo.due === undefined) continue;
-        if (groups.has(`${todo.app}|${todo.ref}`)) continue;
+        if (records.has(`${todo.app}|${todo.ref}`)) continue;
         if (!visibleTo({ app: todo.app, kind: 'task', private: todo.private, audience: todo.audience }, input)) continue;
         out.push(todoEvent(todo, input));
       }
     }
     return out.sort((a, b) => a.start - b.start || a.key.localeCompare(b.key));
   });
+}
+
+/**
+ * The agenda in the clusters `exportEvents` needs together, for a server that exports in parts:
+ * each record's items (a series is one event), joined with the records it merges with.
+ */
+export function exportClusters(items: readonly AgendaItem[], input: Pick<ExportInput, 'me' | 'role' | 'settings'>): AgendaItem[][] {
+  const visible = items.filter((i) => visibleTo(i, input));
+  const parent = new Map<string, string>();
+  const find = (k: string): string => {
+    let r = k;
+    while (parent.get(r) !== r) r = parent.get(r)!;
+    parent.set(k, r);
+    return r;
+  };
+  const recordOf = (i: AgendaItem) => `${i.app}|${i.ref}`;
+  for (const i of visible) parent.set(recordOf(i), recordOf(i));
+  for (const g of agendaMergeGroups(visible.filter((i) => !UNMERGED_APPS.includes(i.app))).values()) for (const m of g.slice(1)) parent.set(find(recordOf(m)), find(recordOf(g[0])));
+  const clusters = new Map<string, AgendaItem[]>();
+  for (const i of visible) {
+    const root = find(recordOf(i));
+    clusters.set(root, [...(clusters.get(root) ?? []), i]);
+  }
+  return [...clusters.values()];
 }
 
 /** Loads the words the export uses in `lang` (on a server, before `exportEvents`). */

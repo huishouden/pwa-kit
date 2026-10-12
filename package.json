@@ -154,6 +154,10 @@
       "types": "./dist/logo.d.ts",
       "default": "./dist/logo.js"
     },
+    "./merge": {
+      "types": "./dist/merge.d.ts",
+      "default": "./dist/merge.js"
+    },
     "./money": {
       "types": "./dist/money.d.ts",
       "default": "./dist/money.js"
