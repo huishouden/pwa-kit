@@ -242,9 +242,10 @@ which act as the signed-in person under the same rules.
 
 - **Ship the tool with the data.** A change that adds or changes user-editable data (a new
   collection, a new field people set, a new setting), or a household task someone asked an agent to
-  do that no tool covers, ships with the matching household tool in the same change set: the kit's
-  `src/household-tools/` (with tests), then the connector (its tool count) and `hh` (its `hh data`
-  command and README), each on the new kit. It is fixed as found, the way a kit gap is: not left as
+  do that no tool covers, ships with the matching household tool in the same change set, merged in
+  this order: the kit's `src/household-tools/` (tool, tests, `COVERAGE`), then huishouden/rules when
+  the rules change, then the connector (on the new kit, with an emulator test under those rules),
+  then `hh` (its `hh data` command and README). It is fixed as found, the way a kit gap is: not left as
   a follow-up, and never done instead by writing to Firestore by hand.
 - **The tool does what the app does.** The same fields, limits and ids the app writes; the roles the
   rules and the app allow, refused up front in the person's language; and whatever the app derives
