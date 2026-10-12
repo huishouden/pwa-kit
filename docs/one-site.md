@@ -244,7 +244,8 @@ What keeps it there, and what to keep when changing an app:
   `ALERT_EMAIL`, or `hh ops read-alerts`) keeps two Cloud Monitoring alert policies, free: billed
   reads (documents returned plus one per query and aggregation request) over 5,000 in the last hour,
   which a runaway job reaches in minutes while the suite's busiest normal hour is under 4,000, and
-  over 30,000 in the last 24 hours.
+  over 30,000 in the last 24 hours. Only a policy that differs from the live one is written, so re-running
+  it changes nothing: an edit to a policy whose condition holds re-opens its incident and emails again.
 
 Writes are not close: a household writes a few hundred documents a day (each saved record, its
 agenda and to-do items when they change, the Workers' syncs), against 20,000.

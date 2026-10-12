@@ -3,10 +3,12 @@
 # "Budgets"): over HOURLY billed reads in the last hour (default 5,000: a runaway job at the rate of
 # the 2026-10-12 incident gets there in about three minutes, while the suite's busiest normal hour is
 # under 4,000), and over DAILY in the last 24 hours (default 30,000, 60% of the free plan's 50,000).
-# Cloud Monitoring, free. Safe to re-run: the channel and the policies are found by name and updated.
+# Cloud Monitoring, free. Safe to re-run: the channel and the policies are found by name, and only
+# what differs from the live one is written (an edit re-opens a firing policy's incident and emails).
 #
 #   ALERT_EMAIL=you@example.com infra/read-alert.sh <project> [daily] [hourly]
 #   infra/read-alert.sh --print <project> [daily] [hourly]   # the policies as JSON, nothing changed
+#   infra/read-alert.sh --same <live.json> <wanted.json>     # exit 0 when they don't differ
 #
 # Without ALERT_EMAIL an existing channel of that name is used as it is. Reads are counted as
 # Firestore bills them against the quota: documents returned (`document/read_count`) plus one for
@@ -14,6 +16,25 @@
 # nothing and which `read_count` leaves out. The windows are rolling, not the quota's Pacific day,
 # so the email comes early rather than late.
 set -euo pipefail
+
+# What decides a policy, for comparing the live one with the wanted one: the API adds names,
+# creation and mutation records and defaults, which are left out.
+shape() {
+  jq -S '{
+    displayName, combiner,
+    documentation: {content: .documentation.content, mimeType: .documentation.mimeType},
+    conditions: [.conditions[] | {displayName, query: .conditionPrometheusQueryLanguage.query, duration: (.conditionPrometheusQueryLanguage.duration // "0s"), evaluationInterval: .conditionPrometheusQueryLanguage.evaluationInterval}],
+    autoClose: .alertStrategy.autoClose,
+    channels: ((.notificationChannels // []) | sort)
+  }'
+}
+
+# read-alert.sh --same <live.json> <wanted.json>: exit 0 when nothing that decides the policy differs.
+if [[ "${1:-}" == "--same" ]]; then
+  [[ "$(shape < "${2:?live policy file}")" == "$(shape < "${3:?wanted policy file}")" ]]
+  exit $?
+fi
+
 PRINT=false
 if [[ "${1:-}" == "--print" ]]; then PRINT=true; shift; fi
 PROJECT=${1:?usage: [ALERT_EMAIL=…] read-alert.sh [--print] <project> [daily] [hourly]}
@@ -56,9 +77,11 @@ if [[ -n "${ALERT_EMAIL:-}" ]]; then
   if [[ -z "$channel" ]]; then
     channel=$(curl -sf "${auth[@]}" -X POST "$API/notificationChannels" -d "$channel_body" | jq -r .name)
     echo "  created the email channel"
+  elif [[ "$(curl -sf "${auth[@]}" "https://monitoring.googleapis.com/v3/$channel" | jq -r '.labels.email_address // empty')" == "$ALERT_EMAIL" ]]; then
+    echo "  email channel unchanged"
   else
     curl -sf "${auth[@]}" -X PATCH "https://monitoring.googleapis.com/v3/$channel?updateMask=labels" -d "$channel_body" >/dev/null
-    echo "  email channel up to date"
+    echo "  email channel updated"
   fi
 elif [[ -z "$channel" ]]; then
   echo "No \"$CHANNEL_NAME\" channel yet: set ALERT_EMAIL to create it." >&2
@@ -68,15 +91,21 @@ else
 fi
 
 # apply <current name filter> <body> <label>
+# Only a policy that differs is written: an edit to a policy whose condition holds re-opens its
+# incident and emails again, so re-running this must change nothing when nothing changed.
 apply() {
-  local existing
-  existing=$(curl -sf "${auth[@]}" -G "$API/alertPolicies" --data-urlencode "filter=$1" | jq -r '.alertPolicies[0].name // empty')
+  local live existing
+  live=$(curl -sf "${auth[@]}" -G "$API/alertPolicies" --data-urlencode "filter=$1" | jq -c '.alertPolicies[0] // empty')
+  existing=""
+  [[ -n "$live" ]] && existing=$(jq -r '.name // empty' <<<"$live")
   if [[ -z "$existing" ]]; then
     curl -sf "${auth[@]}" -X POST "$API/alertPolicies" -d "$2" >/dev/null
     echo "  created the alert: $3"
+  elif [[ "$(shape <<<"$live")" == "$(shape <<<"$2")" ]]; then
+    echo "  unchanged: $3"
   else
     curl -sf "${auth[@]}" -X PATCH "https://monitoring.googleapis.com/v3/$existing" -d "$2" >/dev/null
-    echo "  alert up to date: $3"
+    echo "  alert updated: $3"
   fi
 }
 
