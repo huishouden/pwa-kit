@@ -19,6 +19,7 @@ import {
   type TestRole,
   type TestUser,
 } from './staging.js';
+import { PAGE_READS_KEY, ReadBudgetExceeded, type PageReadMeter, type ReadTally } from './read-test.js';
 
 // Paths: every helper's default is `./`, which is BASE_URL itself. On the suite's one site BASE_URL
 // is the app's path (`https://<site>/pet/`), so pass relative paths (`?tab=care`, `settings`): a
@@ -836,4 +837,72 @@ export async function expectLocalized(page: Page, lang: 'es' | 'nl', { path = '.
   const found = english.filter((w) => new RegExp(`(^|[^\\p{L}])${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\p{L}])`, 'u').test(text));
   expect(found, `English left on the ${lang} page`).toEqual([]);
   return text;
+}
+
+/**
+ * The Firestore reads this page has been billed for since it loaded (or since `resetPageReads`), as
+ * the kit's counted `firebase/firestore` tallies them in a build for the emulators
+ * (`VITE_USE_EMULATORS=true`, or `VITE_READ_METER=true`; `readMeter` in ./vite). Throws in a build
+ * without it (production, staging).
+ */
+const NO_METER = 'This build does not count its reads: page read budgets run on a build for the emulators (VITE_USE_EMULATORS=true, or VITE_READ_METER=true).';
+
+export async function pageReads(page: Pick<Page, 'evaluate'>): Promise<ReadTally> {
+  const tally = await page.evaluate((key) => (globalThis as unknown as Record<string, PageReadMeter | undefined>)[key]?.tally() ?? null, PAGE_READS_KEY);
+  if (!tally) throw new Error(NO_METER);
+  return tally;
+}
+
+/** Starts the page's count again (a screen's reads after the app has loaded). Throws on a build without the meter. */
+export async function resetPageReads(page: Pick<Page, 'evaluate'>): Promise<void> {
+  const done = await page.evaluate((key) => {
+    const meter = (globalThis as unknown as Record<string, PageReadMeter | undefined>)[key];
+    meter?.reset();
+    return !!meter;
+  }, PAGE_READS_KEY);
+  if (!done) throw new Error(NO_METER);
+}
+
+export interface PageReadsOptions {
+  /** The ceiling: more reads than this fail. Raise it only with the reason in the PR. */
+  max: number;
+  /** A floor, to catch a count that silently stopped counting (default 1). */
+  min?: number;
+  /** What was measured, for the failure message. */
+  label?: string;
+  /** The count must stay unchanged this long before it is read (listeners settle), ms. Default 1500. */
+  settleMs?: number;
+  /** How long the count may keep moving before the test fails as not settling (a listener re-billing in a loop), ms. Default 20000. */
+  settleTimeoutMs?: number;
+}
+
+/**
+ * A screen's read budget (STANDARD.md "Read budgets"): runs `open` (sign in and open the screen,
+ * wait for its content), waits for the count to settle, and fails with the count by kind when the
+ * page was billed more than `max` reads since it loaded. A fresh context's first visit: snapshots
+ * from a warm persistent cache (a second visit) are not what a household's first open costs.
+ * Emulator builds only (tag the test so it does not run on staging).
+ */
+export async function expectPageReads(
+  page: Pick<Page, 'evaluate' | 'waitForTimeout'>,
+  open: () => Promise<unknown>,
+  { max, min = 1, label, settleMs = 1500, settleTimeoutMs = 20_000 }: PageReadsOptions,
+): Promise<ReadTally> {
+  await open();
+  let tally = await pageReads(page);
+  let last = tally.reads;
+  const deadline = Date.now() + settleTimeoutMs;
+  for (;;) {
+    await page.waitForTimeout(settleMs);
+    tally = await pageReads(page);
+    if (tally.reads === last) break;
+    last = tally.reads;
+    // Still moving: a listener re-billing in a loop is the runaway this budget is for.
+    if (Date.now() >= deadline || tally.reads > max) {
+      if (tally.reads > max) break;
+      throw new Error(`${label ? `${label}: ` : ''}the page's Firestore reads kept rising for ${settleTimeoutMs} ms (${tally.reads} so far): a listener re-subscribing or re-reading in a loop?`);
+    }
+  }
+  if (tally.reads > max || tally.reads < min) throw new ReadBudgetExceeded(tally, { max, min, ...(label ? { label } : {}) });
+  return tally;
 }

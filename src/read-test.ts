@@ -25,8 +25,25 @@ export interface ReadTally {
   byKind: Partial<Record<ReadKind, { requests: number; reads: number }>>;
 }
 
-/** Called before each read goes out (REST or an SDK read; not a listener's later snapshots). `n` counts from 1. */
-export type BeforeRead = (n: number, kind: ReadKind) => Promise<void> | void;
+/**
+ * Called before each read goes out (REST or an SDK read; not a listener's later snapshots). `n` counts
+ * from 1. Its writes must go around the counter: `raw.fetch` is the uncounted fetch for a REST read
+ * (or use the emulator's owner token, another client). A hook that reads through the counter runs
+ * itself again; past MAX_HOOK_RUNS the counter throws rather than hang.
+ */
+export type BeforeRead = (n: number, kind: ReadKind, raw: { fetch?: Fetch }) => Promise<void> | void;
+
+/** A `beforeRead` hook run this many times in one count is reading through the counter itself. */
+export const MAX_HOOK_RUNS = 10_000;
+
+/** The page global a counted build sets (`./read-meter-browser`) and `./e2e` reads. */
+export const PAGE_READS_KEY = '__hhReads';
+
+/** What a browser test reads: the page's reads since it loaded or since `reset()`. */
+export interface PageReadMeter {
+  tally(): ReadTally;
+  reset(): void;
+}
 
 export interface ReadCounter {
   readonly tally: ReadTally;
@@ -41,14 +58,18 @@ export interface ReadCounter {
    *     const real = await import('firebase/firestore');
    *     mock.module('firebase/firestore', () => counter.sdk(real));
    *
-   * A listener is billed its whole result (at least 1) on its first snapshot from the server and one
-   * read per added or changed document after; snapshots from the cache bill nothing. One undercount:
+   * A listener is billed its whole result (at least 1) on its first snapshot, even one the cache
+   * answers (the server still sends the new target whole), then one read per added or changed
+   * document in each snapshot from the server; later snapshots from the cache bill nothing. A
+   * `getDoc`/`getDocs` answered from the cache (offline) bills nothing. One undercount:
    * `getAggregateFromServer` (sums, averages) is counted 1 read, where Firestore bills 1 per 1,000
    * entries; count alongside it (`getCountFromServer`) where the size matters to a budget.
    */
   sdk<M extends object>(real: M): M;
   /** Sets or clears the hook run before each read. */
   setBeforeRead(hook: BeforeRead | null): void;
+  /** Set when a `beforeRead` hook ran MAX_HOOK_RUNS times (it reads through the counter). */
+  readonly runaway: Error | undefined;
 }
 
 type SnapLike = { metadata?: { fromCache?: boolean }; size?: number; docChanges?: () => { type: string }[]; data?: () => Record<string, unknown> };
@@ -57,7 +78,7 @@ export function readCounter({ beforeRead = null as BeforeRead | null } = {}): Re
   const tally: ReadTally = { reads: 0, requests: 0, byKind: {} };
   let hook = beforeRead;
   let n = 0;
-  let inHook = false;
+  let runaway: Error | undefined;
   const add = (kind: ReadKind, reads: number) => {
     const k = (tally.byKind[kind] ??= { requests: 0, reads: 0 });
     k.requests++;
@@ -65,17 +86,17 @@ export function readCounter({ beforeRead = null as BeforeRead | null } = {}): Re
     tally.requests++;
     tally.reads += reads;
   };
-  const before = async (kind: ReadKind): Promise<boolean> => {
-    if (inHook) return false;
-    if (hook) {
-      inHook = true;
-      try {
-        await hook(++n, kind);
-      } finally {
-        inHook = false;
-      }
+  // Every read is counted, also those sent while another read's hook runs (a job's reads at once).
+  // A hook's own writes go around the counter (the emulator's owner, another client): a read it
+  // made through it would be counted and would run the hook again.
+  const before = async (kind: ReadKind, raw: { fetch?: Fetch } = {}): Promise<void> => {
+    if (!hook) return;
+    if (n >= MAX_HOOK_RUNS) {
+      // Kept as well as thrown: a client may turn the throw into its own error ("unreachable").
+      runaway ??= new Error(`beforeRead ran ${MAX_HOOK_RUNS} times in one count: does the hook read through the counter? Use raw.fetch (or another client) for its own reads and writes.`);
+      throw runaway;
     }
-    return true;
+    await hook(++n, kind, raw);
   };
 
   const counter: ReadCounter = {
@@ -85,6 +106,10 @@ export function readCounter({ beforeRead = null as BeforeRead | null } = {}): Re
       tally.requests = 0;
       tally.byKind = {};
       n = 0;
+      runaway = undefined;
+    },
+    get runaway() {
+      return runaway;
     },
     setBeforeRead(next) {
       hook = next;
@@ -94,9 +119,8 @@ export function readCounter({ beforeRead = null as BeforeRead | null } = {}): Re
         const method = (init?.method ?? 'GET').toUpperCase();
         const kind = isFirestoreUrl(url) ? readKind(method, url) : null;
         if (!kind) return inner(url, init);
-        const counted = await before(kind);
+        await before(kind, { fetch: inner });
         const res = await inner(url, init);
-        if (!counted) return res;
         const body = await res
           .clone()
           .json()
@@ -113,9 +137,9 @@ export function readCounter({ beforeRead = null as BeforeRead | null } = {}): Re
         const f = fn(name);
         if (!f) return;
         wrapped[name] = async (...args: unknown[]) => {
-          const counted = await before(kind);
+          await before(kind);
           const snap = (await f(...args)) as SnapLike;
-          if (counted) add(kind, snap?.metadata?.fromCache ? 0 : bill(snap));
+          add(kind, snap?.metadata?.fromCache ? 0 : bill(snap));
           return snap;
         };
       };
@@ -130,12 +154,16 @@ export function readCounter({ beforeRead = null as BeforeRead | null } = {}): Re
         wrapped.onSnapshot = (ref: unknown, ...rest: unknown[]) => {
           let first = true;
           const bill = (snap: SnapLike) => {
-            if (inHook || snap?.metadata?.fromCache) return;
-            if (typeof snap?.docChanges === 'function') {
-              const reads = first ? Math.max(1, snap.size ?? 0) : snap.docChanges().filter((c) => c.type !== 'removed').length;
-              if (reads) add('listen', reads);
-            } else add('listen', 1);
-            first = false;
+            const query = typeof snap?.docChanges === 'function';
+            if (first) {
+              // A new listener's target is read from the server whole, even when the cache answers first.
+              first = false;
+              add('listen', query ? Math.max(1, snap.size ?? 0) : 1);
+              return;
+            }
+            if (snap?.metadata?.fromCache) return;
+            const reads = query ? snap.docChanges!().filter((c) => c.type !== 'removed').length : 1;
+            if (reads) add('listen', reads);
           };
           const isOptions = (x: unknown) => !!x && typeof x === 'object' && typeof (x as { next?: unknown }).next !== 'function' && ('includeMetadataChanges' in (x as object) || 'source' in (x as object));
           const at = isOptions(rest[0]) ? 1 : 0;
@@ -212,9 +240,12 @@ export async function expectReads<T>(fn: (meter: (inner: Fetch) => Fetch) => Pro
   let value: T;
   try {
     value = await fn((inner) => counter.fetch(inner));
+  } catch (e) {
+    throw counter.runaway ?? e;
   } finally {
     if (options.beforeRead) counter.setBeforeRead(null);
   }
+  if (counter.runaway) throw counter.runaway;
   const tally: ReadTally = { reads: counter.tally.reads, requests: counter.tally.requests, byKind: structuredClone(counter.tally.byKind) };
   if (tally.reads > options.max || tally.reads < (options.min ?? 0)) throw new ReadBudgetExceeded(tally, options);
   return { value, reads: tally.reads, tally };
@@ -225,8 +256,8 @@ export async function expectReads<T>(fn: (meter: (inner: Fetch) => Fetch) => Pro
  * of them, default all), so another member's edit lands at every await on Firestore. The write
  * must go around the counter (the emulator's owner token, or another client).
  */
-export function writeBeforeEachRead(write: (n: number, kind: ReadKind) => Promise<void> | void, { times = Infinity } = {}): BeforeRead {
-  return async (n, kind) => {
-    if (n <= times) await write(n, kind);
+export function writeBeforeEachRead(write: (n: number, kind: ReadKind, raw: { fetch?: Fetch }) => Promise<void> | void, { times = Infinity } = {}): BeforeRead {
+  return async (n, kind, raw) => {
+    if (n <= times) await write(n, kind, raw);
   };
 }

@@ -308,6 +308,18 @@ describe('expectReads and the interleaving hook', () => {
     expect((floor as ReadBudgetExceeded).reason).toBe('under');
   });
 
+  test('reads sent at once are all counted while a hook runs', async () => {
+    const f = firestore();
+    const { reads } = await expectReads(
+      async (meter) => {
+        const db = client(meter(f.fetch));
+        await Promise.all([db.query('households/h1', 'agenda'), db.query('households/h1', 'todos'), db.get('households/h1')]);
+      },
+      { max: 7, min: 7, beforeRead: writeBeforeEachRead(() => new Promise((r) => setTimeout(r, 5))) },
+    );
+    expect(reads).toBe(7);
+  });
+
   test('beforeRead runs before each read, outside the count', async () => {
     const f = firestore();
     const writes: string[] = [];
@@ -345,10 +357,91 @@ describe('expectReads and the interleaving hook', () => {
     sdk.onSnapshot({}, (s) => void seen.push(s.size ?? -1));
     const q = (size: number, changes: string[], fromCache = false): Snap => ({ metadata: { fromCache }, size, docChanges: () => changes.map((type) => ({ type })) });
     listeners[0](q(3, ['added', 'added', 'added'], true));
-    listeners[0](q(3, ['added', 'added', 'added']));
+    listeners[0](q(3, []));
     listeners[0](q(3, ['modified', 'removed', 'added']));
-    expect(seen).toEqual([3, 3, 3]);
-    // getDocs: 1 (empty); getDoc from cache: 0; the listener: 3 at first from the server, then 2.
+    listeners[0](q(3, ['modified'], true));
+    expect(seen).toEqual([3, 3, 3, 3]);
+    // getDocs: 1 (empty); getDoc from cache: 0; the listener: 3 at first (from the cache, but the
+    // server sends the new target whole), nothing for the server's confirmation, then 2; a later
+    // snapshot from the cache nothing.
     expect(counter.tally.reads).toBe(6);
+  });
+});
+
+describe('expectPageReads', () => {
+  /** A page whose tally follows `counts`, one value per read of it. */
+  const page = (counts: (number | null)[]) => {
+    let i = 0;
+    return {
+      evaluate: async (fn: (key: string) => unknown, key: string) => {
+        void fn;
+        void key;
+        const n = counts[Math.min(i++, counts.length - 1)];
+        return n === null ? null : { reads: n, requests: n, byKind: { listen: { requests: n, reads: n } } };
+      },
+      waitForTimeout: async () => {},
+    } as never;
+  };
+  test('waits for the count to settle, then holds it to the ceiling', async () => {
+    const { expectPageReads } = await import('../src/e2e');
+    expect((await expectPageReads(page([3, 5, 7, 7]), async () => {}, { max: 7 })).reads).toBe(7);
+    const over = await expectPageReads(page([3, 9, 9]), async () => {}, { max: 7, label: 'Today' }).catch((e) => e);
+    expect((over as ReadBudgetExceeded).reason).toBe('over');
+  });
+  test('a count that never settles fails, as does a build without the meter', async () => {
+    const { expectPageReads, resetPageReads } = await import('../src/e2e');
+    const rising = Array.from({ length: 50 }, (_, i) => i + 1);
+    await expect(expectPageReads(page(rising), async () => {}, { max: 1000, settleMs: 1, settleTimeoutMs: 0 })).rejects.toThrow('kept rising');
+    await expect(expectPageReads(page([null]), async () => {}, { max: 5 })).rejects.toThrow('does not count its reads');
+    await expect(resetPageReads(page([null]))).rejects.toThrow('does not count its reads');
+  });
+});
+
+describe('a hook that reads through the counter', () => {
+  test('throws instead of running itself for ever; raw.fetch is the way around', async () => {
+    const f = firestore();
+    const { MAX_HOOK_RUNS } = await import('../src/read-test');
+    let db: FirestoreRest;
+    const looping = expectReads(
+      async (meter) => {
+        db = client(meter(f.fetch));
+        await db.get('households/h1');
+      },
+      { max: 10, beforeRead: async () => void (await db.get('households/h1')) },
+    );
+    await expect(looping).rejects.toThrow(`beforeRead ran ${MAX_HOOK_RUNS} times`);
+    let raw = 0;
+    await expectReads(
+      async (meter) => {
+        await client(meter(f.fetch)).get('households/h1');
+      },
+      { max: 1, beforeRead: async (_n, _kind, r) => void (await client(r.fetch!).get('households/h1'), raw++) },
+    );
+    expect(raw).toBe(1);
+  });
+});
+
+describe("the preset's read meter", () => {
+  test('on for emulator builds or when asked; never otherwise', async () => {
+    const { readMeterOn } = await import('../src/vite');
+    expect(readMeterOn({ VITE_USE_EMULATORS: 'true' })).toBe(true);
+    expect(readMeterOn({ VITE_READ_METER: 'true' })).toBe(true);
+    expect(readMeterOn({ VITE_FIREBASE_PROJECT_ID: 'huishouden-staging' })).toBe(false);
+  });
+
+  test("swaps every firebase/firestore import for the counted copy, except the copy's own; off unless Vite's env turns it on", async () => {
+    const { readMeter } = await import('../src/vite');
+    const asked: [string, string | undefined][] = [];
+    const ctx = { resolve: async (id: string, importer?: string) => (asked.push([id, importer]), { id: `/resolved/${id}` }) };
+    const off = readMeter();
+    off.configResolved({ env: { VITE_FIREBASE_PROJECT_ID: 'huishouden-staging' } });
+    expect(await off.resolveId.call(ctx, 'firebase/firestore', '/app/src/main.tsx')).toBeNull();
+    const plugin = readMeter();
+    // As a mode's .env file sets it (`vite build --mode emulator`).
+    plugin.configResolved({ env: { VITE_USE_EMULATORS: 'true' } });
+    expect(await plugin.resolveId.call(ctx, 'firebase/firestore', '/app/src/main.tsx')).toEqual({ id: '/resolved/@huishouden/pwa-kit/read-meter-browser' });
+    expect(await plugin.resolveId.call(ctx, 'firebase/firestore', '/app/node_modules/@huishouden/pwa-kit/dist/read-meter-browser.js')).toBeNull();
+    expect(await plugin.resolveId.call(ctx, 'firebase/auth', '/app/src/main.tsx')).toBeNull();
+    expect(asked).toEqual([['@huishouden/pwa-kit/read-meter-browser', '/app/src/main.tsx']]);
   });
 });

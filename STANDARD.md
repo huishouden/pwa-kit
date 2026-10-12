@@ -456,7 +456,11 @@ billed and a household's day).
   screens and sync paths carry a test that counts the reads Firestore bills and fails past a
   ceiling: `expectReads(fn, { max })` from `@huishouden/pwa-kit/read-test`. REST code is counted
   from each response (`meter(fetch)`), SDK code from each result and snapshot
-  (`readCounter().sdk(firebase/firestore)`). The emulator bills nothing and reports no counts, so the count is
+  (`readCounter().sdk(firebase/firestore)`), an app's screens in the browser with
+  `expectPageReads(page, open, { max, min, label, settleMs })` from `./e2e` on its emulator build (the
+  preset counts every `firebase/firestore` read in builds with `VITE_USE_EMULATORS=true` or
+  `VITE_READ_METER=true`, from the shell or the mode's `.env` file; `e2e:emulator` runs them, not
+  staging). The emulator bills nothing and reports no counts, so the count is
   Firestore's billing rule applied to what came back (`billedReads`): one per document returned, at
   least one per query and aggregation, one per 1,000 entries an aggregation walks, a listener's
   whole result when it starts and one per changed document after. The ceiling is the expected

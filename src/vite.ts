@@ -83,7 +83,7 @@ export function pwaApp(options: PwaAppOptions) {
   const { overrides = {} } = options;
   const base = normalizeBase(options.base);
   const origin = assetOriginOf(options);
-  return [sitePath(base), ...(origin ? [assetCdn(base, origin)] : []), buildStamp(), telemetryChunks(), stableChunks(), linkPreview(options), themeBoot(), langBoot(), ...(options.push ? [pushServiceWorkerFile()] : []), ...(sharesFiles(options) ? [shareServiceWorkerFile()] : []), ...VitePWA({
+  return [sitePath(base), readMeter(), ...(origin ? [assetCdn(base, origin)] : []), buildStamp(), telemetryChunks(), stableChunks(), linkPreview(options), themeBoot(), langBoot(), ...(options.push ? [pushServiceWorkerFile()] : []), ...(sharesFiles(options) ? [shareServiceWorkerFile()] : []), ...VitePWA({
     registerType: 'autoUpdate',
     includeAssets: options.includeAssets ?? ['icon.svg', 'apple-touch-icon.png', 'og.png'],
     base,
@@ -92,6 +92,38 @@ export function pwaApp(options: PwaAppOptions) {
     manifest: { ...webManifest(options), ...(overrides.manifest || {}) },
     workbox: pwaWorkbox(options),
   })];
+}
+
+/**
+ * Whether this build counts its Firestore reads (`readMeter`): builds for the emulators
+ * (`VITE_USE_EMULATORS=true`, as `hh dev verify` makes for the signed-in tests) or asked for
+ * (`VITE_READ_METER=true`). Never a production or staging build.
+ */
+export const readMeterOn = (env: Record<string, string | undefined> = process.env): boolean => env.VITE_USE_EMULATORS === 'true' || env.VITE_READ_METER === 'true';
+
+const READ_METER = '@huishouden/pwa-kit/read-meter-browser';
+
+/**
+ * Read-budget tests in the browser (STANDARD.md "Read budgets"): every import of
+ * `firebase/firestore` (the app's and the kit's) resolves to the kit's counted copy
+ * (`./read-meter-browser`), which tallies the reads Firestore bills for each result and snapshot in
+ * `window.__hhReads`; `expectPageReads` in `./e2e` reads it.
+ */
+export function readMeter() {
+  // Decided from Vite's resolved environment (shell variables and the mode's .env files), the same
+  // `VITE_USE_EMULATORS` the app reads (./app); off until the config is resolved.
+  let on = false;
+  return {
+    name: 'huishouden-read-meter',
+    enforce: 'pre' as const,
+    configResolved(config: { env: Record<string, unknown> }) {
+      on = readMeterOn({ ...process.env, ...(config.env as Record<string, string | undefined>) });
+    },
+    async resolveId(this: { resolve: (id: string, importer?: string, options?: { skipSelf?: boolean }) => Promise<unknown> }, source: string, importer?: string) {
+      if (!on || source !== 'firebase/firestore' || !importer || /read-meter-browser\.[jt]s$/.test(importer)) return null;
+      return this.resolve(READ_METER, importer, { skipSelf: true });
+    },
+  };
 }
 
 /** `assetOrigin`, else `HH_ASSET_ORIGIN`; an https origin without a trailing slash, or '' for none. */
