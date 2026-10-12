@@ -6,7 +6,7 @@ import { agendaInRange, toAgendaItem } from '../src/agenda-core';
 
 // Modules a server (a Cloudflare Worker such as huishouden/connector) imports: none may load
 // Firebase, the DOM or anything else only a browser app has.
-const SERVER_SAFE = ['todo-core', 'agenda-core', 'contact-core', 'role-core', 'reminder-source', 'dose', 'schedule', 'time', 'i18n', 'audience', 'store', 'site', 'money', 'firestore-rest', 'firebase-auth-rest', 'local-clock', 'signin-handoff', 'ics', 'calendar-export', 'visit', 'condition', 'reminder-core', 'people', 'pet-outings', 'pet-routines', 'reader-langs', 'baby-settings'];
+const SERVER_SAFE = ['todo-core', 'agenda-core', 'contact-core', 'role-core', 'reminder-source', 'dose', 'schedule', 'time', 'i18n', 'audience', 'store', 'site', 'money', 'firestore-rest', 'firebase-auth-rest', 'local-clock', 'signin-handoff', 'ics', 'calendar-export', 'visit', 'condition', 'reminder-core', 'people', 'pet-outings', 'pet-routines', 'reader-langs', 'baby-settings', 'read-budget', 'read-test'];
 
 function importGraph(entry: string): { files: Set<string>; bare: Set<string> } {
   const seen = new Set<string>();

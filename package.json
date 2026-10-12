@@ -371,6 +371,14 @@
     "./reader-langs": {
       "types": "./dist/reader-langs.d.ts",
       "default": "./dist/reader-langs.js"
+    },
+    "./read-budget": {
+      "types": "./dist/read-budget.d.ts",
+      "default": "./dist/read-budget.js"
+    },
+    "./read-test": {
+      "types": "./dist/read-test.d.ts",
+      "default": "./dist/read-test.js"
     }
   },
   "bin": {
@@ -398,7 +406,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "lint": "tsc --noEmit",
-    "test": "bun test test && bun test ./test/sdk/firestore.sdk.ts && bun test ./test/isolated/app.mocked.ts && bun test ./test/isolated/home.mocked.ts && bun test ./test/isolated/contact-positions.mocked.ts && bun test ./test/isolated/household-create.mocked.ts"
+    "test": "bun test test && bun test ./test/sdk/firestore.sdk.ts && bun test ./test/isolated/app.mocked.ts && bun test ./test/isolated/home.mocked.ts && bun test ./test/isolated/contact-positions.mocked.ts && bun test ./test/isolated/household-create.mocked.ts",
+    "test:emulator": "firebase emulators:exec --only firestore --project demo-kit-reads \"bun test ./test/sdk/reads.sdk.ts && bun test ./test/sdk/firestore.sdk.ts\""
   },
   "peerDependencies": {
     "@playwright/test": ">=1.45",
@@ -443,6 +452,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "firebase": "^12",
+    "firebase-tools": "15.32.1",
     "happy-dom": "^20.14.5",
     "ical.js": "2.2.1",
     "lucide-react": "^1.50.0",

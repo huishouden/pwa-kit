@@ -232,14 +232,19 @@ What keeps it there, and what to keep when changing an app:
   personal forms skip the read when this device published the same items in the last 6 hours
   (`src/published.ts`).
 - **Workers ask cheaply first.** A check is aggregations and a `batchGet`, never a list; a sync reads
-  documents changed since its cached copy. Each Worker has its own daily share:
-  `FIRESTORE_CHECK_READS` (calendar, 20,000) and `FIRESTORE_NOTIFY_READS` (notify), and spaces its work
-  out rather than go over.
+  documents changed since its cached copy. Each Worker runs its reads under the kit's `ReadBudget`
+  (`./read-budget`): a cap per run, its own share of the day, a pause when Firestore answers 429.
+  The shares and their sum are in STANDARD.md "Read budgets"; a check spaces itself out rather than
+  go over its share.
+- **Read-budget tests.** Every Worker run type and every app's main screens and sync paths have a
+  test with a ceiling on the reads it is billed for (`./read-test`, STANDARD.md "Read budgets").
 - **No browser against production** (Bandwidth): one automated browser run reads as much as a
   household's day.
-- **An alert at 60%.** `infra/read-alert.sh` (run by the bootstrap with `ALERT_EMAIL`) emails when the
-  last 24 hours' billed reads pass 30,000 (documents returned plus one per query and aggregation
-  request), a Cloud Monitoring alert policy, free.
+- **Alerts at 5,000 an hour and at 60% of the day.** `infra/read-alert.sh` (run by the bootstrap with
+  `ALERT_EMAIL`, or `hh ops read-alerts`) keeps two Cloud Monitoring alert policies, free: billed
+  reads (documents returned plus one per query and aggregation request) over 5,000 in the last hour,
+  which a runaway job reaches in minutes while the suite's busiest normal hour is under 4,000, and
+  over 30,000 in the last 24 hours.
 
 Writes are not close: a household writes a few hundred documents a day (each saved record, its
 agenda and to-do items when they change, the Workers' syncs), against 20,000.

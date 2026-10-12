@@ -1,0 +1,4 @@
+[
+  { "found": { "name": "projects/demo-kit/databases/(default)/documents/households/h1", "fields": { "name": { "stringValue": "Home" } }, "updateTime": "2031-10-01T12:00:00Z" }, "readTime": "2031-10-01T12:00:01Z" },
+  { "missing": "projects/demo-kit/databases/(default)/documents/households/h1/calendarSettings/alice@example.com", "readTime": "2031-10-01T12:00:01Z" }
+]

@@ -5,6 +5,8 @@
  * integers, as the Firebase SDK does, since the rules check `is int`.
  */
 
+import { refusalScope } from './read-budget.js';
+
 export type Value =
   | { nullValue: null }
   | { booleanValue: boolean }
@@ -31,12 +33,14 @@ export class Increment {
 /** `deleteField()` in a merge: the field is removed, as the SDK's FieldValue. */
 export class FieldDelete {}
 
-export type Code = 'permission-denied' | 'not-found' | 'already-exists' | 'failed-precondition' | 'invalid-argument' | 'unauthenticated' | 'unavailable' | 'unknown';
+export type Code = 'permission-denied' | 'not-found' | 'already-exists' | 'failed-precondition' | 'invalid-argument' | 'unauthenticated' | 'unavailable' | 'resource-exhausted' | 'unknown';
 
 export class FirestoreError extends Error {
   constructor(
     readonly code: Code,
     message: string,
+    /** The `ReadBudget` cap that refused (`./read-budget`), when it was one rather than Firestore. */
+    readonly budgetScope?: string,
   ) {
     super(message);
   }
@@ -51,6 +55,8 @@ const STATUS_CODES: Record<string, Code> = {
   UNAUTHENTICATED: 'unauthenticated',
   UNAVAILABLE: 'unavailable',
   ABORTED: 'unavailable',
+  // The project's daily quota (the free plan's 50,000 reads), or a `ReadBudget` cap (./read-budget).
+  RESOURCE_EXHAUSTED: 'resource-exhausted',
 };
 
 export function encode(v: unknown): Value {
@@ -169,7 +175,12 @@ export class FirestoreRest {
     if (!res.ok) {
       const error = (Array.isArray(parsed) ? parsed[0] : parsed) as { error?: { status?: string; message?: string } } | undefined;
       const status = error?.error?.status ?? '';
-      throw new FirestoreError(STATUS_CODES[status] ?? (res.status === 403 ? 'permission-denied' : res.status === 404 ? 'not-found' : 'unknown'), `Firestore ${res.status} ${status}`.trim());
+      const scope = refusalScope(parsed);
+      throw new FirestoreError(
+        STATUS_CODES[status] ?? (res.status === 403 ? 'permission-denied' : res.status === 404 ? 'not-found' : res.status === 429 ? 'resource-exhausted' : 'unknown'),
+        `Firestore ${res.status} ${status}${scope ? `: ${error?.error?.message ?? ''}` : ''}`.trim(),
+        scope ?? undefined,
+      );
     }
     return parsed as T;
   }

@@ -1,0 +1,5 @@
+[
+  { "document": { "name": "projects/demo-kit/databases/(default)/documents/households/h1/agenda/a1", "fields": { "title": { "stringValue": "Garbage pickup" } }, "updateTime": "2031-10-01T12:00:00Z" }, "readTime": "2031-10-01T12:00:01Z" },
+  { "document": { "name": "projects/demo-kit/databases/(default)/documents/households/h1/agenda/a2", "fields": { "title": { "stringValue": "Checkup" } }, "updateTime": "2031-10-01T12:00:00Z" }, "readTime": "2031-10-01T12:00:01Z" },
+  { "document": { "name": "projects/demo-kit/databases/(default)/documents/households/h1/agenda/a3", "fields": { "title": { "stringValue": "Power bill" } }, "updateTime": "2031-10-01T12:00:00Z" }, "readTime": "2031-10-01T12:00:01Z" }
+]

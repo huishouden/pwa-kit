@@ -31,6 +31,12 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run lint
       - run: bun run test
+      # The SDK's read budgets and the outbox against the Firestore emulator (STANDARD.md "Read budgets").
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: bun run test:emulator
       - run: bun run build
       - name: Workflows and hooks parse
         run: |

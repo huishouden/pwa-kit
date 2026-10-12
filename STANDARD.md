@@ -442,6 +442,59 @@ The portal's household panel edits one document, `households/{id}/settings/food`
   1000 expressions, too few to check every person's fields, so always write with `saveFood` (which
   clips each person to `FOOD_PERSON_FIELDS` and `FOOD_LIMITS`) and read with `watchFood`.
 
+## Read budgets
+
+Firestore's free plan has 50,000 document reads a day for the whole project: every household, app
+and Worker, until midnight Pacific. Once they are gone every read fails, everywhere. On 2026-10-12
+one calendar Worker round compared fresh lists with counts taken before an edit, went back a step
+for ever and read about 39,000 documents in 19 minutes; the apps and notify failed for an hour.
+Reads are therefore budgeted, tested and capped like money (docs/one-site.md "Budgets" for what is
+billed and a household's day).
+
+- **Every read path has a read-budget test.** Every Worker run type (calendar's checks, feed and
+  sync rounds and alert inbox units; notify's run; each connector tool family) and every app's main
+  screens and sync paths carry a test that counts the reads Firestore bills and fails past a
+  ceiling: `expectReads(fn, { max })` from `@huishouden/pwa-kit/read-test`. REST code is counted
+  from each response (`meter(fetch)`), SDK code from each result and snapshot
+  (`readCounter().sdk(firebase/firestore)`). The emulator bills nothing and reports no counts, so the count is
+  Firestore's billing rule applied to what came back (`billedReads`): one per document returned, at
+  least one per query and aggregation, one per 1,000 entries an aggregation walks, a listener's
+  whole result when it starts and one per changed document after. The ceiling is the expected
+  count for the test's invented data, not a round number far above it.
+- **A change that raises a budget says why in its PR**: which read was added, for what, and the
+  new count. Lowering one needs no reason.
+- **Jobs that read in steps get an interleaving test.** A job that reads, decides and reads again
+  (a Worker round, a sync with a check before it, a multi-step import) is run with another member's
+  write landing before each of its reads (`expectReads(fn, { max, beforeRead: writeBeforeEachRead(write) })`)
+  and must finish within its budget. A step never compares what it just read with counts or
+  snapshots captured earlier in the same job without refreshing them, and a state machine never
+  returns to an earlier step without having made progress.
+- **Workers run their reads under `ReadBudget`** (`@huishouden/pwa-kit/read-budget`): a cap per
+  run, a share per Pacific day kept in a ledger (D1, or a SQLite Durable Object from
+  `readLedgerObject`), a pause for every run when Firestore answers 429 `RESOURCE_EXHAUSTED`, and
+  the run's reads (`summary()`) in its log line and heartbeat. `finish()` runs in a `finally` (or
+  the run goes through `within(fn)`), so a run that throws is still counted. A cap reached answers like
+  Firestore's own quota, so the code's quota handling covers it. Caps are `[vars]` read with
+  `readCap`, so a typo fails loudly instead of turning a cap off.
+- **The day is allocated.** The Workers' daily shares add up to well under the free 50,000, leaving
+  the rest to the apps, which have no server-side cap:
+
+  | Consumer | Variable (wrangler.toml) | Per day | Per run |
+  |---|---|---|---|
+  | Calendar, checks | `FIRESTORE_CHECK_READS` | 12,000 | 300 per check invocation |
+  | Calendar, feed and sync rounds | `FIRESTORE_WORK_READS` | 6,000 | 2,500 per round (`ROUND_READS`) |
+  | Calendar, Spending alert inboxes | `FIRESTORE_MAIL_READS` | 2,000 | 400 per unit |
+  | Notify (queries included) | `FIRESTORE_NOTIFY_READS` | 4,000 | 400 per run |
+  | Connector (each connection 1,000) | `FIRESTORE_CONNECTOR_READS` | 4,000 | 500 per tool call |
+  | **Workers together** | | **28,000** | |
+  | Apps (every household's devices) | | 22,000 | |
+
+  Changing a share changes this table in the same PR; the Workers' sum stays at or under 30,000.
+  Staging has its own 50,000, mostly for the apps' test runs: its Worker shares are smaller.
+- **Alarms come early.** Cloud Monitoring emails at 5,000 billed reads in an hour (a runaway at
+  the incident's rate trips it within about three minutes) and at 30,000 in 24 hours
+  (`infra/read-alert.sh`, `hh ops read-alerts`).
+
 ## Observability
 
 The maintainers hear about a failure from the reports, not from a household. Every app sends

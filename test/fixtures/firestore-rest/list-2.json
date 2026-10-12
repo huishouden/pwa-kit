@@ -1,0 +1,4 @@
+{ "documents": [
+  { "name": "projects/demo-kit/databases/(default)/documents/households/h1/reminders/r1", "fields": {}, "updateTime": "2031-10-01T12:00:00Z" },
+  { "name": "projects/demo-kit/databases/(default)/documents/households/h1/reminders/r2", "fields": {}, "updateTime": "2031-10-01T12:00:00Z" }
+] }
