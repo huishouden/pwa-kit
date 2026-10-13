@@ -53,7 +53,7 @@ user of it (dogfooding), never a special case. So:
   `/__/auth/handler`; without this the service worker answers it with the cached app and
   "Sign in with Google" opens the app instead of Google. The portal also passes `otherApps` (the
   paths in `apps.json`), so its worker never answers a navigation into an app with the portal.
-- Hosting headers: each path's `sw.js`, `registerSW.js`, `index.html` and the manifest `no-cache`;
+- Hosting headers: each path's `sw.js`, `index.html` and the manifest `no-cache`;
   `assets/` immutable for a year (the combined `firebase.json`, generated; see One site).
 - Tablet first: test at 1280×800 landscape; tap targets at least 44 px.
 
