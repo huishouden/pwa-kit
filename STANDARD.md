@@ -48,14 +48,42 @@ user of it (dogfooding), never a special case. So:
   portal's `/`), icons at 192 and 512 plus a 512 maskable icon under it. Generate PNGs from one SVG
   (`bunx pwa-icons`).
 - Use `pwaApp({ base: '/pet/' })` from `@huishouden/pwa-kit/vite`; `base` sets all of the above and
-  Vite's `base`. It sets `registerType: 'autoUpdate'` (installed copies update on the next launch)
-  and **`navigateFallbackDenylist`** with `/^\/__\//`. Firebase serves its sign-in popup at
+  Vite's `base`. Its worker installs new versions in the background and waits (`registerType:
+  'prompt'`; see Updates) and it sets **`navigateFallbackDenylist`** with `/^\/__\//`. Firebase serves its sign-in popup at
   `/__/auth/handler`; without this the service worker answers it with the cached app and
   "Sign in with Google" opens the app instead of Google. The portal also passes `otherApps` (the
   paths in `apps.json`), so its worker never answers a navigation into an app with the portal.
 - Hosting headers: each path's `sw.js`, `registerSW.js`, `index.html` and the manifest `no-cache`;
   `assets/` immutable for a year (the combined `firebase.json`, generated; see One site).
 - Tablet first: test at 1280×800 landscape; tap targets at least 44 px.
+
+## Updates
+
+Apps redeploy often (every kit release redeploys them all), so a new version must never interrupt
+anyone: no reload under a half-filled form, an open sheet or a screen someone is reading.
+
+- **Never reload a page in use.** `pwaApp` builds a worker that installs a new version and waits.
+  `startUpdates({ base: import.meta.env.BASE_URL })` from `./update` (once, in main.tsx, in
+  production builds) registers it, checks hourly and on return after 15 minutes, and applies a
+  waiting version only: **at launch**, before the first touch (a version that was already waiting);
+  **when the page is hidden** and nothing would be lost (no open dialog or sheet, no typed text still
+  in a field, no `holdUpdates()` / `useHoldUpdates`); or **when the person taps** the app bar's small
+  Update button. Otherwise it applies once every window of the app has closed. Never
+  `registerType: 'autoUpdate'` or a `virtual:pwa-register` call of your own.
+- **A reload returns to the same place.** The tab, and the item it shows where that is cheap, live in
+  the address (`?tab=care&pet=p1`): `useUrlTab` and `useUrlParam` from `./react/url-state`. A tab
+  change pushes a history entry, so Back works; a refinement (the item shown) replaces it.
+- **A lazily loaded file that is gone** (a newer deploy removed it) is tried twice (`retryImport`);
+  then the Update button offers the new version. Nothing navigates away on its own; the asset CDN's
+  fallback (`./asset-cdn`) acts only before the page has loaded.
+- **Opening shows a stable frame.** Until the session is restored and the first data has arrived,
+  the app shows its own frame and tabs over `ScreenSkeleton` (`./react/ui`): never the sign-in screen,
+  an empty state or a half-drawn app that is then replaced.
+- **Tests:** `./e2e-update` builds the app twice and serves the builds locally (`buildVersions`,
+  `serveBuilds`); `expectUpdateWithoutReload` opens a deep screen with input on build A, deploys
+  build B under it and checks the page did not reload, kept its screen and input, and applied B
+  when hidden with nothing unsaved, back on the same screen. Each app's `e2e/updates.spec.ts` runs
+  it, with a reload and Back test, in `e2e:emulator`.
 
 ## One site
 

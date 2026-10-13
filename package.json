@@ -387,6 +387,26 @@
     "./read-meter-browser": {
       "types": "./dist/read-meter-browser.d.ts",
       "default": "./dist/read-meter-browser.js"
+    },
+    "./update": {
+      "types": "./dist/update.d.ts",
+      "default": "./dist/update.js"
+    },
+    "./url-state": {
+      "types": "./dist/url-state.d.ts",
+      "default": "./dist/url-state.js"
+    },
+    "./react/update": {
+      "types": "./dist/react/update.d.ts",
+      "default": "./dist/react/update.js"
+    },
+    "./react/url-state": {
+      "types": "./dist/react/url-state.d.ts",
+      "default": "./dist/react/url-state.js"
+    },
+    "./e2e-update": {
+      "types": "./dist/e2e-update.d.ts",
+      "default": "./dist/e2e-update.js"
     }
   },
   "bin": {

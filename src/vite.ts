@@ -76,15 +76,19 @@ export interface PwaAppOptions {
 }
 
 /**
- * Vite PWA plugin with the conventions every app here shares: auto-updating service worker,
- * standalone manifest with 192/512/maskable icons from public/, and Firebase-safe navigation.
+ * Vite PWA plugin with the conventions every app here shares: a service worker that installs new
+ * versions in the background and waits to be told (`./update` applies them without interrupting
+ * anyone), standalone manifest with 192/512/maskable icons from public/, and Firebase-safe navigation.
  */
 export function pwaApp(options: PwaAppOptions) {
   const { overrides = {} } = options;
   const base = normalizeBase(options.base);
   const origin = assetOriginOf(options);
   return [sitePath(base), readMeter(), ...(origin ? [assetCdn(base, origin)] : []), buildStamp(), telemetryChunks(), stableChunks(), linkPreview(options), themeBoot(), langBoot(), ...(options.push ? [pushServiceWorkerFile()] : []), ...(sharesFiles(options) ? [shareServiceWorkerFile()] : []), ...VitePWA({
-    registerType: 'autoUpdate',
+    // Never 'autoUpdate': it reloads the open page the moment a new worker activates, a few seconds
+    // after opening the app following any deploy. `startUpdates` (./update) registers the worker itself.
+    registerType: 'prompt',
+    injectRegister: false,
     includeAssets: options.includeAssets ?? ['icon.svg', 'apple-touch-icon.png', 'og.png'],
     base,
     scope: base,
@@ -207,6 +211,10 @@ export function pwaWorkbox(options: PwaAppOptions) {
   const origin = assetOriginOf(options);
   return {
     globPatterns: ['**/*.{js,css,html,svg,png,ico,woff,woff2}'],
+    // A new version waits (no skipWaiting) until ./update sends SKIP_WAITING; the first install still
+    // takes the open page at once, so it works offline after one visit.
+    skipWaiting: false,
+    clientsClaim: true,
     navigateFallback: `${normalizeBase(options.base)}index.html`,
     navigateFallbackDenylist: navigationDenylist(options),
     ...workboxOverrides,

@@ -4,7 +4,8 @@
  * checkbox, section tabs (a bottom bar on phones), member badge, "Sample data" banner every app shows, and
  * the suggestion chip (tap to add, long press to stop suggesting) with its `useLongPress`, a copy button,
  * the note offering to bring back Google's window when it may have opened out of sight, and the
- * completion pattern (`CompleteButton`, `CompletionRow`, `CompletionList`: DESIGN.md "Completion").
+ * completion pattern (`CompleteButton`, `CompletionRow`, `CompletionList`: DESIGN.md "Completion"), and
+ * the placeholder every app shows while it opens (`ScreenSkeleton`).
  *
  * Styled with Tailwind v4 on the kit's palette: import `@huishouden/pwa-kit/tailwind.css` after
  * `tailwindcss` in the app's stylesheet. It maps the theme (forest, cream, terracotta) and adds
@@ -393,6 +394,36 @@ export function SampleBanner({
       {open && !notice && <p className="w-full pb-1.5 text-sm text-muted sm:hidden">{text}</p>}
       {children}
     </div>
+  );
+}
+
+const pulse = 'animate-pulse rounded bg-sunken motion-reduce:animate-none';
+
+/**
+ * What every app shows while it opens (DESIGN.md "Empty and loading states"): from the first paint
+ * until the session is restored and the first data has arrived, a still placeholder the size of a
+ * screen's rows: an overline and a card of `rows` rows. Signed-in or not, no sign-in screen, empty
+ * state or half-drawn app flashes before it, and nothing jumps when the real screen replaces it.
+ * A status region, so screen readers announce "Loading…" and `label` ("Loading the household's day.").
+ */
+export function ScreenSkeleton({ rows = 3, label }: { rows?: number; label?: string }) {
+  const kt = useKitT();
+  return (
+    <section role="status" aria-busy="true" aria-label={kt('common.loading')} data-hh-skeleton="">
+      {label && <p className="sr-only">{label}</p>}
+      <div className={`mb-2 h-4 w-24 ${pulse}`} aria-hidden="true" />
+      <ul className={`${cardClass} divide-y divide-line`} aria-hidden="true">
+        {Array.from({ length: rows }, (_, i) => (
+          <li key={i} className="flex min-h-20 items-center gap-3 px-4 py-3 sm:gap-4 sm:px-5 sm:py-4">
+            <span className={`h-11 w-11 shrink-0 ${pulse} rounded-xl`} />
+            <span className="flex-1 space-y-2">
+              <span className={`block h-6 w-2/3 ${pulse}`} />
+              <span className={`block h-5 w-1/3 ${pulse}`} />
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 

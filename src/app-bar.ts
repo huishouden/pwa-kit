@@ -17,12 +17,16 @@
  *   <nav slot="nav">…</nav>
  * </hh-app-bar>
  * ```
+ * When a new version of the app is ready (`./update`), a small Update button sits before the account
+ * area; tapping it applies the version and reloads. Nothing applies on its own while the page is in use.
+ *
  * `bar.user = { name, email, photoURL }` once signed in, `null` when signed out; leave it
  * `undefined` while the session is being restored so neither the avatar nor Sign in flashes.
  */
 import { GLYPHS, logoSvg, type Glyph } from './logo';
 import { LANG_CHOICES, LANG_NAMES, LANGS, getLang, getLangChoice, kt, onLangChange, setLangChoice, type LangChoice } from './i18n';
 import { THEME_MODES, getThemeMode, onThemeChange, setThemeMode, startTheme, type ThemeMode } from './theme';
+import { applyUpdate, onUpdateReady, updateReady } from './update';
 
 /** What the bar shows of the signed-in person. A Firebase `User` fits as it is. */
 export interface AppBarUser {
@@ -334,10 +338,31 @@ button { font-family: inherit; }
 .langs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .mode[aria-pressed='true'] { background: var(--primary-bg); color: var(--primary-text); font-weight: 600; }
 .menu .version { margin-top: 8px; font-size: 12px; line-height: 16px; color: var(--menu-muted); }
-.signin, .avatar, .item, .mode, .menu-button { transition: background-color 150ms ease-out; }
+/* A new version is ready: small and quiet, never in the way; tapping it applies the update. */
+.update {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--bar-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--bar-title);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.update:hover { background: var(--item-hover); }
+.update svg { width: 18px; height: 18px; flex-shrink: 0; }
+:host([compact]) .update { width: 44px; padding: 0; justify-content: center; }
+:host([compact]) .update .label { display: none; }
+.signin, .avatar, .item, .mode, .menu-button, .update { transition: background-color 150ms ease-out; }
 a:focus-visible, button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) {
-  .signin, .avatar, .item, .mode, .menu-button { transition: none; }
+  .signin, .avatar, .item, .mode, .menu-button, .update { transition: none; }
 }
 `;
 
@@ -352,6 +377,7 @@ const TEMPLATE = `
     <div class="nav" part="nav" hidden><slot name="nav"></slot></div>
     <div class="end" part="end">
       <slot name="actions"></slot>
+      <button type="button" class="update" part="update" hidden></button>
       <div class="account" part="account"></div>
     </div>
   </div>
@@ -370,6 +396,7 @@ export class HhAppBar extends Base {
   #menuId = `hh-account-menu-${Math.random().toString(36).slice(2, 8)}`;
   #offTheme: (() => void) | undefined;
   #offLang: (() => void) | undefined;
+  #offUpdate: (() => void) | undefined;
 
   constructor() {
     super();
@@ -377,6 +404,7 @@ export class HhAppBar extends Base {
     this.#root.innerHTML = TEMPLATE;
     const slot = this.#root.querySelector<HTMLSlotElement>('slot[name="nav"]')!;
     slot.addEventListener('slotchange', () => this.#syncNav());
+    this.#root.querySelector('.update')!.addEventListener('click', () => applyUpdate());
   }
 
   /** Short app name: "Spending". The portal passes "Huishouden" (or nothing). */
@@ -427,7 +455,14 @@ export class HhAppBar extends Base {
     this.#offLang = onLangChange(() => {
       this.#renderHome();
       this.#renderAccount();
+      this.#renderUpdate();
     });
+    this.#offUpdate?.();
+    this.#offUpdate = onUpdateReady(() => {
+      this.#renderUpdate();
+      this.#fit();
+    });
+    this.#renderUpdate();
     this.#renderHome();
     this.#renderAccount();
     this.#syncNav();
@@ -442,6 +477,8 @@ export class HhAppBar extends Base {
     this.#offTheme = undefined;
     this.#offLang?.();
     this.#offLang = undefined;
+    this.#offUpdate?.();
+    this.#offUpdate = undefined;
   }
 
   attributeChangedCallback(name: string) {
@@ -480,8 +517,8 @@ export class HhAppBar extends Base {
   };
 
   /**
-   * Keeps the logo, the app's name and the account controls on one row: Sign in drops to its icon
-   * only when its words would push it onto a second line. Measured, so it holds for every app name
+   * Keeps the logo, the app's name and the account controls on one row: Sign in and Update drop to
+   * their icons only when their words would push them onto a second line. Measured, so it holds for every app name
    * and language rather than at a guessed width.
    */
   #fit() {
@@ -489,7 +526,7 @@ export class HhAppBar extends Base {
     const home = this.#root.querySelector<HTMLElement>('.home')!;
     const end = this.#root.querySelector<HTMLElement>('.end')!;
     this.removeAttribute('compact');
-    if (!this.#root.querySelector('.signin')) return;
+    if (!this.#root.querySelector('.signin') && this.#root.querySelector<HTMLElement>('.update')!.hidden) return;
     const a = home.getBoundingClientRect();
     const b = end.getBoundingClientRect();
     const header = this.#root.querySelector('header')!;
@@ -502,6 +539,19 @@ export class HhAppBar extends Base {
     const assigned = slot.assignedElements();
     this.#root.querySelector<HTMLElement>('.nav')!.hidden = assigned.length === 0;
     this.toggleAttribute('bottom-nav', assigned.length > 0 && assigned.every((el) => el.hasAttribute('data-bottom-nav')));
+  }
+
+  #renderUpdate() {
+    const button = this.#root.querySelector<HTMLButtonElement>('.update')!;
+    button.hidden = !updateReady();
+    if (button.hidden) return;
+    button.title = kt('appBar.updateReady');
+    button.setAttribute('aria-label', kt('appBar.updateReady'));
+    button.innerHTML = UPDATE_ICON; // trusted: static markup
+    const label = document.createElement('span');
+    label.className = 'label';
+    label.textContent = kt('appBar.update');
+    button.append(label);
   }
 
   #renderAccount() {
@@ -791,6 +841,9 @@ const THEME_KEYS = { auto: 'theme.auto', light: 'theme.light', dark: 'theme.dark
 // lucide "log-in", for Sign in on narrow phones.
 const SIGN_IN_ICON =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg>';
+
+const UPDATE_ICON =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>';
 
 const SETTINGS_ICON =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"/><path d="M19 7h-9"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>';

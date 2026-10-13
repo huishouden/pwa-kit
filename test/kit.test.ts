@@ -171,3 +171,11 @@ test('stable chunks: React and Firebase out of the app chunk, nothing loaded laz
   expect(stableChunks().config({})).toEqual({ build: { rollupOptions: { output: { codeSplitting: { groups: STABLE_CHUNK_GROUPS } } } } });
   expect(stableChunks().config({ build: { rollupOptions: { output: { codeSplitting: false } } } })).toEqual({});
 });
+
+describe('updates (STANDARD.md "Updates")', () => {
+  test('the worker waits for ./update to apply a new version; the first install still takes the page', () => {
+    const w = pwaWorkbox({ name: 'Pet', description: 'd', themeColor: '#000', backgroundColor: '#fff', base: '/pet/' });
+    expect(w.skipWaiting).toBe(false);
+    expect(w.clientsClaim).toBe(true);
+  });
+});

@@ -173,6 +173,37 @@ describe('stripCdn and the fallback script', () => {
   });
 });
 
+describe('the fallback script after the page has loaded', () => {
+  test('a CDN file failing before load replaces the page once; after load it never navigates', () => {
+    const g = globalThis as unknown as Record<string, unknown>;
+    const saved = { location: g.location, history: g.history, addEventListener: g.addEventListener };
+    const on: Record<string, (e: unknown) => void> = {};
+    const replaced: string[] = [];
+    try {
+      g.addEventListener = (type: string, fn: (e: unknown) => void) => (on[type] = fn);
+      g.location = { pathname: '/pet/', hash: '', search: '?tab=care', replace: (u: string) => replaced.push(u) };
+      new Function(cdnFallbackScript(ASSET_ORIGINS.production, '/pet/index.site.html'))();
+      const css = { target: { tagName: 'LINK', rel: 'stylesheet', href: `${ASSET_ORIGINS.production}/pet/assets/lazy-a.css` } };
+      on.load({});
+      on.error(css);
+      on.error({ target: { tagName: 'SCRIPT', src: `${ASSET_ORIGINS.production}/pet/assets/index-a.js` } });
+      expect(replaced, 'after load: nothing').toEqual([]);
+    } finally {
+      Object.assign(g, saved);
+    }
+    try {
+      g.addEventListener = (type: string, fn: (e: unknown) => void) => (on[type] = fn);
+      g.location = { pathname: '/pet/', hash: '', search: '?tab=care', replace: (u: string) => replaced.push(u) };
+      new Function(cdnFallbackScript(ASSET_ORIGINS.production, '/pet/index.site.html'))();
+      on.error({ target: { tagName: 'SCRIPT', src: `${ASSET_ORIGINS.production}/pet/assets/index-a.js` } });
+      on.error({ target: { tagName: 'SCRIPT', src: `${ASSET_ORIGINS.production}/pet/assets/index-a.js` } });
+      expect(replaced).toEqual([`/pet/index.site.html#hh-from=${encodeURIComponent('/pet/?tab=care')}`]);
+    } finally {
+      Object.assign(g, saved);
+    }
+  });
+});
+
 describe('Vite preset', () => {
   const app = { name: 'Pet', description: 'd', themeColor: '#000', backgroundColor: '#fff', base: '/pet/' };
   test('assetOriginOf: option, else HH_ASSET_ORIGIN, else none; origins only', () => {

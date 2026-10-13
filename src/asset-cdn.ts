@@ -231,13 +231,15 @@ export function cdnOriginIn(text: string): string | null {
 export const SITE_PAGE = 'index.site.html';
 
 /**
- * The page's fallback, inline first in <head>. When a script or stylesheet from the CDN fails to
- * load, or a CDN script fails to parse before the page has loaded (the CDN's Brotli reaching a
+ * The page's fallback, inline first in <head>. When, before the page has loaded, a script or
+ * stylesheet from the CDN fails to load or a CDN script fails to parse (the CDN's Brotli reaching a
  * client that didn't ask for it, through a proxy that rewrote Accept-Encoding), the page is
  * replaced once by `<base>index.site.html`, the same page naming the site's own assets, with the
  * address kept in the fragment. That page (origin empty) only puts the address back, before the
- * app reads it. The service worker leaves index.site.html to the network.
+ * app reads it. The service worker leaves index.site.html to the network. Once the page has loaded
+ * it never navigates: a file loaded later that fails (a lazy chunk) is the app's to handle, and
+ * `./update` offers the new version instead of taking the person away from what they were doing.
  */
 export function cdnFallbackScript(origin: string, sitePage: string): string {
-  return `(function(o,p){var k="#hh-from=";if(location.pathname===p&&location.hash.indexOf(k)===0){try{history.replaceState(history.state,"",decodeURIComponent(location.hash.slice(k.length)))}catch(x){}}if(!o)return;var gone=0,loaded=0;addEventListener("load",function(){loaded=1});addEventListener("error",function(e){var t=e.target,u=t&&t.tagName?t.src||t.href||"":e.filename||"";if(gone||u.indexOf(o+"/"))return;if(t&&t.tagName){if(t.tagName==="LINK"&&t.rel!=="stylesheet")return}else if(loaded||!e.error||e.error.name!=="SyntaxError")return;gone=1;location.replace(p+k+encodeURIComponent(location.pathname+location.search+location.hash))},true)})(${JSON.stringify(origin)},${JSON.stringify(sitePage)});`;
+  return `(function(o,p){var k="#hh-from=";if(location.pathname===p&&location.hash.indexOf(k)===0){try{history.replaceState(history.state,"",decodeURIComponent(location.hash.slice(k.length)))}catch(x){}}if(!o)return;var gone=0,loaded=0;addEventListener("load",function(){loaded=1});addEventListener("error",function(e){var t=e.target,u=t&&t.tagName?t.src||t.href||"":e.filename||"";if(gone||u.indexOf(o+"/"))return;if(loaded)return;if(t&&t.tagName){if(t.tagName==="LINK"&&t.rel!=="stylesheet")return}else if(!e.error||e.error.name!=="SyntaxError")return;gone=1;location.replace(p+k+encodeURIComponent(location.pathname+location.search+location.hash))},true)})(${JSON.stringify(origin)},${JSON.stringify(sitePage)});`;
 }

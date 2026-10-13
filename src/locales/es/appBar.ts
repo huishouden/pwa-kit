@@ -21,6 +21,8 @@ export default {
   'appBar.signOut': 'Cerrar sesión',
   'appBar.theme': 'Tema',
   'appBar.language': 'Idioma',
+  'appBar.update': 'Actualizar',
+  'appBar.updateReady': 'Hay una versión nueva: actualizar ahora',
   'theme.auto': 'Automático',
   'theme.light': 'Claro',
   'theme.dark': 'Oscuro',

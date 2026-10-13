@@ -46,8 +46,9 @@ Firebase's `/__/`, to `navigateFallbackDenylist`, so those navigations go to the
 reads the paths from `apps.json`. Asset requests from an app page the portal's worker controls fall
 through to the network: no precache route matches them.
 
-Updates are unchanged: `registerType: 'autoUpdate'`, `skipWaiting` and `clientsClaim` per worker;
-`sw.js`, `registerSW.js`, `index.html` and manifests are `no-cache` under every base.
+Updates: one worker per base, which installs a new version and waits until `./update` applies it
+(at launch, when the page is hidden with nothing unsaved, or from the Update button; STANDARD.md
+"Updates"), then claims its pages; `sw.js`, `index.html` and manifests are `no-cache` under every base.
 
 Push: the notification click handler reuses a window inside the tapped worker's scope (not any
 window of the origin, which would now be another app), and icons resolve against the scope.

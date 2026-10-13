@@ -21,6 +21,8 @@ export default {
   'appBar.signOut': 'Uitloggen',
   'appBar.theme': 'Thema',
   'appBar.language': 'Taal',
+  'appBar.update': 'Bijwerken',
+  'appBar.updateReady': 'Er is een nieuwe versie: nu bijwerken',
   'theme.auto': 'Automatisch',
   'theme.light': 'Licht',
   'theme.dark': 'Donker',

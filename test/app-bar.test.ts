@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { AppBar } from '../src/react/app-bar';
 import { displayNameOf, initialOf, isSuite, sameSite, versionLabel } from '../src/app-bar';
 import { resetI18nForTests, setLangChoice } from '../src/i18n';
+import { offerUpdate, resetUpdatesForTests, startUpdates } from '../src/update';
 
 describe('app bar helpers', () => {
   test('the initial comes from the name, then the email', () => {
@@ -60,6 +61,34 @@ describe('<hh-app-bar>', () => {
     expect($('.suite')!.textContent).toBe('Huishouden');
     expect($('.suite')!.hidden).toBe(false);
     expect($('h1')!.textContent).toBe('Baby');
+  });
+
+  test('no Update button until a new version is ready; then a small one that applies it', () => {
+    resetUpdatesForTests();
+    let reloads = 0;
+    const noop = () => {};
+    startUpdates({
+      base: '/baby/',
+      env: {
+        serviceWorker: { register: () => new Promise(noop), addEventListener: noop, controller: {} } as unknown as ServiceWorkerContainer,
+        reload: () => reloads++,
+        setInterval: noop,
+        setTimeout: noop,
+      },
+    });
+    try {
+      const { $ } = mount();
+      expect($('.update')!.hidden).toBe(true);
+      offerUpdate();
+      const button = $('.update') as HTMLButtonElement;
+      expect(button.hidden).toBe(false);
+      expect(button.textContent).toBe('Update');
+      expect(button.getAttribute('aria-label')).toBe('A new version is ready: update now');
+      button.click();
+      expect(reloads).toBe(1);
+    } finally {
+      resetUpdatesForTests();
+    }
   });
 
   test('the portal shows one name', () => {

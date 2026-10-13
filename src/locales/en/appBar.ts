@@ -18,6 +18,8 @@ export default {
   'appBar.signOut': 'Sign out',
   'appBar.theme': 'Theme',
   'appBar.language': 'Language',
+  'appBar.update': 'Update',
+  'appBar.updateReady': 'A new version is ready: update now',
   'theme.auto': 'Automatic',
   'theme.light': 'Light',
   'theme.dark': 'Dark',

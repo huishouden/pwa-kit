@@ -182,7 +182,12 @@ rather than copying the class strings; the shapes are:
   saved, what signing in shows). On phones one line, the chip and a short "Nothing is saved." that
   opens the sentence on a tap.
 - **Empty and loading states:** one sentence and, if useful, one action. No spinners longer than a
-  second without text.
+  second without text. While an app opens (the session restoring, the first data loading) it shows
+  its frame and tabs over `ScreenSkeleton`, never a sign-in screen or empty state that is then
+  replaced.
+- **Update button:** when a new version is ready the app bar shows a small outlined "Update" pill
+  before the account; it never interrupts and nothing reloads until it is tapped or the app is put
+  away (STANDARD.md "Updates").
 
 ## Completion
 
