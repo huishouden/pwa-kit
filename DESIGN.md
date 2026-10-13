@@ -191,7 +191,9 @@ rather than copying the class strings; the shapes are:
   knows before sign-in (none when they depend on the household, as Baby's do), over
   `ScreenSkeleton`. The same props as the loaded `AppFrame`, so the app bar, the tabs and the main
   column don't move between the phases or when the app arrives. Never a sign-in screen or empty
-  state that is then replaced.
+  state that is then replaced. When the wait goes badly (a connection error), `note` puts one muted
+  status line above the placeholder ("Still connecting. Retrying automatically."), in the caller's
+  words and page language, announced politely; the frame stays the opening's.
 - **Update button:** when a new version is ready the app bar shows a small outlined "Update" pill
   before the account; it never interrupts and nothing reloads until it is tapped or the app is put
   away (STANDARD.md "Updates").
