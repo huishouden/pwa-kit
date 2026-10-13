@@ -34,7 +34,7 @@ export function useUrlParam(name: string): [string | null, (value: string | null
 export interface UrlTabOptions {
   /** The query parameter; default `tab`. */
   param?: string;
-  /** Also read `#<id>` (an app that kept its tab in the fragment): moved into the query on first render. */
+  /** Also read `#<id>` (an app that kept its tab in the fragment): moved into the query, on opening or when such a link is followed while open. */
   legacyHash?: boolean;
 }
 
@@ -46,14 +46,14 @@ export interface UrlTabOptions {
 export function useUrlTab<T extends string>(ids: readonly T[], fallback: T, { param = 'tab', legacyHash = false }: UrlTabOptions = {}): [T, (id: T, options?: { replace?: boolean; also?: Record<string, string | null> }) => void] {
   const url = useUrl();
   const tab = tabFromUrl(url, ids, fallback, { param, legacyHash });
+  const hashTab = legacyHash ? decodeURIComponent(new URL(url).hash.slice(1)) : '';
+  const known = (ids as readonly string[]).includes(hashTab);
   useEffect(() => {
-    if (!legacyHash || !location.hash) return;
-    const hash = decodeURIComponent(location.hash.slice(1));
-    if (!(ids as readonly string[]).includes(hash)) return;
-    // An old #tab link: the same screen, with the tab where the rest of the suite keeps it.
+    if (!known) return;
+    // An old #tab link, on opening or followed while open: the same screen, with the tab where the rest of the suite keeps it.
     history.replaceState(history.state, '', `${location.pathname}${location.search}`);
-    setUrlParams({ [param]: hash === fallback ? null : hash }, { replace: true });
-  }, [legacyHash, ids, fallback, param]);
+    setUrlParams({ [param]: hashTab === fallback ? null : hashTab }, { replace: true });
+  }, [known, hashTab, fallback, param]);
   const choose = useCallback(
     (id: T, { replace = false, also = {} }: { replace?: boolean; also?: Record<string, string | null> } = {}) =>
       setUrlParams({ ...also, [param]: id === fallback ? null : id }, { replace }),

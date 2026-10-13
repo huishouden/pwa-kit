@@ -39,6 +39,13 @@ describe('useUrlTab and useUrlParam', () => {
     expect(tab).toBe('care');
     expect(location.pathname + location.search + location.hash).toBe('/pet/?tab=care');
     expect(history.length).toBe(before);
+    // A #tab link followed while the app is open (hashchange) switches to it the same way.
+    act(() => {
+      history.pushState(null, '', '/pet/?tab=care#pets');
+      dispatchEvent(new Event('hashchange'));
+    });
+    expect(tab).toBe('pets');
+    expect(location.pathname + location.search + location.hash).toBe('/pet/?tab=pets');
     act(() => root.unmount());
   });
 

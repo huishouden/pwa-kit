@@ -20,6 +20,8 @@ describe('url-state', () => {
     expect(tabFromUrl('https://x.test/pet/#pets', ids, 'home')).toBe('home');
     expect(tabFromUrl('https://x.test/pet/#pets', ids, 'home', { legacyHash: true })).toBe('pets');
     expect(tabFromUrl('https://x.test/pet/?view=pets', ids, 'home', { param: 'view' })).toBe('pets');
+    expect(tabFromUrl('https://x.test/pet/?tab=care#pets', ids, 'home', { legacyHash: true }), 'a fragment link just followed wins').toBe('pets');
+    expect(tabFromUrl('https://x.test/pet/?tab=care#top', ids, 'home', { legacyHash: true })).toBe('care');
   });
 
   test('setUrlParams pushes an entry (or replaces it) and tells listeners; Back is a popstate they hear too', () => {

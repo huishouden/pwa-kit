@@ -44,14 +44,15 @@ export function onUrlChange(listener: () => void): () => void {
 }
 
 /**
- * The tab an address names: `?<param>=` when it is one of `ids`, else (for apps that once kept the tab
- * in the fragment) `#<id>` when `legacyHash`, else `fallback`.
+ * The tab an address names: (for apps that once kept the tab in the fragment, with `legacyHash`)
+ * `#<id>`, else `?<param>=` when it is one of `ids`, else `fallback`.
  */
 export function tabFromUrl<T extends string>(href: string, ids: readonly T[], fallback: T, { param = 'tab', legacyHash = false }: { param?: string; legacyHash?: boolean } = {}): T {
   const url = new URL(href);
-  const named = url.searchParams.get(param);
-  if (named && (ids as readonly string[]).includes(named)) return named as T;
+  // A fragment naming a tab is a link just followed (an old agenda link): it wins over the query.
   const hash = decodeURIComponent(url.hash.slice(1));
   if (legacyHash && (ids as readonly string[]).includes(hash)) return hash as T;
+  const named = url.searchParams.get(param);
+  if (named && (ids as readonly string[]).includes(named)) return named as T;
   return fallback;
 }
