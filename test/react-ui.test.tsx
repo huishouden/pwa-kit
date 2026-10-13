@@ -12,7 +12,7 @@ if (typeof document === 'undefined') GlobalRegistrator.register({ url: 'https://
 afterAll(() => GlobalRegistrator.unregister());
 const { createRoot } = await import('react-dom/client');
 
-const { Chip, CopyButton, Dialog, GoogleWindowWait, Field, SampleBanner, SectionTabs, SuggestionChip, Toast, StatusPill, splitTabs, useToast } = await import('../src/react/ui');
+const { Chip, CopyButton, Dialog, ScreenSkeleton, GoogleWindowWait, Field, SampleBanner, SectionTabs, SuggestionChip, Toast, StatusPill, splitTabs, useToast } = await import('../src/react/ui');
 const { Clock, History, Home, Phone, Shield, Wrench } = await import('lucide-react');
 const { ClockProvider, useClock } = await import('../src/react/clock');
 const { CalendarImportDialog, CalendarHint } = await import('../src/react/calendar');
@@ -29,6 +29,19 @@ function render(node: React.ReactNode): { root: Root; el: HTMLElement } {
 }
 const click = (el: Element | null) => act(() => (el as HTMLElement).click());
 const byText = (text: string) => Array.from(document.querySelectorAll('button')).find((b) => b.textContent?.trim() === text) ?? null;
+
+describe('ScreenSkeleton', () => {
+  test('a busy placeholder of rows that says what is loading to screen readers only', () => {
+    const { el, root } = render(<ScreenSkeleton rows={4} label="Loading the household's day." />);
+    const section = el.querySelector('section')!;
+    expect(section.getAttribute('aria-busy')).toBe('true');
+    expect(section.getAttribute('aria-label')).toBe('Loading…');
+    expect(section.querySelector('.sr-only')!.textContent).toBe("Loading the household's day.");
+    expect(section.querySelectorAll('li')).toHaveLength(4);
+    expect(section.querySelector('ul')!.getAttribute('aria-hidden')).toBe('true');
+    act(() => root.unmount());
+  });
+});
 
 describe('Dialog', () => {
   test('titled, focuses the first field, closes on Escape and on the scrim', () => {

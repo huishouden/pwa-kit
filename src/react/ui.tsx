@@ -404,12 +404,13 @@ const pulse = 'animate-pulse rounded bg-sunken motion-reduce:animate-none';
  * until the session is restored and the first data has arrived, a still placeholder the size of a
  * screen's rows: an overline and a card of `rows` rows. Signed-in or not, no sign-in screen, empty
  * state or half-drawn app flashes before it, and nothing jumps when the real screen replaces it.
- * Screen readers hear "Loading…" (or `label`).
+ * Screen readers hear "Loading…" and `label` ("Loading the household's day.").
  */
 export function ScreenSkeleton({ rows = 3, label }: { rows?: number; label?: string }) {
   const kt = useKitT();
   return (
-    <section aria-busy="true" aria-label={label ?? kt('common.loading')} data-hh-skeleton="">
+    <section aria-busy="true" aria-label={kt('common.loading')} data-hh-skeleton="">
+      {label && <p className="sr-only">{label}</p>}
       <div className={`mb-2 h-4 w-24 ${pulse}`} aria-hidden="true" />
       <ul className={`${cardClass} divide-y divide-line`} aria-hidden="true">
         {Array.from({ length: rows }, (_, i) => (
