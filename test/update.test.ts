@@ -7,6 +7,7 @@ import {
   TAKEOVER_TIMEOUT_MS,
   UPDATE_CHECK_MS,
   hasUnsavedInput,
+  holdUpdates,
   mayApply,
   mayReload,
   offerUpdate,
@@ -247,6 +248,35 @@ describe('startUpdates', () => {
     expect(w.messages, 'an open sheet holds too').toEqual([]);
     h.show();
     document.body.innerHTML = '';
+    h.hide();
+    expect(w.messages).toEqual([SKIP_WAITING]);
+  });
+
+  test('a listener added before startUpdates hears the updater, and its unsubscribe works after', async () => {
+    resetUpdatesForTests();
+    const seen: boolean[] = [];
+    const off = onUpdateReady((r) => seen.push(r));
+    const h = harness();
+    await h.settle();
+    h.deploy();
+    expect(seen).toEqual([true]);
+    off();
+    h.updates.offer();
+    h.sw.emit('controllerchange');
+    expect(seen).toEqual([true]);
+  });
+
+  test('a hold taken before startUpdates holds, and lets go after', async () => {
+    resetUpdatesForTests();
+    const release = holdUpdates();
+    const h = harness();
+    await h.settle();
+    const w = h.deploy();
+    h.hide();
+    expect(w.messages).toEqual([]);
+    h.show();
+    release();
+    release();
     h.hide();
     expect(w.messages).toEqual([SKIP_WAITING]);
   });

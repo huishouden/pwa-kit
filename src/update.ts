@@ -115,22 +115,28 @@ export interface StartUpdatesOptions {
   env?: Partial<UpdateEnv>;
 }
 
+/** Who listens and what holds, shared by the page's updater and the module's functions (which may run before it starts). */
+export interface UpdateShared {
+  listeners: Set<Listener>;
+  holds: { count: number };
+}
+
 /** The running page's updater (one per page); `startUpdates` returns it. */
 export class Updates {
   #env: UpdateEnv;
+  #shared: UpdateShared;
   #registration: ServiceWorkerRegistration | null = null;
   #ready = false;
   #applying: ApplyReason | null = null;
   #interacted = false;
   #interactedSinceApply = false;
   #edited = new Set<Element>();
-  #holds = 0;
   #lastCheck = 0;
-  #listeners = new Set<Listener>();
   #reloaded = false;
 
-  constructor(env: UpdateEnv) {
+  constructor(env: UpdateEnv, shared: UpdateShared = { listeners: new Set(), holds: { count: 0 } }) {
     this.#env = env;
+    this.#shared = shared;
   }
 
   /** A new version is waiting, or this page runs an older one than its worker: the Update button shows. */
@@ -145,24 +151,20 @@ export class Updates {
       visible: this.#env.document.visibilityState === 'visible',
       launching: this.#env.now() < LAUNCH_WINDOW_MS,
       interacted: this.#interacted,
-      unsaved: hasUnsavedInput(this.#env.document, this.#edited, this.#holds),
+      unsaved: hasUnsavedInput(this.#env.document, this.#edited, this.#shared.holds.count),
     };
   }
 
   onReady(listener: Listener): () => void {
-    this.#listeners.add(listener);
-    return () => this.#listeners.delete(listener);
+    this.#shared.listeners.add(listener);
+    return () => {
+      this.#shared.listeners.delete(listener);
+    };
   }
 
   /** Something a reload would lose that the page can't see (an upload, a timer); call the result to let go. */
   hold(): () => void {
-    this.#holds++;
-    let released = false;
-    return () => {
-      if (released) return;
-      released = true;
-      this.#holds--;
-    };
+    return takeHold(this.#shared.holds);
   }
 
   /** The person asked (the Update button): the waiting version takes over and the page reloads. */
@@ -277,12 +279,23 @@ export class Updates {
   #setReady(ready: boolean) {
     if (this.#ready === ready) return;
     this.#ready = ready;
-    for (const listener of this.#listeners) listener(ready);
+    for (const listener of [...this.#shared.listeners]) listener(ready);
   }
 }
 
+function takeHold(holds: { count: number }): () => void {
+  holds.count++;
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    holds.count--;
+  };
+}
+
 let current: Updates | null = null;
-const early = new Set<Listener>();
+// Shared with the updater once it starts, so a listener or hold taken before then still counts and lets go.
+const shared: UpdateShared = { listeners: new Set(), holds: { count: 0 } };
 let earlyOffer = false;
 
 /** Starts the page's updater (once; later calls return the first). No-op where there are no service workers. */
@@ -298,10 +311,8 @@ export function startUpdates({ base = '/', checkEveryMs = UPDATE_CHECK_MS, env =
     now: env.now ?? (() => performance.now()),
     setInterval: env.setInterval ?? ((fn, ms) => setInterval(fn, ms)),
     setTimeout: env.setTimeout ?? ((fn, ms) => setTimeout(fn, ms)),
-  });
+  }, shared);
   current = updates;
-  for (const listener of early) updates.onReady(listener);
-  early.clear();
   if (earlyOffer) updates.offer();
   void updates.start(base.endsWith('/') ? base : `${base}/`, checkEveryMs);
   return updates;
@@ -314,10 +325,9 @@ export function updateReady(): boolean {
 
 /** Calls `listener` when an update becomes ready (or stops being); returns the unsubscribe. */
 export function onUpdateReady(listener: Listener): () => void {
-  if (current) return current.onReady(listener);
-  early.add(listener);
+  shared.listeners.add(listener);
   return () => {
-    early.delete(listener);
+    shared.listeners.delete(listener);
   };
 }
 
@@ -327,10 +337,9 @@ export function applyUpdate(): void {
   else if (typeof location !== 'undefined') location.reload();
 }
 
-/** Keeps a waiting version from applying while the page is hidden, until the returned function is called. */
+/** Keeps a waiting version from applying while the page is hidden, until the returned function is called (before or after `startUpdates`). */
 export function holdUpdates(): () => void {
-  if (current) return current.hold();
-  return () => {};
+  return takeHold(shared.holds);
 }
 
 /** A file this page needs is gone from the server: show the Update button (see `retryImport`). */
@@ -361,6 +370,7 @@ export async function retryImport<T>(load: () => Promise<T>, waitMs = 1000): Pro
 /** @internal Tests: forget the page's updater. */
 export function resetUpdatesForTests(): void {
   current = null;
-  early.clear();
+  shared.listeners.clear();
+  shared.holds.count = 0;
   earlyOffer = false;
 }

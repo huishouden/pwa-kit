@@ -34,6 +34,7 @@ describe('ScreenSkeleton', () => {
   test('a busy placeholder of rows that says what is loading to screen readers only', () => {
     const { el, root } = render(<ScreenSkeleton rows={4} label="Loading the household's day." />);
     const section = el.querySelector('section')!;
+    expect(section.getAttribute('role')).toBe('status');
     expect(section.getAttribute('aria-busy')).toBe('true');
     expect(section.getAttribute('aria-label')).toBe('Loading…');
     expect(section.querySelector('.sr-only')!.textContent).toBe("Loading the household's day.");
