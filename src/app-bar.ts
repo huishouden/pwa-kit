@@ -207,8 +207,11 @@ h1 { margin: 0; font-size: 18px; line-height: 1.25; font-weight: 700; letter-spa
 .end { display: flex; align-items: center; gap: 12px; }
 .account { position: relative; display: flex; }
 @media (min-width: 640px) {
-  .inner { padding-left: max(24px, env(safe-area-inset-left)); padding-right: max(24px, env(safe-area-inset-right)); }
+  .inner { justify-content: flex-start; padding-left: max(24px, env(safe-area-inset-left)); padding-right: max(24px, env(safe-area-inset-right)); }
   .nav { order: 0; width: auto; }
+  /* The tabs sit beside the name whatever the account area holds (nothing while the session
+     restores, Sign in, the avatar, Update), so they never move when it changes. */
+  .end { margin-left: auto; }
 }
 button { font-family: inherit; }
 .signin {

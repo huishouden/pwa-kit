@@ -222,6 +222,10 @@
       "types": "./dist/react/clock.d.ts",
       "default": "./dist/react/clock.js"
     },
+    "./react/frame": {
+      "types": "./dist/react/frame.d.ts",
+      "default": "./dist/react/frame.js"
+    },
     "./react/home": {
       "types": "./dist/react/home.d.ts",
       "default": "./dist/react/home.js"
@@ -434,7 +438,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "lint": "tsc --noEmit",
-    "test": "bun test test && bun test ./test/sdk/firestore.sdk.ts && bun test ./test/isolated/app.mocked.ts && bun test ./test/isolated/home.mocked.ts && bun test ./test/isolated/contact-positions.mocked.ts && bun test ./test/isolated/household-create.mocked.ts",
+    "test": "bun test test && bun test ./test/sdk/firestore.sdk.ts && bun test ./test/isolated/app.mocked.ts && bun test ./test/isolated/home.mocked.ts && bun test ./test/isolated/contact-positions.mocked.ts && bun test ./test/isolated/household-create.mocked.ts && bun test ./test/isolated/frame.mocked.tsx",
     "test:emulator": "firebase emulators:exec --only firestore --project demo-kit-reads \"bun test ./test/sdk/reads.sdk.ts && bun test ./test/sdk/read-meter-browser.sdk.ts && bun test ./test/sdk/firestore.sdk.ts\""
   },
   "peerDependencies": {
