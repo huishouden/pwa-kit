@@ -96,7 +96,7 @@ export function featuresOf(policy: string | undefined): DeviceFeatures {
 const NO_CACHE = [{ key: 'Cache-Control', value: 'no-cache' }];
 const IMMUTABLE = [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }];
 /** Files that must be fetched fresh for an update to reach a device. */
-export const FRESH_FILES = ['sw.js', 'registerSW.js', 'hh-push-sw.js', 'hh-share-sw.js', 'index.html', 'index.site.html', 'manifest.webmanifest', 'manifest.json'];
+export const FRESH_FILES = ['sw.js', 'hh-push-sw.js', 'hh-share-sw.js', 'index.html', 'index.site.html', 'manifest.webmanifest', 'manifest.json'];
 
 export interface HostingSite {
   site: string;

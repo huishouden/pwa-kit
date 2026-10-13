@@ -93,7 +93,7 @@ export async function serveBuilds(builds: Record<string, string>, base = '/'): P
       }
       file = join(dir, 'index.html');
     }
-    const fresh = /(?:^|\/)(?:sw\.js|[^/]*\.html|manifest\.webmanifest|registerSW\.js|hh-[a-z]+-sw\.js)$/.test(file);
+    const fresh = /(?:^|\/)(?:sw\.js|[^/]*\.html|manifest\.webmanifest|hh-[a-z]+-sw\.js)$/.test(file);
     res.writeHead(200, {
       'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream',
       'Cache-Control': fresh ? 'no-cache' : 'public, max-age=31536000, immutable',

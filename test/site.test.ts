@@ -97,7 +97,7 @@ describe('siteConfig', () => {
 
   test("workers, manifests and pages are fetched fresh; each app's assets are immutable", () => {
     const cache = (p: string) => headersFor(config.headers!, p).get('cache-control');
-    for (const p of ['/sw.js', '/pet/sw.js', '/pet/registerSW.js', '/baby/hh-push-sw.js', '/pet/manifest.webmanifest', '/', '/pet/', '/hh-site.json']) expect(cache(p), p).toBe('no-cache');
+    for (const p of ['/sw.js', '/pet/sw.js', '/baby/hh-push-sw.js', '/pet/manifest.webmanifest', '/', '/pet/', '/hh-site.json']) expect(cache(p), p).toBe('no-cache');
     for (const p of ['/assets/index-abc.js', '/pet/assets/index-abc.js', '/baby/assets/x.css']) expect(cache(p), p).toContain('immutable');
     expect(cache('/pet/pwa-192.png')).toBeUndefined();
   });
