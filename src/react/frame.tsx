@@ -113,6 +113,13 @@ export interface AppOpeningProps extends Omit<AppFrameProps, 'children'> {
   label?: string;
   /** Placeholder rows (`ScreenSkeleton`). */
   rows?: number;
+  /**
+   * A short status line above the placeholder, for a wait that is going badly ("Still connecting.
+   * Retrying automatically."): the caller's words, in the page language, and any detail line as a
+   * child span. Muted small text, announced politely to screen readers. It sits inside the
+   * placeholder's column, so the frame does not move.
+   */
+  note?: ReactNode;
 }
 
 /**
@@ -122,13 +129,22 @@ export interface AppOpeningProps extends Omit<AppFrameProps, 'children'> {
  * Screen readers hear "Loading…" and the phase: "Opening Pet.", "Finding your household.",
  * "Getting Pet ready.".
  */
-export function AppOpening({ phase, label, rows, layout = 'page', onSettings: _settings, settingsLabel: _settingsLabel, onView: _onView, view: _view, ...frame }: AppOpeningProps) {
+export function AppOpening({ phase, label, rows, note, layout = 'page', onSettings: _settings, settingsLabel: _settingsLabel, onView: _onView, view: _view, ...frame }: AppOpeningProps) {
   const kt = useKitT();
   const sentence = label ?? kt(PHASE_KEY[phase], { app: frame.app });
-  const skeleton = <ScreenSkeleton label={sentence} rows={rows} />;
+  const body = (
+    <>
+      {note ? (
+        <p className="mb-3 max-w-sm text-sm text-muted" role="status" aria-live="polite" data-hh-opening-note>
+          {note}
+        </p>
+      ) : null}
+      <ScreenSkeleton label={sentence} rows={rows} />
+    </>
+  );
   return (
     <Frame {...frame} layout={layout} opening>
-      {layout === 'list' ? <div className={listColumn}>{skeleton}</div> : skeleton}
+      {layout === 'list' ? <div className={listColumn}>{body}</div> : body}
     </Frame>
   );
 }

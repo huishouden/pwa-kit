@@ -108,6 +108,33 @@ describe('AppOpening', () => {
     expect(frame().className).toBe('flex h-full flex-col');
   });
 
+  test('a note shows above the placeholder, muted and announced politely; the frame is the same without it', () => {
+    render(<AppOpening {...bar} app="Tasks" glyph="check" layout="list" phase="data" />);
+    const plain = { outer: frame().className, main: document.querySelector('main')!.className, column: skeleton()!.parentElement!.className };
+    expect(document.querySelector('[data-hh-opening-note]')).toBeNull();
+    render(
+      <AppOpening {...bar} app="Tasks" glyph="check" layout="list" phase="data" note={<>Still connecting. Retrying automatically.<span className="block">offline</span></>} />,
+    );
+    const note = document.querySelector('[data-hh-opening-note]')!;
+    expect(note.textContent).toBe('Still connecting. Retrying automatically.offline');
+    expect(note.getAttribute('role')).toBe('status');
+    expect(note.getAttribute('aria-live')).toBe('polite');
+    expect(note.className).toContain('text-sm text-muted');
+    expect(note.nextElementSibling).toBe(skeleton());
+    expect(note.parentElement!.className).toBe(listColumn);
+    expect({ outer: frame().className, main: document.querySelector('main')!.className, column: skeleton()!.parentElement!.className }).toEqual(plain);
+    expect(frame().getAttribute('data-hh-frame')).toBe('opening');
+  });
+
+  test('the note is the caller\'s words in the page language', async () => {
+    await loadLang('nl');
+    await act(() => setLangChoice('nl', null));
+    render(<AppOpening {...bar} phase="data" note="Nog aan het verbinden." />);
+    expect(document.querySelector('[data-hh-opening-note]')!.textContent).toBe('Nog aan het verbinden.');
+    expect(sentence()).toBe('Pet wordt klaargezet.');
+    await act(() => setLangChoice('en', null));
+  });
+
   test('the app settings never show while opening: they belong to the loaded app', () => {
     const loadedFrame = { ...bar, onSettings: () => {}, settingsLabel: 'Pet settings' };
     render(<AppOpening {...loadedFrame} phase="session" />);
