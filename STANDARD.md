@@ -76,9 +76,16 @@ anyone: no reload under a half-filled form, an open sheet or a screen someone is
 - **A lazily loaded file that is gone** (a newer deploy removed it) is tried twice (`retryImport`);
   then the Update button offers the new version. Nothing navigates away on its own; the asset CDN's
   fallback (`./asset-cdn`) acts only before the page has loaded.
-- **Opening shows a stable frame.** Until the session is restored and the first data has arrived,
-  the app shows its own frame and tabs over `ScreenSkeleton` (`./react/ui`): never the sign-in screen,
-  an empty state or a half-drawn app that is then replaced.
+- **Opening shows a stable frame.** Until the session is restored, the household found and the
+  first data arrived, the app shows `AppOpening` (`./react/frame`) with the phase it waits for:
+  never the sign-in screen, an empty state or a half-drawn app that is then replaced. It is the
+  loaded app's `AppFrame` over `ScreenSkeleton`, given the same props (one object spread into both),
+  so nothing jumps between the phases or into the app. It shows the tabs known before sign-in and
+  their tab from the address (`useUrlTab`); it counts no view and says the phase to screen readers.
+  No app draws an opening frame of its own.
+- **Opening tests:** each app's `e2e/opening.spec.ts` runs `expectOpeningLinesUp` (phone and tablet,
+  light and dark) in `e2e:emulator`, and its `screenshots` script captures the opening frame
+  (`captureOpening`), so `hh dev evidence` shows it.
 - **Tests:** `./e2e-update` builds the app twice and serves the builds locally (`buildVersions`,
   `serveBuilds`); `expectUpdateWithoutReload` opens a deep screen with input on build A, deploys
   build B under it and checks the page did not reload, kept its screen and input, and applied B

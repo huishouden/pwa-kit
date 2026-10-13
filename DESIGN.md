@@ -79,8 +79,9 @@ forest-600. Only the glyph changes between apps: portal `home` (a door), Tasks `
 - Top: the Huishouden app bar, `<hh-app-bar>` from `@huishouden/pwa-kit/app-bar` (React:
   `AppBar` from `@huishouden/pwa-kit/react/app-bar`). Never hand-build it. It holds the family logo
   linking to the portal, "Huishouden" over the app's short name (the portal shows "Huishouden"
-  alone), the app's own tabs or switchers in the `nav` slot (beside the name on tablets, a second
-  row on phones; section tabs move to the bottom bar on phones, below), app buttons in the `actions` slot, and on the right "Sign in with Google" or the
+  alone), the app's own tabs or switchers in the `nav` slot (beside the name on tablets, where they
+  keep their place whatever the account area shows, a second row on phones; from 640px the bar is
+  78px tall with or without tabs; section tabs move to the bottom bar on phones, below), app buttons in the `actions` slot, and on the right "Sign in with Google" or the
   signed-in profile photo (`.hh-avatar`) opening the account menu: name, email, Theme (Automatic,
   Light, Dark), Language (Automatic, English, Español, Nederlands; each language named in itself),
   the app's own settings ("Tasks settings", `onSettings`), All apps, Privacy, Sign out, and the
@@ -90,6 +91,9 @@ forest-600. Only the glyph changes between apps: portal `home` (a door), Tasks `
   it onto a second row (a narrow phone, a long name, Spanish), Sign in shows its icon alone (still
   named "Sign in with Google"), so the logo, the app's name and the account controls stay on one row (`expectAppBarOneRow`). The bar follows the suite's theme by itself. Sticky, cream, a stone-200 rule below,
   content width 1200px.
+- One component draws it: `AppFrame` from `/react/frame` (the app bar, the app's tabs, the main
+  column in the app's `layout`), and `AppOpening` the same frame while the app opens. Apps don't
+  assemble the app bar, tabs and `<main>` themselves.
 - Sections: `SectionTabs` from `/react/ui`, never hand-built. From 640px they are a segmented
   control in the app bar. On phones they are a bar fixed to the bottom edge (no sideways-scrolling
   tabs): up to four sections with a lucide icon and a short label, and More opening a sheet with the
@@ -182,9 +186,12 @@ rather than copying the class strings; the shapes are:
   saved, what signing in shows). On phones one line, the chip and a short "Nothing is saved." that
   opens the sentence on a tap.
 - **Empty and loading states:** one sentence and, if useful, one action. No spinners longer than a
-  second without text. While an app opens (the session restoring, the first data loading) it shows
-  its frame and tabs over `ScreenSkeleton`, never a sign-in screen or empty state that is then
-  replaced.
+  second without text. While an app opens (the session restoring, the household being found, the
+  first data arriving) it shows `AppOpening` from `/react/frame`: its own frame, with the tabs it
+  knows before sign-in (none when they depend on the household, as Baby's do), over
+  `ScreenSkeleton`. The same props as the loaded `AppFrame`, so the app bar, the tabs and the main
+  column don't move between the phases or when the app arrives. Never a sign-in screen or empty
+  state that is then replaced.
 - **Update button:** when a new version is ready the app bar shows a small outlined "Update" pill
   before the account; it never interrupts and nothing reloads until it is tapped or the app is put
   away (STANDARD.md "Updates").
@@ -288,5 +295,6 @@ read it with `useTheme()` (`/react/theme`) when they need to know, e.g. for a ch
 | `pwa-design-check` | CI build job, every PR | Off-palette Tailwind colours, gradients, raw hex, `backdrop-blur`, other fonts, emoji in UI text |
 | `expectHuishoudenFrame` | Smoke tests against the live site | App bar present, logo links to the portal, the app's name, Inter |
 | `expectThemeConsistent` | Smoke tests against the live site | Dark from the first paint on a dark device: `.dark`, dark page and bar, the dark status bar, no visible text under 4.5:1; back to light when the device is |
+| `expectOpeningLinesUp` | An e2e spec on a local or emulator build | The opening frame and the loaded app line up on a phone and a tablet, light and dark: app bar, app name, main column, tabs, colours |
 | `expectBottomNav` | Smoke tests against the live site | Phone sections in a fixed bottom bar: at most five 48px items, current marked, content clear of it, More sheet over it; tabs back in the app bar on tablets |
 | `huishouden/design-language` reviewer | `cr review` on every PR | Everything above that needs judgment: hierarchy, copy tone, component shapes, consistency with the other apps |

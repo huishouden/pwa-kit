@@ -20,6 +20,7 @@ import { clockWords, toHhmm } from '../time';
 import { useKitT } from './i18n';
 import { kt } from '../i18n';
 import { COMPLETE_OPEN, COMPLETE_UNDO } from '../complete';
+import { BAR_TABS_HEIGHT } from '../bar-size';
 
 export const inputClass =
   'w-full min-h-11 rounded-xl border border-line bg-white px-3 py-2.5 text-base text-ink outline-none focus:border-forest-500 focus:ring-2 focus:ring-forest-200 dark:bg-forest-900 dark:focus:ring-forest-700';
@@ -472,6 +473,7 @@ export function SectionTabs({ tabs, tab, onTab }: { tabs: Tab[]; tab: string; on
         slot="nav"
         data-bottom-nav=""
         aria-label={kt('ui.sections')}
+        style={{ height: BAR_TABS_HEIGHT }}
         className="hidden w-full gap-1 overflow-x-auto rounded-2xl border border-line bg-surface p-1 sm:flex sm:w-auto"
       >
         {tabs.map((t) => (

@@ -244,6 +244,158 @@ export async function captureScreenshot(page: Page, name: string, options: Scree
   await page.screenshot({ path: `${dir}/${name}.png`, animations: 'disabled', caret: 'hide' });
 }
 
+/**
+ * Keeps every page of `target` in its opening frame (`AppOpening`, `./react/frame`): IndexedDB never
+ * opens, so Firebase Auth never finishes restoring the session and the app stays on its first
+ * phase. For screenshots of the opening frame and `expectOpeningLinesUp`; call before `goto`.
+ */
+export async function holdOpening(target: Page | BrowserContext): Promise<void> {
+  await target.addInitScript(() => {
+    const never = () =>
+      Object.assign(new EventTarget(), { result: null, error: null, readyState: 'pending', source: null, transaction: null, onsuccess: null, onerror: null, onupgradeneeded: null, onblocked: null });
+    Object.defineProperty(IDBFactory.prototype, 'open', { configurable: true, value: never });
+  });
+}
+
+/** The opening frame on screen (`[data-hh-frame="opening"]`), with its placeholder. */
+export async function expectOpeningFrame(page: Page): Promise<void> {
+  await expect(page.locator('[data-hh-frame="opening"]'), 'the opening frame').toBeVisible();
+  await expect(page.locator('[data-hh-frame="opening"] [data-hh-skeleton]'), 'its placeholder').toBeVisible();
+}
+
+/**
+ * A screenshot of the app's opening frame (`AppOpening`) at `path`: `holdOpening`, then
+ * `captureScreenshot` once the frame and its placeholder show. Name it `opening`.
+ */
+export async function captureOpening(page: Page, name = 'opening', options: Omit<ScreenshotOptions, 'prepare'> = {}): Promise<void> {
+  await holdOpening(page);
+  await captureScreenshot(page, name, { ...options, prepare: expectOpeningFrame });
+}
+
+/** The sizes and schemes `expectOpeningLinesUp` checks: a phone and a tablet, light and dark. */
+export const FRAME_VARIANTS = [
+  { name: 'phone, light', viewport: { width: 390, height: 844 }, mobile: true, colorScheme: 'light' },
+  { name: 'phone, dark', viewport: { width: 390, height: 844 }, mobile: true, colorScheme: 'dark' },
+  { name: 'tablet, light', viewport: { width: 1280, height: 800 }, mobile: false, colorScheme: 'light' },
+  { name: 'tablet, dark', viewport: { width: 1280, height: 800 }, mobile: false, colorScheme: 'dark' },
+] as const;
+
+export interface OpeningLineUpOptions {
+  /** The app's address: the test's `baseURL` fixture. */
+  baseURL: string | undefined;
+  /** The screen to open, relative to `baseURL` (`./?tab=care`). */
+  path?: string;
+  /** Waits for the loaded screen; by default, for the loaded frame (`[data-hh-frame=""]`). */
+  loaded?: (page: Page) => Promise<void>;
+  /**
+   * The opening frame's tabs against the loaded app's: `same` (the default), `subset` (the loaded
+   * app may add tabs it learns from the household, after the ones the opening showed), `none` (the
+   * opening shows none, as Baby's).
+   */
+  tabs?: 'same' | 'subset' | 'none';
+  /** Restrict to some of `FRAME_VARIANTS`. */
+  variants?: readonly (typeof FRAME_VARIANTS)[number][];
+  /** Before each `goto`: stubs, a frozen clock. */
+  prepare?: (page: Page) => Promise<void>;
+}
+
+interface Box {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+interface FrameLayoutSnapshot {
+  bar: Box;
+  title: Box;
+  main: { x: number; y: number; width: number };
+  tabs: { label: string; box: Box }[];
+  page: string;
+  barColour: string;
+}
+
+async function frameLayout(page: Page, mobile: boolean): Promise<FrameLayoutSnapshot> {
+  return page.evaluate((phone) => {
+    const box = (el: Element | null | undefined): Box => {
+      const r = el!.getBoundingClientRect();
+      return { x: Math.round(r.x), y: Math.round(r.y), width: Math.round(r.width), height: Math.round(r.height) };
+    };
+    const bar = document.querySelector('hh-app-bar')!;
+    const title = bar.shadowRoot?.querySelector('h1') ?? bar.querySelector('h1');
+    const main = box(document.querySelector('[data-hh-frame] main'));
+    const nav = phone ? document.querySelector('nav[data-hh-bottom-nav]') : bar.querySelector('nav[slot="nav"]');
+    const tabs = nav
+      ? Array.from(nav.querySelectorAll('button'))
+          .filter((b) => b.getClientRects().length > 0)
+          .map((b) => ({ label: (b.textContent ?? '').trim(), box: box(b) }))
+      : [];
+    return {
+      bar: box(bar),
+      title: box(title),
+      main: { x: main.x, y: main.y, width: main.width },
+      tabs,
+      page: getComputedStyle(document.querySelector('[data-hh-frame]')!).backgroundColor || getComputedStyle(document.body).backgroundColor,
+      barColour: getComputedStyle(bar).backgroundColor,
+    };
+  }, mobile);
+}
+
+/**
+ * The opening frame (`AppOpening`) and the loaded app line up, on a phone and a tablet, light and
+ * dark: the app bar's place and height, the app's name, the main column's left edge, top and width,
+ * every tab the opening shows (in the app bar from 640px, the bottom bar on phones) in the same
+ * place, and the same page and bar colours. The opening is held with `holdOpening`; the loaded app
+ * is the same address without the hold (signed out, the sample household). Within 1px.
+ */
+export async function expectOpeningLinesUp(browser: Browser, { baseURL, path = './', loaded, tabs = 'same', variants = FRAME_VARIANTS, prepare }: OpeningLineUpOptions): Promise<void> {
+  const near = (a: number, b: number) => Math.abs(a - b) <= 1;
+  const sameBox = (a: Box, b: Box) => near(a.x, b.x) && near(a.y, b.y) && near(a.width, b.width) && near(a.height, b.height);
+  for (const v of variants) {
+    const open = async (hold: boolean) => {
+      const context = await browser.newContext({ baseURL, viewport: v.viewport, isMobile: v.mobile, hasTouch: v.mobile, colorScheme: v.colorScheme, reducedMotion: 'reduce' });
+      const page = await context.newPage();
+      if (hold) await holdOpening(page);
+      if (prepare) await prepare(page);
+      await page.goto(path);
+      await page.evaluate(() => document.fonts.ready);
+      if (hold) await expectOpeningFrame(page);
+      else {
+        await expect(page.locator('[data-hh-frame=""]'), `${v.name}: the loaded frame`).toBeVisible({ timeout: 20_000 });
+        if (loaded) await loaded(page);
+      }
+      // The bar's own layout settles a frame after its fonts and account controls.
+      await page.waitForTimeout(100);
+      const snapshot = await frameLayout(page, v.mobile);
+      await context.close();
+      return snapshot;
+    };
+    const opening = await open(true);
+    const ready = await open(false);
+    const where = `${v.name}`;
+    expect(sameBox(opening.bar, ready.bar), `${where}: the app bar (opening ${JSON.stringify(opening.bar)}, loaded ${JSON.stringify(ready.bar)})`).toBe(true);
+    expect(sameBox(opening.title, ready.title), `${where}: the app's name (opening ${JSON.stringify(opening.title)}, loaded ${JSON.stringify(ready.title)})`).toBe(true);
+    expect(
+      near(opening.main.x, ready.main.x) && near(opening.main.y, ready.main.y) && near(opening.main.width, ready.main.width),
+      `${where}: the main column (opening ${JSON.stringify(opening.main)}, loaded ${JSON.stringify(ready.main)})`,
+    ).toBe(true);
+    expect(opening.page, `${where}: the page colour`).toBe(ready.page);
+    expect(opening.barColour, `${where}: the app bar's colour`).toBe(ready.barColour);
+    if (tabs === 'none') {
+      expect(opening.tabs, `${where}: no tabs while opening`).toEqual([]);
+      continue;
+    }
+    expect(opening.tabs.length, `${where}: the opening shows the app's tabs`).toBeGreaterThan(0);
+    if (tabs === 'same') expect(opening.tabs.map((t) => t.label), `${where}: the same tabs`).toEqual(ready.tabs.map((t) => t.label));
+    for (const t of opening.tabs) {
+      const match = ready.tabs.find((r) => r.label === t.label);
+      expect(match, `${where}: tab "${t.label}" in the loaded app`).toBeTruthy();
+      if (tabs === 'subset' && v.mobile) continue; // the phone's bar shares its width among all the tabs
+      expect(sameBox(t.box, match!.box), `${where}: tab "${t.label}" (opening ${JSON.stringify(t.box)}, loaded ${JSON.stringify(match!.box)})`).toBe(true);
+    }
+  }
+}
+
 export interface FrameOptions {
   /** The app's short name as the bar shows it ("Spending"); the portal's is "Huishouden". */
   app: string;

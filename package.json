@@ -222,6 +222,10 @@
       "types": "./dist/react/clock.d.ts",
       "default": "./dist/react/clock.js"
     },
+    "./react/frame": {
+      "types": "./dist/react/frame.d.ts",
+      "default": "./dist/react/frame.js"
+    },
     "./react/home": {
       "types": "./dist/react/home.d.ts",
       "default": "./dist/react/home.js"
