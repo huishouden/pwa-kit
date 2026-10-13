@@ -34,6 +34,7 @@
  * ```
  * React: `useT()`, `useLocale()`, `useLang()` from `@huishouden/pwa-kit/react/i18n`.
  */
+import { retryImport } from './update.js';
 import kitEn from './locales/en.js';
 
 export type Lang = 'en' | 'es' | 'nl';
@@ -370,10 +371,11 @@ export function registerKitMessages(en: object, loaders: Partial<Record<Exclude<
 async function load(loader: Loader | undefined): Promise<Messages | undefined> {
   if (!loader) return undefined;
   try {
-    const mod = await loader();
+    // Tried twice; a file still missing means a newer deploy replaced it, so the app bar offers the update.
+    const mod = await retryImport(loader);
     return ('default' in mod && typeof mod.default === 'object' ? mod.default : mod) as Messages;
   } catch {
-    return undefined; // offline before the chunk was cached: English for now
+    return undefined; // offline before the chunk was cached, or gone: English for now
   }
 }
 
