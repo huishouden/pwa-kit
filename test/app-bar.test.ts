@@ -6,6 +6,7 @@ import { AppBar } from '../src/react/app-bar';
 import { displayNameOf, initialOf, isSuite, sameSite, versionLabel } from '../src/app-bar';
 import { resetI18nForTests, setLangChoice } from '../src/i18n';
 import { offerUpdate, resetUpdatesForTests, startUpdates } from '../src/update';
+import { BAR_PADDING_Y, BAR_TABS_HEIGHT } from '../src/bar-size';
 
 describe('app bar helpers', () => {
   test('the initial comes from the name, then the email', () => {
@@ -275,6 +276,15 @@ describe('<hh-app-bar>', () => {
     const css = bar.shadowRoot!.querySelector('style')!.textContent!;
     expect(css).toContain('.logo .hh-logo-tile { fill: var(--tile); }');
     expect(css).toMatch(/\.avatar \{[^}]*box-shadow: 0 0 0 1px var\(--tile-ring\)/);
+  });
+
+  test('from 640px the bar keeps room for the tabs (SectionTabs, BAR_TABS_HEIGHT), so it is as tall with them as without', () => {
+    const { bar } = mount();
+    const css = bar.shadowRoot!.querySelector('style')!.textContent!;
+    expect(css).toContain(`.inner { min-height: ${BAR_TABS_HEIGHT + 2 * BAR_PADDING_Y}px;`);
+    expect(css).toContain(`padding: ${BAR_PADDING_Y}px max(16px`);
+    // The tabs beside the name, the account pushed right: they don't move when it changes.
+    expect(css).toContain('.end { margin-left: auto; }');
   });
 
   test('Sign in has an icon for narrow phones and keeps its full name', () => {

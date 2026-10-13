@@ -15,6 +15,7 @@ const onView = (view: string) => void views.push(view);
 const { createRoot } = await import('react-dom/client');
 const { AppFrame, AppOpening, listColumn } = await import('../src/react/frame');
 const { loadLang, setLangChoice } = await import('../src/i18n');
+const { BAR_TABS_HEIGHT } = await import('../src/bar-size');
 const { Ellipsis, Sun, Heart } = await import('lucide-react');
 
 const TABS = [
@@ -115,6 +116,12 @@ describe('AppOpening', () => {
 });
 
 describe('AppFrame', () => {
+  test('the tabs in the bar are BAR_TABS_HEIGHT tall, the room the bar keeps for them (app-bar.test.ts)', () => {
+    render(<AppFrame {...bar} tabs={TABS} tab="today" />);
+    const nav = document.querySelector<HTMLElement>('hh-app-bar nav[slot="nav"]')!;
+    expect(nav.getAttribute('style')).toBe(`height: ${BAR_TABS_HEIGHT}px;`);
+  });
+
   test('the same frame as the opening, without the placeholder; counts the tab, then each change', () => {
     const props = { ...bar, tabs: TABS, onTab: () => {}, layout: 'fit' as const, className: 'print:bg-white' };
     render(<AppOpening {...props} tab="care" phase="data" />);

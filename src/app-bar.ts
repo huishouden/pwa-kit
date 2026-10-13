@@ -27,6 +27,7 @@ import { GLYPHS, logoSvg, type Glyph } from './logo';
 import { LANG_CHOICES, LANG_NAMES, LANGS, getLang, getLangChoice, kt, onLangChange, setLangChoice, type LangChoice } from './i18n';
 import { THEME_MODES, getThemeMode, onThemeChange, setThemeMode, startTheme, type ThemeMode } from './theme';
 import { applyUpdate, onUpdateReady, updateReady } from './update';
+import { BAR_PADDING_Y, BAR_TABS_HEIGHT } from './bar-size';
 
 /** What the bar shows of the signed-in person. A Firebase `User` fits as it is. */
 export interface AppBarUser {
@@ -184,7 +185,7 @@ header {
   gap: 12px 24px;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 12px max(16px, env(safe-area-inset-right)) 12px max(16px, env(safe-area-inset-left));
+  padding: ${BAR_PADDING_Y}px max(16px, env(safe-area-inset-right)) ${BAR_PADDING_Y}px max(16px, env(safe-area-inset-left));
 }
 .home {
   display: flex;
@@ -207,8 +208,8 @@ h1 { margin: 0; font-size: 18px; line-height: 1.25; font-weight: 700; letter-spa
 .end { display: flex; align-items: center; gap: 12px; }
 .account { position: relative; display: flex; }
 @media (min-width: 640px) {
-  /* As tall with the tabs (a 54px segmented control) as without, so the bar never grows when they arrive. */
-  .inner { min-height: 78px; justify-content: flex-start; padding-left: max(24px, env(safe-area-inset-left)); padding-right: max(24px, env(safe-area-inset-right)); }
+  /* As tall with the tabs (SectionTabs, BAR_TABS_HEIGHT) as without, so the bar never grows when they arrive. */
+  .inner { min-height: ${BAR_TABS_HEIGHT + 2 * BAR_PADDING_Y}px; justify-content: flex-start; padding-left: max(24px, env(safe-area-inset-left)); padding-right: max(24px, env(safe-area-inset-right)); }
   .nav { order: 0; width: auto; }
   /* The tabs sit beside the name whatever the account area holds (nothing while the session
      restores, Sign in, the avatar, Update), so they never move when it changes. */

@@ -80,7 +80,8 @@ forest-600. Only the glyph changes between apps: portal `home` (a door), Tasks `
   `AppBar` from `@huishouden/pwa-kit/react/app-bar`). Never hand-build it. It holds the family logo
   linking to the portal, "Huishouden" over the app's short name (the portal shows "Huishouden"
   alone), the app's own tabs or switchers in the `nav` slot (beside the name on tablets, where they
-  keep their place whatever the account area shows, a second row on phones; section tabs move to the bottom bar on phones, below), app buttons in the `actions` slot, and on the right "Sign in with Google" or the
+  keep their place whatever the account area shows, a second row on phones; from 640px the bar is
+  78px tall with or without tabs; section tabs move to the bottom bar on phones, below), app buttons in the `actions` slot, and on the right "Sign in with Google" or the
   signed-in profile photo (`.hh-avatar`) opening the account menu: name, email, Theme (Automatic,
   Light, Dark), Language (Automatic, English, Español, Nederlands; each language named in itself),
   the app's own settings ("Tasks settings", `onSettings`), All apps, Privacy, Sign out, and the
