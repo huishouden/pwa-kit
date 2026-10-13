@@ -1,6 +1,4 @@
-// Replaces the kit's observability for the whole process to see which views the frame counts, so it
-// runs on its own (package.json "test").
-import { afterAll, beforeEach, describe, expect, mock, test } from 'bun:test';
+import { afterAll, beforeEach, describe, expect, test } from 'bun:test';
 import { GlobalRegistrator } from '@happy-dom/global-registrator';
 import { act } from 'react';
 
@@ -12,11 +10,11 @@ afterAll(async () => {
 });
 
 const views: string[] = [];
-mock.module('../../src/observability', () => ({ trackView: (view: string) => views.push(view) }));
+const onView = (view: string) => void views.push(view);
 
 const { createRoot } = await import('react-dom/client');
-const { AppFrame, AppOpening, listColumn } = await import('../../src/react/frame');
-const { loadLang, setLangChoice } = await import('../../src/i18n');
+const { AppFrame, AppOpening, listColumn } = await import('../src/react/frame');
+const { loadLang, setLangChoice } = await import('../src/i18n');
 const { Ellipsis, Sun, Heart } = await import('lucide-react');
 
 const TABS = [
@@ -24,7 +22,7 @@ const TABS = [
   { id: 'care', label: 'Care', icon: Heart },
   { id: 'pets', label: 'Pets', icon: Ellipsis },
 ];
-const bar = { app: 'Pet', glyph: 'paw' as const, portalUrl: '/', user: undefined };
+const bar = { app: 'Pet', glyph: 'paw' as const, portalUrl: '/', user: undefined, onView };
 
 let root: ReturnType<typeof createRoot> | null = null;
 function render(node: React.ReactNode) {
@@ -142,13 +140,19 @@ describe('AppFrame', () => {
     expect(views).toEqual(['care', 'pets']);
   });
 
-  test('view: the app names what is counted, or counts its own (null); a page outside the tabs counts nothing', () => {
+  test('view: the app names what is heard; without onView nothing is reported; a page outside the tabs reports nothing', () => {
     render(<AppFrame {...bar} tabs={TABS} tab="today" view="settings:email" />);
     expect(views).toEqual(['settings:email']);
     views.length = 0;
-    render(<AppFrame {...bar} tabs={TABS} tab="today" view={null} />);
-    expect(views).toEqual([]);
+    render(<AppFrame {...bar} onView={undefined} tabs={TABS} tab="today" />);
     render(<AppFrame {...bar} tab="" />);
+    expect(views).toEqual([]);
+  });
+
+  test('the loaded frame\'s props spread into the opening: its settings and view are left out', () => {
+    const loaded = { ...bar, tabs: TABS, tab: 'care', view: 'care', onSettings: () => {}, settingsLabel: 'Pet settings' };
+    render(<AppOpening {...loaded} phase="data" />);
+    expect(document.querySelector('hh-app-bar')!.hasAttribute('settings')).toBe(false);
     expect(views).toEqual([]);
   });
 

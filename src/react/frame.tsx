@@ -9,16 +9,15 @@
  *
  * ```tsx
  * const frame = { app: t('app.name'), glyph: 'paw', portalUrl: '/', version, user, signingIn, onSignIn, onSignOut,
- *   tabs: tabs(t), tab, onTab: setTab, layout: 'fit' } as const;
+ *   tabs: tabs(t), tab, onTab: setTab, layout: 'fit', onView: trackView } as const;
  * if (loading) return <AppOpening {...frame} phase="household" />;
  * return <AppFrame {...frame} onSettings={openSettings}>…</AppFrame>;
  * ```
  */
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { AppBar, type AppBarProps } from './app-bar';
 import { ScreenSkeleton, SectionTabs, type Tab } from './ui';
 import { useKitT } from './i18n';
-import { trackView } from '../observability';
 
 /**
  * How the page under the app bar is laid out.
@@ -59,23 +58,30 @@ export interface AppFrameProps extends Omit<AppBarProps, 'children' | 'className
   /** Added to `<main>` (`pb-20` under a floating Undo). */
   mainClassName?: string;
   /**
-   * The view counted for usage (`trackView`, anonymous, per visit): the tab by default. `null` when
-   * the app counts its own views. Nothing is counted while the frame is opening.
+   * Called with the view on screen when it first shows and each time it changes, never while the
+   * app opens: pass the kit's `trackView` to count it (anonymous, per visit; the portal's /privacy
+   * page). The view is the tab unless `view` names another.
    */
-  view?: string | null;
+  onView?: (view: string) => void;
+  /** The view `onView` hears in place of the tab (`settings:email`); `''` for none. */
+  view?: string;
   /** After `<main>`, inside the frame: a footer. */
   after?: ReactNode;
-  /** The frame while the app opens: no view is counted. `AppOpening` sets it. */
-  opening?: boolean;
   children?: ReactNode;
 }
 
 /** The app bar, the app's tabs and the main column (DESIGN.md "Frame"). */
-export function AppFrame({ tabs, tab = '', onTab, bar, layout = 'page', className, mainClassName, view, after, opening, children, ...appBar }: AppFrameProps) {
-  const counted = opening ? null : view === undefined ? tab : view;
+export function AppFrame(props: AppFrameProps) {
+  return <Frame {...props} opening={false} />;
+}
+
+function Frame({ tabs, tab = '', onTab, bar, layout = 'page', className, mainClassName, onView, view, after, opening, children, ...appBar }: AppFrameProps & { opening: boolean }) {
+  const shown = opening ? '' : (view ?? tab);
+  const report = useRef(onView);
+  report.current = onView;
   useEffect(() => {
-    if (counted) trackView(counted);
-  }, [counted]);
+    if (shown) report.current?.(shown);
+  }, [shown]);
   return (
     <div className={className ? `${OUTER[layout]} ${className}` : OUTER[layout]} data-hh-frame={opening ? 'opening' : ''}>
       <AppBar {...appBar}>
@@ -96,7 +102,12 @@ const noop = () => {};
  */
 export type OpeningPhase = 'session' | 'household' | 'data';
 
-export interface AppOpeningProps extends Omit<AppFrameProps, 'children' | 'opening' | 'view' | 'onSettings' | 'settingsLabel'> {
+/**
+ * The loaded frame's props (spread the same object) and the phase. Its `onSettings`, `settingsLabel`,
+ * `onView` and `view` are accepted and left out while opening: the settings open in the loaded app,
+ * and nothing is counted until it shows.
+ */
+export interface AppOpeningProps extends Omit<AppFrameProps, 'children'> {
   phase: OpeningPhase;
   /** The status sentence for screen readers, in place of the phase's own ("Loading the pets."). */
   label?: string;
@@ -111,16 +122,14 @@ export interface AppOpeningProps extends Omit<AppFrameProps, 'children' | 'openi
  * Screen readers hear "Loading…" and the phase: "Opening Pet.", "Finding your household.",
  * "Getting Pet ready.".
  */
-export function AppOpening({ phase, label, rows, layout = 'page', ...props }: AppOpeningProps) {
+export function AppOpening({ phase, label, rows, layout = 'page', onSettings: _settings, settingsLabel: _settingsLabel, onView: _onView, view: _view, ...frame }: AppOpeningProps) {
   const kt = useKitT();
-  // The same props object as the loaded frame's may carry its settings: they open in the loaded app.
-  const { onSettings: _settings, settingsLabel: _label, ...frame } = props as AppOpeningProps & Pick<AppFrameProps, 'onSettings' | 'settingsLabel'>;
   const sentence = label ?? kt(PHASE_KEY[phase], { app: frame.app });
   const skeleton = <ScreenSkeleton label={sentence} rows={rows} />;
   return (
-    <AppFrame {...frame} layout={layout} opening>
+    <Frame {...frame} layout={layout} opening>
       {layout === 'list' ? <div className={listColumn}>{skeleton}</div> : skeleton}
-    </AppFrame>
+    </Frame>
   );
 }
 
