@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import jsQR from 'jsqr';
-import { SHARE_HOST, SHARE_URL, shareData, shareHuishouden, shareQrSvg, type ShareEnv } from '../src/share';
+import { SHARE_HOST, SHARE_URL, copyShareLink, shareData, shareHuishouden, shareQrSvg, type ShareEnv } from '../src/share';
 import { SUITE_ORIGIN } from '../src/suite';
 import { resetI18nForTests, setLangChoice } from '../src/i18n';
 
@@ -97,5 +97,15 @@ describe('shareQrSvg', () => {
       }
     }
     expect(jsQR(pixels, side, side)?.data).toBe(SHARE_URL);
+  });
+});
+
+describe('copyShareLink', () => {
+  test('copies the address alone; no clipboard or a refusal is failed', async () => {
+    const copied: string[] = [];
+    expect(await copyShareLink({ copy: async (t) => void copied.push(t) })).toBe('copied');
+    expect(copied).toEqual([SHARE_URL]);
+    expect(await copyShareLink({ share: async () => {} })).toBe('failed');
+    expect(await copyShareLink({ copy: () => Promise.reject(new Error('denied')) })).toBe('failed');
   });
 });

@@ -196,7 +196,10 @@ rather than copying the class strings; the shapes are:
   words and page language, announced politely; the frame stays the opening's.
 - **Share Huishouden:** in the account menu of every app. A tap opens the system share sheet with
   the suite's name, a one-line pitch and the bare site address; where there is none the link is
-  copied and a toast says "Link copied". The QR code button beside it opens a dialog with a large
+  copied and a toast says "Link copied"; with no clipboard either, the QR view opens instead, with
+  the address to read. The bar shows that toast itself (it serves vanilla and React apps alike),
+  with the apps' timings (`TOAST_MS`); it follows a tap in the bar's own menu, so no app toast is
+  raised at the same moment. The QR code button beside it opens a dialog with a large
   code (up to 360px; dark modules on a white tile in light and dark, which cameras read best), the
   address in words, and Copy link (and Share link where there is a share sheet). It shares the
   suite, never the household or the person sharing.

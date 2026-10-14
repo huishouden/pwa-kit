@@ -66,7 +66,7 @@ function utf8(text: string): number[] {
   return [...new TextEncoder().encode(text)];
 }
 
-/** The smallest version holding `bytes` at `ecc`, or undefined when even 40 is too small. */
+/** The smallest version from `minVersion` up holding `byteLength` bytes at `ecc`, or undefined when even 40 is too small. */
 export function qrVersionFor(byteLength: number, ecc: QrEcc = 'M', minVersion = 1): number | undefined {
   for (let v = Math.max(1, Math.floor(minVersion)); v <= 40; v++) if (4 + countBits(v) + 8 * byteLength <= dataCodewords(v, ecc) * 8) return v;
   return undefined;
@@ -264,7 +264,7 @@ function applyMask(g: Grid, mask: number) {
 }
 
 /** The standard's penalty (runs, 2×2 blocks, finder look-alikes, balance): the lowest mask is used. */
-export function qrPenalty(modules: boolean[][]): number {
+function qrPenalty(modules: boolean[][]): number {
   const size = modules.length;
   let score = 0;
   const lines: boolean[][] = [];

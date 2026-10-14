@@ -80,6 +80,11 @@ export async function shareHuishouden(env: ShareEnv = browserShareEnv()): Promis
       if ((e as { name?: string } | null)?.name === 'AbortError') return 'cancelled';
     }
   }
+  return copyShareLink(env);
+}
+
+/** Copies `SHARE_URL` with `env.copy`: `failed` when there is no clipboard or it refuses. */
+export async function copyShareLink(env: ShareEnv = browserShareEnv()): Promise<'copied' | 'failed'> {
   if (!env.copy) return 'failed';
   try {
     await env.copy(SHARE_URL);

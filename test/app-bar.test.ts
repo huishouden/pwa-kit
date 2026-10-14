@@ -388,6 +388,14 @@ describe('<hh-app-bar>', () => {
     const again = $('dialog.sheet') as HTMLDialogElement;
     again.dispatchEvent(new Event('cancel', { cancelable: true }));
     expect($('dialog.sheet')).toBeNull();
+
+    // Copy link uses the bar's clipboard only: none there is an error toast, not the page's own.
+    bar.shareEnv = {};
+    qr.click();
+    $('dialog.sheet .sheet-actions button')!.dispatchEvent(new Event('click'));
+    await new Promise((r) => setTimeout(r, 0));
+    expect($('.toast.error')!.textContent).toBe("Couldn't copy the link");
+    expect($('.toast')!.getAttribute('role')).toBe('alert');
   });
 
   test('the QR view offers the share sheet too, where there is one; signing out closes it', async () => {

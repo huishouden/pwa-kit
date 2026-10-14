@@ -32,7 +32,8 @@ import { LANG_CHOICES, LANG_NAMES, LANGS, getLang, getLangChoice, kt, onLangChan
 import { THEME_MODES, getThemeMode, onThemeChange, setThemeMode, startTheme, type ThemeMode } from './theme';
 import { applyUpdate, onUpdateReady, updateReady } from './update';
 import { BAR_PADDING_Y, BAR_TABS_HEIGHT } from './bar-size';
-import { SHARE_HOST, SHARE_URL, browserShareEnv, copyText, shareHuishouden, shareQrSvg, type ShareEnv } from './share.js';
+import { SHARE_HOST, SHARE_URL, browserShareEnv, copyShareLink, shareHuishouden, shareQrSvg, type ShareEnv } from './share.js';
+import { TOAST_MS } from './toast.js';
 
 /** What the bar shows of the signed-in person. A Firebase `User` fits as it is. */
 export interface AppBarUser {
@@ -870,12 +871,8 @@ export class HhAppBar extends Base {
   }
 
   async #copy(): Promise<void> {
-    try {
-      await (this.#shareEnv().copy ?? copyText)(SHARE_URL);
-      this.#toast(kt('share.copied'));
-    } catch {
-      this.#toast(kt('share.copyFailed'), 'error');
-    }
+    if ((await copyShareLink(this.#shareEnv())) === 'copied') this.#toast(kt('share.copied'));
+    else this.#toast(kt('share.copyFailed'), 'error');
   }
 
   /** The large QR code of the site's address, for someone standing next to you. */
@@ -946,7 +943,7 @@ export class HhAppBar extends Base {
     if (restoreFocus) this.#root.querySelector<HTMLButtonElement>('[data-trigger]')?.focus();
   }
 
-  /** One toast at a time, 6 seconds (9 for an error), as the apps' own (DESIGN.md "Toast"). */
+  /** One toast at a time, for as long as the apps' own (`TOAST_MS`, DESIGN.md "Toast"). */
   #toast(message: string, tone: 'info' | 'error' = 'info') {
     const area = this.#root.querySelector<HTMLElement>('.toast-area')!;
     const toast = document.createElement('div');
@@ -955,7 +952,7 @@ export class HhAppBar extends Base {
     toast.textContent = message;
     area.replaceChildren(toast);
     clearTimeout(this.#toastTimer);
-    this.#toastTimer = setTimeout(() => area.replaceChildren(), tone === 'error' ? 9000 : 6000);
+    this.#toastTimer = setTimeout(() => area.replaceChildren(), TOAST_MS[tone]);
   }
 
   #privacyLink() {
