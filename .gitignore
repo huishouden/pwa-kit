@@ -4,3 +4,6 @@ node_modules/
 test-results/
 .env*.local
 dist/
+
+# Label benchmark: downloaded and generated images, readings, HTTP cache (bench/labels/README.md)
+bench/labels/.cache/

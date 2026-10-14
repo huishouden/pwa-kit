@@ -2,6 +2,7 @@ import { afterAll, describe, expect, test } from 'bun:test';
 import { GlobalRegistrator } from '@happy-dom/global-registrator';
 import { act } from 'react';
 import type { ParsedCourse } from '../src/dose';
+import type { LabelCourse } from '../src/medicine-label';
 
 if (typeof document === 'undefined') GlobalRegistrator.register({ url: 'https://health.example.com/' });
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -91,6 +92,71 @@ describe('LabelScan', () => {
       await new Promise((r) => setTimeout(r, 0));
     });
     expect(document.querySelector('[role="alert"]')?.textContent).toContain("Couldn't read that photo");
+    act(() => root.unmount());
+  });
+
+  test('says which fields came from the FDA listing for the label\'s NDC', async () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const root = createRoot(document.getElementById('app')!);
+    const listing = async (c: LabelCourse): Promise<LabelCourse> => ({ ...c, name: 'Ciprofloxacin', strength: '3 mg/mL', sources: { name: 'fda', strength: 'fda' } });
+    let filled: LabelCourse | null = null;
+    act(() =>
+      root.render(
+        <LabelScan
+          onRead={(p) => ((filled = p), [{ label: 'Medicine', value: `${p.name} ${p.strength}` }])}
+          read={async () => 'NDC 59390-217-02\nCiproflox\nOphthalmic Solution\n0.3%'}
+          listing={listing}
+          images={[new File(['x'], 'a.jpg', { type: 'image/jpeg' })]}
+        />,
+      ),
+    );
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    expect(filled!.ndc).toBe('59390-217-02');
+    expect(region('Filled in from the label')).toContain('MedicineCiprofloxacin 3 mg/mL');
+    expect(document.body.textContent).toContain('from the FDA listing for NDC 59390-217-02');
+    act(() => root.unmount());
+  });
+
+  test('offers the strengths the medicine comes in when the label\'s was unreadable, and passes the pick on', async () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const root = createRoot(document.getElementById('app')!);
+    const picked: string[] = [];
+    act(() =>
+      root.render(
+        <LabelScan
+          onRead={(p) => [{ label: 'Medicine', value: p.name ?? '' }]}
+          onStrength={(s) => picked.push(s)}
+          read={async () => 'Galliprant\nFor oral use in dogs only'}
+          listing={async (c) => ({ ...c, strengthChoices: ['20 mg', '60 mg', '100 mg'] })}
+          images={[new File(['x'], 'a.jpg', { type: 'image/jpeg' })]}
+        />,
+      ),
+    );
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    expect(region('Pick the strength')).toContain('Galliprant comes in these strengths');
+    const button = Array.from(document.querySelectorAll('button')).find((b) => b.textContent === '60 mg')!;
+    act(() => button.click());
+    expect(picked).toEqual(['60 mg']);
+    expect(button.getAttribute('aria-pressed')).toBe('true');
+    act(() => root.unmount());
+  });
+
+  test('never looks anything up with listing={null}', async () => {
+    document.body.innerHTML = '<div id="app"></div>';
+    const root = createRoot(document.getElementById('app')!);
+    const calls: string[] = [];
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = (async (u: string) => (calls.push(String(u)), new Response('{}', { status: 404 }))) as typeof fetch;
+    act(() => root.render(<LabelScan onRead={() => []} read={async () => 'NDC 59390-217-02\nCiprofloxacin 0.3%'} listing={null} images={[new File(['x'], 'a.jpg', { type: 'image/jpeg' })]} />));
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 0));
+    });
+    globalThis.fetch = realFetch;
+    expect(calls).toEqual([]);
     act(() => root.unmount());
   });
 });

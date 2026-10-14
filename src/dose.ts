@@ -8,7 +8,7 @@
  * back in `assumptions`, so the app can show them next to the fields it filled in.
  */
 
-import { readImageText, type ReadTextOptions } from './ocr';
+import { readLabelLines, type ReadLabelLinesOptions } from './ocr';
 import { fitsRule, type EventRule } from './schedule';
 import { kt } from './i18n.js';
 
@@ -17,15 +17,16 @@ export { OCR_LANG_PATH, releaseOcr } from './ocr';
 // ---------------------------------------------------------------------------------------------
 // OCR
 
-export type ReadLabelOptions = Omit<ReadTextOptions, 'screenshot'>;
+export type ReadLabelOptions = ReadLabelLinesOptions;
 
 /**
- * The text on a label photo, read on the device with tesseract.js (English; see `./ocr`). The
- * engine is loaded on first use only, so apps that never call this don't download it. Accuracy
- * depends on the photo: flat, well lit and in focus.
+ * The text on a label photo, read on the device with tesseract.js (English; see `./ocr`
+ * `readLabelLines`, which also gives each line's confidence and print size for
+ * `./medicine-label` `parseLabel`). The engine is loaded on first use only, so apps that never
+ * call this don't download it.
  */
-export function readLabel(image: Blob, options: ReadLabelOptions = {}): Promise<string> {
-  return readImageText(image, options);
+export async function readLabel(image: Blob, options: ReadLabelOptions = {}): Promise<string> {
+  return (await readLabelLines(image, options)).text;
 }
 
 /**
@@ -77,8 +78,11 @@ export interface ParsedCourse {
   withFood?: boolean;
   /** "As needed" / PRN: no schedule. */
   asNeeded?: boolean;
-  /** "by mouth", "in each eye", "in the left ear", "to the affected area". */
-  route?: string;
+  /**
+   * How it is taken: one of `ROUTES` when the parser names it ("by mouth", "in the eye"), else the
+   * label's own words ("in the left ear", "to the affected area"). `routeWords` says it for people.
+   */
+  route?: Route | (string & {});
   /** Who it is for, from a "Pet:" or "Patient:" line. */
   patient?: string;
   /** Advice lines the app can keep as notes ("Shake well", "Refrigerate"). */
@@ -91,6 +95,17 @@ export interface ParsedCourse {
   assumptions: string[];
   /** Label lines recognised as pharmacy boilerplate (Rx number, quantity, refills, prescriber, address). */
   ignored: string[];
+}
+
+/** The routes the parsers name themselves; anything else in `route` is a label's own wording. */
+export const ROUTES = ['by mouth', 'under the skin', 'by injection', 'in the eye', 'in the ear', 'in the nose', 'inhaled', 'on the skin'] as const;
+export type Route = (typeof ROUTES)[number];
+
+export const isRoute = (route: string | undefined): route is Route => (ROUTES as readonly string[]).includes(route ?? '');
+
+/** A route as a note, in the active language: the parser's own routes translated, a label's wording as it was. */
+export function routeWords(route: string): string {
+  return isRoute(route) ? kt('dose.route', { route: route.replace(/ /g, '_') }) : route.replace(/^./, (c) => c.toUpperCase());
 }
 
 const NUMBER_WORDS: Record<string, number> = {
@@ -303,7 +318,7 @@ const ADVICE = [
 const PATIENT = /^\s*(?:pet|patient|animal|for|name)\s*(?:name)?\s*[:\-]\s*([A-Za-z][A-Za-z' -]{0,40}?)(?:\s*\(.*\))?\s*(?:(?:owner|client|species|dob|age|sex|wt|weight)\b.*)?$/i;
 const DIRECTION_START = /^\s*(?:give|take|administer|apply|instill|inhale|place|insert|inject|use|chew|dissolve|mix|squirt|put|directions?|sig)\b/i;
 const FORMS = String.raw`(?:chewable tablets?|chew tabs?|tablets?|tabs|capsules?|caps|oral suspension|suspension|oral solution|solution|liquid|syrup|drops|eye drops|ear drops|ointment|cream|gel|chews?|injection|spray|powder|granules|transdermal|patch(?:es)?)`;
-const NAME_LINE = new RegExp(String.raw`^\s*([A-Za-z][A-Za-z\-/ ]{2,60}?)\s+(${STRENGTH})(?:\s+(${FORMS}))?\b`, 'i');
+const NAME_LINE = new RegExp(String.raw`^\s*([A-Za-z][A-Za-z\-/ ]{2,60}?)\s+(${STRENGTH})(?:\s+(${FORMS}))?(?![a-z])`, 'i');
 const SCHEDULE_WORDS = /\b(?:every|daily|times|hours|twice|once|give|take)\b/i;
 const NAME_FORM_LINE = new RegExp(String.raw`^\s*([A-Za-z][A-Za-z\-/ ]{2,40}?)\s+(${FORMS})\s*$`, 'i');
 
@@ -327,6 +342,18 @@ function emptyCourse(): ParsedCourse {
  * more. Anything else is returned in `unparsed`.
  */
 export function parseDirections(text: string): ParsedCourse {
+  const { course, multiLine } = parseDirectionsCore(text);
+  if (!course.name && multiLine) course.assumptions.push(kt('dose.assumeNoName'));
+  course.confidence = confidenceOf(course);
+  return course;
+}
+
+/**
+ * `parseDirections` without its last word on the name, for a caller that decides the name itself
+ * (`./medicine-label`): no "no medicine name" assumption and no `confidence`. `multiLine`: the text
+ * has several lines, when a missing name is worth saying.
+ */
+export function parseDirectionsCore(text: string): { course: ParsedCourse; multiLine: boolean } {
   const course = emptyCourse();
   const lines = text
     .replace(/\r/g, '')
@@ -387,11 +414,7 @@ export function parseDirections(text: string): ParsedCourse {
   const sig = directionLines.join(' ');
   if (sig) parseSig(sig, course);
   course.unparsed.push(...otherLines);
-  if (!course.name && !singleLine) {
-    course.assumptions.push(kt('dose.assumeNoName'));
-  }
-  course.confidence = confidenceOf(course);
-  return course;
+  return { course, multiLine: !singleLine };
 }
 
 /** Whether a label line carries schedule wording, so a wrapped line joins the directions. */
@@ -623,9 +646,8 @@ export function toMedCourse(parsed: ParsedCourse, options: DoseTimesOptions & { 
   const asNeeded = kt('dose.asNeeded').toLowerCase();
   if (parsed.asNeeded && !parsed.notes.some((n) => /^as needed/i.test(n) || n.toLowerCase().startsWith(asNeeded))) notes.push(kt('dose.asNeeded'));
   if (parsed.untilGone) notes.push(kt('dose.untilGone'));
-  // The route is the label's own wording (English), except the one the parser names itself.
-  if (parsed.route === 'under the skin') notes.push(kt('dose.underTheSkin'));
-  else if (parsed.route && parsed.route !== 'by mouth') notes.push(parsed.route.replace(/^./, (c) => c.toUpperCase()));
+  // The parser's own routes in the active language; a label's own wording as it was.
+  if (parsed.route && parsed.route !== 'by mouth') notes.push(routeWords(parsed.route));
   notes.push(...parsed.notes);
   return {
     name: [parsed.name, parsed.strength].filter(Boolean).join(' '),

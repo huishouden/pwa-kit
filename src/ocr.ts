@@ -11,6 +11,9 @@
  * reading works offline after the first use. To self-host instead, copy the files into the app's
  * `public/` and pass their paths as `{ paths }`.
  */
+import { toGray, type Box, type Gray } from './label-image';
+import { readLabelImage, type LabelReading, type OcrWord, type ReadLabelPassOptions, type Recognize } from './label-read';
+
 export const OCR_LANG_PATH = 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int';
 
 /** The tesseract.js release used; kept equal to the kit's devDependency (a test checks). */
@@ -31,7 +34,11 @@ export interface ReadTextOptions {
   screenshot?: boolean;
 }
 
-type OcrWorker = { recognize(image: unknown): Promise<{ data: { text: string } }>; terminate(): Promise<unknown> };
+type OcrWorker = {
+  recognize(image: unknown, options?: Record<string, unknown>, output?: Record<string, boolean>): Promise<{ data: { text: string; blocks?: OcrBlock[] | null } }>;
+  terminate(): Promise<unknown>;
+};
+type OcrBlock = { paragraphs: { lines: { words: { text: string; confidence: number; bbox: Box }[] }[] }[] };
 let worker: Promise<OcrWorker> | null = null;
 let progressListener: ReadTextOptions['onProgress'];
 
@@ -40,6 +47,14 @@ let progressListener: ReadTextOptions['onProgress'];
  * never call this don't download it.
  */
 export async function readImageText(image: Blob, options: ReadTextOptions = {}): Promise<string> {
+  const ocr = await engine(options);
+  const prepared = options.screenshot ? await prepareScreenshot(image, options.maxSide ?? 2800) : await downscale(image, options.maxSide ?? 2000);
+  const { data } = await ocr.recognize(prepared);
+  return data.text;
+}
+
+/** The shared engine, started on first use. */
+async function engine(options: Pick<ReadTextOptions, 'paths' | 'onProgress'>): Promise<OcrWorker> {
   progressListener = options.onProgress;
   if (!worker) {
     worker = (async () => {
@@ -55,10 +70,45 @@ export async function readImageText(image: Blob, options: ReadTextOptions = {}):
     })();
     worker.catch(() => (worker = null));
   }
-  const ocr = await worker;
-  const prepared = options.screenshot ? await prepareScreenshot(image, options.maxSide ?? 2800) : await downscale(image, options.maxSide ?? 2000);
-  const { data } = await ocr.recognize(prepared);
-  return data.text;
+  return worker;
+}
+
+export interface ReadLabelLinesOptions extends Pick<ReadTextOptions, 'paths' | 'onProgress'>, Omit<ReadLabelPassOptions, 'onPass'> {}
+
+/**
+ * A label photo read the careful way (`./label-read`): several passes, the right way up, unsure
+ * words dropped, each line with its confidence and print size. Slower than `readImageText` (two
+ * to four passes); progress runs once from 0 to 1 over all of them.
+ */
+export async function readLabelLines(image: Blob, options: ReadLabelLinesOptions = {}): Promise<LabelReading> {
+  const { paths, onProgress, ...passOptions } = options;
+  if (!canDraw()) {
+    // No OffscreenCanvas (Safari before 16.4): the photo as it is, read once, as before this reader.
+    const text = await readImageText(image, { paths, onProgress, maxSide: passOptions.maxSide });
+    return { text, lines: [], words: [], turns: 0, passes: 1 };
+  }
+  let pass = 1;
+  let total = 2;
+  const ocr = await engine({ paths, onProgress: (p, status) => onProgress?.(Math.min(1, (pass - 1 + (status === 'recognizing text' ? p : 0)) / total), status) });
+  const gray = await grayPixels(image, Math.max(passOptions.maxSide ?? 2000, 1));
+  const recognize: Recognize = async (bitmap, psm) => {
+    const { data } = await ocr.recognize(bitmap, { tessedit_pageseg_mode: psm }, { blocks: true, text: false });
+    const words: OcrWord[] = [];
+    for (const b of data.blocks ?? []) for (const p of b.paragraphs) for (const l of p.lines) for (const w of l.words) words.push({ text: w.text, confidence: w.confidence, box: w.bbox });
+    return { words };
+  };
+  return readLabelImage(gray, recognize, { ...passOptions, onPass: (n, of) => ((pass = n), (total = of)) });
+}
+
+/** The photo's pixels in grey, scaled to at most `maxSide` on its longer side while decoding (orientation as shot). */
+async function grayPixels(image: Blob, maxSide: number): Promise<Gray> {
+  const bitmap = await createImageBitmap(image);
+  const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+  const canvas = new OffscreenCanvas(Math.max(1, Math.round(bitmap.width * scale)), Math.max(1, Math.round(bitmap.height * scale)));
+  const ctx = canvas.getContext('2d')!;
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  return toGray(ctx.getImageData(0, 0, canvas.width, canvas.height));
 }
 
 /** Stops the OCR engine and frees its memory; the next read starts it again. */

@@ -5,7 +5,7 @@ import es from '../src/locales/es';
 import nl from '../src/locales/nl';
 import { describePrep, describeRule, describeSchedule, describeMonths, prepWhen } from '../src/schedule';
 import { CADENCE_LABELS } from '../src/recurring';
-import { formatDose, parseDirections, toMedCourse } from '../src/dose';
+import { formatDose, parseDirections, routeWords, toMedCourse } from '../src/dose';
 import { atTime } from '../src/time';
 
 // Another test file leaves a bare `window` stub behind; the language change event needs a real one or none.
@@ -20,6 +20,16 @@ afterAll(() => {
 afterEach(() => setLangForTests('en'));
 
 describe('schedule and dose text in Spanish and Dutch', () => {
+  test('the parser\'s routes are said in the language; a label\'s own wording stays as written', async () => {
+    expect(routeWords('in the eye')).toBe('In the eye');
+    expect(routeWords('in the left ear')).toBe('In the left ear');
+    await setLangForTests('nl');
+    expect(routeWords('in the eye')).toBe('In het oog');
+    expect(toMedCourse(parseDirections('Give 1 tablet under the skin daily'), { startDate: '2031-01-06' }).notes).toBe('Onder de huid');
+    await setLangForTests('es');
+    expect(routeWords('by injection')).toBe('Por inyección');
+  });
+
   test('every schedule, dose and recurring message has the same variables in every language', () => {
     for (const [key, message] of Object.entries(en)) {
       if (!/^(schedule|dose|recurring)\./.test(key)) continue;

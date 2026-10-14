@@ -1,0 +1,1099 @@
+{
+ "about": "Public package-label images from DailyMed (U.S. National Library of Medicine), downloaded by fetch.ts and never committed. Truth: what the label shows, reviewed by eye; null where the label does not show it. Forms and routes are the benchmark's canonical words.",
+ "labels": [
+  {
+   "id": "amox-clav-875",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=36efc48d-f5cf-fdb4-e063-6294a90a720b",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=36efc48d-f5cf-fdb4-e063-6294a90a720b&name=68071-3864-4.jpg",
+   "truth": {
+    "names": [
+     "amoxicillin and clavulanate potassium",
+     "amoxi/clavu. pot.",
+     "amoxicillin/clavulanate"
+    ],
+    "strength": "875 mg/125 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "68071-3864-4"
+   }
+  },
+  {
+   "id": "amoxicillin-500-caps",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=61a9829b-4792-4caa-b75a-b84812f28d4a",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=61a9829b-4792-4caa-b75a-b84812f28d4a&name=amoxicillin-caps-usp-500mg-20s-bottle-label.jpg",
+   "truth": {
+    "names": [
+     "amoxicillin"
+    ],
+    "strength": "500 mg",
+    "form": "capsule",
+    "route": "oral",
+    "ndc": "68999-112-20"
+   }
+  },
+  {
+   "id": "lisinopril-2.5",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=34ebeea1-6812-4697-84c4-b2ae4f39e55f",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=34ebeea1-6812-4697-84c4-b2ae4f39e55f&name=42c64b65-20a1-4f41-aa89-b4db9aede264-02.jpg",
+   "truth": {
+    "names": [
+     "lisinopril"
+    ],
+    "strength": "2.5 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "68001-332-00"
+   }
+  },
+  {
+   "id": "lisinopril-hctz",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=00b266d9-ac4a-e931-e063-6294a90a6a0b",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=00b266d9-ac4a-e931-e063-6294a90a6a0b&name=LISINOPRIL-HCTZ%2010-12.5MG%2090CT%2060760-586-90.jpg",
+   "truth": {
+    "names": [
+     "lisinopril and hydrochlorothiazide"
+    ],
+    "strength": "10 mg/12.5 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "60760-586-90"
+   }
+  },
+  {
+   "id": "atorvastatin-10",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=10e766cc-c3fd-4584-a0d7-652c516e828c",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=10e766cc-c3fd-4584-a0d7-652c516e828c&name=atorvastatin-10mg-90tab.jpg",
+   "truth": {
+    "names": [
+     "atorvastatin calcium",
+     "atorvastatin"
+    ],
+    "strength": "10 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "77771-451-90"
+   }
+  },
+  {
+   "id": "caduet",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=164394b3-d7ba-4bbf-b64b-e2dd15735ea8",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=164394b3-d7ba-4bbf-b64b-e2dd15735ea8&name=caduet-10.jpg",
+   "truth": {
+    "names": [
+     "caduet",
+     "amlodipine and atorvastatin"
+    ],
+    "strength": "5 mg/10 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "58151-064-93"
+   }
+  },
+  {
+   "id": "amlodipine-5",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=204f27e9-5041-4677-b313-866ca69abad9",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=204f27e9-5041-4677-b313-866ca69abad9&name=amLODIPine%20Besylate%205mg_70518-2981-00.jpg",
+   "truth": {
+    "names": [
+     "amlodipine besylate",
+     "amlodipine"
+    ],
+    "strength": "5 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "70518-2981-00"
+   }
+  },
+  {
+   "id": "amlodipine-olmesartan",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c531fceb-09aa-492b-a5a3-2b004e9eadda",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=c531fceb-09aa-492b-a5a3-2b004e9eadda&name=amlodipine-5-20mg-30tablets.jpg",
+   "truth": {
+    "names": [
+     "amlodipine and olmesartan medoxomil"
+    ],
+    "strength": "5 mg/20 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "50228-365-30"
+   }
+  },
+  {
+   "id": "sertraline-solution",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f5da1754-2aed-4777-ad2e-593ee43e6e86",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=f5da1754-2aed-4777-ad2e-593ee43e6e86&name=container20mg60ml.jpg.jpg.jpg",
+   "truth": {
+    "names": [
+     "sertraline hydrochloride",
+     "sertraline"
+    ],
+    "strength": "20 mg/mL",
+    "form": "liquid",
+    "route": "oral",
+    "ndc": "71093-143-11"
+   }
+  },
+  {
+   "id": "prednisone-10",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5d2df7a8-7d7d-c4b9-e063-6394a90a0a7a",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=5d2df7a8-7d7d-c4b9-e063-6394a90a0a7a&name=0054-9817-29%20PREDNISONE%2010MG_67046-1294-30.jpg",
+   "truth": {
+    "names": [
+     "prednisone"
+    ],
+    "strength": "10 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "67046-1294-30"
+   }
+  },
+  {
+   "id": "evexithroid",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=40fa228f-9bfc-fc71-e063-6394a90a9ab6",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=40fa228f-9bfc-fc71-e063-6394a90a9ab6&name=15mg.jpg",
+   "truth": {
+    "names": [
+     "evexithroid",
+     "thyroid"
+    ],
+    "strength": [
+     "15 mg",
+     "9.5 mcg/2.25 mcg"
+    ],
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "73352-693-10"
+   }
+  },
+  {
+   "id": "azithromycin-250",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7ab854bf-eb04-42c4-a403-096b60581bb4",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=7ab854bf-eb04-42c4-a403-096b60581bb4&name=72789483.jpg",
+   "truth": {
+    "names": [
+     "azithromycin"
+    ],
+    "strength": "250 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "72789-483-04"
+   }
+  },
+  {
+   "id": "ciprofloxacin-eye",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=41363a06-d6f5-4bc6-b0e9-34e5616ae387",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=41363a06-d6f5-4bc6-b0e9-34e5616ae387&name=ciprofloxacin-hcl-ophthalmic-solution-0-3-as-base--02.jpg",
+   "crop": [
+    396,
+    225,
+    169,
+    343
+   ],
+   "truth": {
+    "names": [
+     "ciprofloxacin",
+     "ciprofloxacin ophthalmic solution"
+    ],
+    "strength": "0.3%",
+    "form": "liquid",
+    "route": "ophthalmic",
+    "ndc": "59390-217-02"
+   }
+  },
+  {
+   "id": "albuterol-inhalation",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5d62969b-2ad9-6cf0-e063-6394a90ac2f0",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=5d62969b-2ad9-6cf0-e063-6394a90ac2f0&name=spl-albu-inhal-sol-carton.jpg",
+   "crop": [
+    705,
+    204,
+    393,
+    252
+   ],
+   "truth": {
+    "names": [
+     "albuterol",
+     "albuterol sulfate",
+     "albuterol inhalation solution"
+    ],
+    "strength": [
+     "2.5 mg/3 mL",
+     "0.83 mg/mL",
+     "0.083%"
+    ],
+    "form": "liquid",
+    "route": "inhalation",
+    "ndc": "47335-703-54"
+   }
+  },
+  {
+   "id": "gabapentin-100",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3dac0d5f-6e65-4c58-9d2a-4f6910b2d4ef",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=3dac0d5f-6e65-4c58-9d2a-4f6910b2d4ef&name=Gabapentin%20100mg_70518-4742-00.jpg",
+   "truth": {
+    "names": [
+     "gabapentin"
+    ],
+    "strength": "100 mg",
+    "form": "capsule",
+    "route": "oral",
+    "ndc": "70518-4742-00"
+   }
+  },
+  {
+   "id": "cephalexin-suspension",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5858b90a-a80d-40b4-9275-b89e9121ea42",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=5858b90a-a80d-40b4-9275-b89e9121ea42&name=image-2.jpg",
+   "truth": {
+    "names": [
+     "cephalexin",
+     "cephalexin for oral suspension"
+    ],
+    "strength": "125 mg/5 mL",
+    "form": "liquid",
+    "route": "oral",
+    "ndc": "0093-4175-73"
+   }
+  },
+  {
+   "id": "omeprazole-20",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c5e3a37a-f6e3-43d4-a8a9-54db6c271908",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=c5e3a37a-f6e3-43d4-a8a9-54db6c271908&name=image-01.jpg",
+   "truth": {
+    "names": [
+     "omeprazole"
+    ],
+    "strength": "20 mg",
+    "form": "capsule",
+    "route": "oral",
+    "ndc": "82804-318-06"
+   }
+  },
+  {
+   "id": "zegerid",
+   "set": "human",
+   "kind": "human-rx",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=cd6868b9-5824-442b-8d65-4db29ecb70a4",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=cd6868b9-5824-442b-8d65-4db29ecb70a4&name=image-02.jpg",
+   "crop": [
+    297,
+    349,
+    495,
+    368
+   ],
+   "truth": {
+    "names": [
+     "zegerid",
+     "omeprazole and sodium bicarbonate"
+    ],
+    "strength": "20 mg/1680 mg",
+    "form": "liquid",
+    "route": "oral",
+    "ndc": "68012-052-30"
+   }
+  },
+  {
+   "id": "ibuwin",
+   "set": "human",
+   "kind": "human-otc",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0daf1be9-ea38-461e-e063-6394a90a7954",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=0daf1be9-ea38-461e-e063-6394a90a7954&name=Ibuwin%20Forte%20Box%20Label.jpg",
+   "crop": [
+    329,
+    1332,
+    1450,
+    1117
+   ],
+   "truth": {
+    "names": [
+     "ibuwin forte",
+     "ibuprofen"
+    ],
+    "strength": "200 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "69729-157-10"
+   }
+  },
+  {
+   "id": "acetaminophen-ibuprofen",
+   "set": "human",
+   "kind": "human-otc",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0f8b9524-8fe3-47cf-bacd-93047442d90d",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=0f8b9524-8fe3-47cf-bacd-93047442d90d&name=aceta-ibu-18s-label.jpg",
+   "crop": [
+    3,
+    31,
+    262,
+    387
+   ],
+   "truth": {
+    "names": [
+     "acetaminophen and ibuprofen"
+    ],
+    "strength": "250 mg/125 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "70010-131-26"
+   }
+  },
+  {
+   "id": "loratadine-bulk",
+   "set": "human",
+   "kind": "human-otc",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9bae1ba3-c0da-23a2-e053-2a95a90a58ed",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=9bae1ba3-c0da-23a2-e053-2a95a90a58ed&name=62207-787-49.jpg",
+   "truth": {
+    "names": [
+     "loratadine"
+    ],
+    "strength": "10 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "62207-787-49"
+   }
+  },
+  {
+   "id": "loratadine-30",
+   "set": "human",
+   "kind": "human-otc",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d15add22-bc2d-9730-e053-2a95a90acd3f",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=d15add22-bc2d-9730-e053-2a95a90acd3f&name=loratadine-30s-label1.jpg",
+   "truth": {
+    "names": [
+     "loratadine"
+    ],
+    "strength": "10 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "70010-162-03"
+   }
+  },
+  {
+   "id": "cetirizine-amazon",
+   "set": "human",
+   "kind": "human-otc",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=113e66f1-b922-8533-e063-6294a90ab30e",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=113e66f1-b922-8533-e063-6294a90ab30e&name=cetirizine-allergy-fig1.jpg",
+   "crop": [
+    27,
+    25,
+    292,
+    310
+   ],
+   "truth": {
+    "names": [
+     "cetirizine hydrochloride",
+     "cetirizine",
+     "all day allergy relief"
+    ],
+    "strength": "10 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "72288-691-09"
+   }
+  },
+  {
+   "id": "cetirizine-500",
+   "set": "human",
+   "kind": "human-otc",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d55dfce1-acef-3342-e053-2a95a90a4b83",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=d55dfce1-acef-3342-e053-2a95a90a4b83&name=Cetirizine-HCl-tablets-500-ct.jpg",
+   "crop": [
+    24,
+    91,
+    323,
+    356
+   ],
+   "truth": {
+    "names": [
+     "cetirizine hydrochloride",
+     "cetirizine"
+    ],
+    "strength": "10 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "70010-163-05"
+   }
+  },
+  {
+   "id": "sleep-aid",
+   "set": "human",
+   "kind": "human-otc",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=147adc14-ca7c-45f5-9925-ea569edbfe96",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=147adc14-ca7c-45f5-9925-ea569edbfe96&name=good-neighbor-pharmacy-44-367-1.jpg",
+   "crop": [
+    146,
+    137,
+    557,
+    446
+   ],
+   "truth": {
+    "names": [
+     "sleep aid",
+     "diphenhydramine hcl",
+     "diphenhydramine"
+    ],
+    "strength": "25 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "46122-651-62"
+   }
+  },
+  {
+   "id": "diphenhydramine-solution",
+   "set": "human",
+   "kind": "human-otc",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=93753885-6add-462c-9df8-b0a1b9ce36c9",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=93753885-6add-462c-9df8-b0a1b9ce36c9&name=major-44-015-delisted-1.jpg",
+   "truth": {
+    "names": [
+     "diphenhydramine hcl",
+     "diphenhydramine"
+    ],
+    "strength": "12.5 mg/5 mL",
+    "form": "liquid",
+    "route": "oral",
+    "ndc": "0904-6985-16"
+   }
+  },
+  {
+   "id": "famotidine-cvs",
+   "set": "human",
+   "kind": "human-otc",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7e5f9492-1d58-47a3-aac6-c41c81b348d5",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=7e5f9492-1d58-47a3-aac6-c41c81b348d5&name=cvs-acid-reducer-carton-image.jpg",
+   "crop": [
+    703,
+    291,
+    274,
+    548
+   ],
+   "truth": {
+    "names": [
+     "acid reducer",
+     "famotidine"
+    ],
+    "strength": "10 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": null
+   }
+  },
+  {
+   "id": "famotidine-amazon",
+   "set": "human",
+   "kind": "human-otc",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=baab51e5-968a-490e-8f3c-f507adcdd64d",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=baab51e5-968a-490e-8f3c-f507adcdd64d&name=amazon-basics-acid-reducer-mint-carton-image-1.jpg",
+   "crop": [
+    280,
+    282,
+    657,
+    604
+   ],
+   "truth": {
+    "names": [
+     "acid reducer",
+     "famotidine"
+    ],
+    "strength": "20 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "72288-629-78"
+   }
+  },
+  {
+   "id": "naproxen-220",
+   "set": "human",
+   "kind": "human-otc",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f1ed8384-83d6-6f2a-e053-2a95a90ab08f",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=f1ed8384-83d6-6f2a-e053-2a95a90ab08f&name=68071-5039-3.jpg",
+   "truth": {
+    "names": [
+     "naproxen sodium",
+     "naproxen"
+    ],
+    "strength": "220 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": "68071-5039-3"
+   }
+  },
+  {
+   "id": "fluticasone-children",
+   "set": "human",
+   "kind": "human-otc",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=44b980b1-660b-4064-8415-87c0c69e48ff",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=44b980b1-660b-4064-8415-87c0c69e48ff&name=childrens-allergy-relief.jpg",
+   "crop": [
+    568,
+    181,
+    381,
+    649
+   ],
+   "truth": {
+    "names": [
+     "fluticasone propionate",
+     "children's allergy relief",
+     "allergy relief"
+    ],
+    "strength": "50 mcg",
+    "form": "spray",
+    "route": "nasal",
+    "ndc": "21130-607-08"
+   }
+  },
+  {
+   "id": "fluticasone-welmate",
+   "set": "human",
+   "kind": "human-otc",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5333562e-9d8e-2618-e063-6394a90a8673",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=5333562e-9d8e-2618-e063-6394a90a8673&name=Screenshot%202026-06-01%20113346.jpg",
+   "crop": [
+    88,
+    57,
+    697,
+    211
+   ],
+   "truth": {
+    "names": [
+     "fluticasone propionate",
+     "allergy relief nasal spray",
+     "allergy relief"
+    ],
+    "strength": "50 mcg",
+    "form": "spray",
+    "route": "nasal",
+    "ndc": null
+   }
+  },
+  {
+   "id": "carprofen-zyvet",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0683a5ff-db4a-4612-9261-6101b6d67ccf",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=0683a5ff-db4a-4612-9261-6101b6d67ccf&name=ad33542c-bac9-4a91-a93c-083ec463e8d5-02.jpg",
+   "crop": [
+    253,
+    47,
+    1179,
+    534
+   ],
+   "truth": {
+    "names": [
+     "carprofen"
+    ],
+    "strength": "25 mg",
+    "form": "chewable",
+    "route": "oral",
+    "ndc": null
+   }
+  },
+  {
+   "id": "carprofen-felix",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1ea3e536-87d8-467c-a5c6-4af09f827212",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=1ea3e536-87d8-467c-a5c6-4af09f827212&name=25mg30.jpg",
+   "crop": [
+    239,
+    1,
+    155,
+    235
+   ],
+   "truth": {
+    "names": [
+     "carprofen"
+    ],
+    "strength": "25 mg",
+    "form": "chewable",
+    "route": "oral",
+    "ndc": "86101-041-30"
+   }
+  },
+  {
+   "id": "apoquel-chewable",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a39a0298-6453-4c21-a3b0-01c1a52a109b",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=a39a0298-6453-4c21-a3b0-01c1a52a109b&name=apoquel-chewable-3.jpg",
+   "truth": {
+    "names": [
+     "apoquel",
+     "apoquel chewable",
+     "oclacitinib"
+    ],
+    "strength": "3.6 mg",
+    "form": "chewable",
+    "route": "oral",
+    "ndc": null
+   }
+  },
+  {
+   "id": "apoquel",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=275a2c51-9679-4f42-b8cc-21b04369a056",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=275a2c51-9679-4f42-b8cc-21b04369a056&name=apoquel-3.jpg",
+   "truth": {
+    "names": [
+     "apoquel",
+     "oclacitinib"
+    ],
+    "strength": "3.6 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": null
+   }
+  },
+  {
+   "id": "heartgard-plus",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=595a4883-6b37-4190-9579-a2c7ca4738eb",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=595a4883-6b37-4190-9579-a2c7ca4738eb&name=image-01.jpg",
+   "truth": {
+    "names": [
+     "heartgard plus",
+     "heartgard",
+     "ivermectin/pyrantel"
+    ],
+    "strength": "68 mcg/57 mg",
+    "form": "chewable",
+    "route": "oral",
+    "ndc": null,
+    "directions": {
+     "dose": "1 chew",
+     "intervalHours": 720
+    }
+   }
+  },
+  {
+   "id": "nexgard-combo",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=48dd3eaa-18e3-430d-ad40-a964b591fb16",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=48dd3eaa-18e3-430d-ad40-a964b591fb16&name=image-01.jpg",
+   "truth": {
+    "names": [
+     "nexgard combo",
+     "nexgard",
+     "esafoxolaner, eprinomectin, and praziquantel"
+    ],
+    "strength": null,
+    "form": "liquid",
+    "route": "topical",
+    "ndc": null,
+    "directions": {
+     "intervalHours": 720
+    }
+   }
+  },
+  {
+   "id": "nexgard",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e10f7434-d00c-44de-af79-7b0886b2e948",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=e10f7434-d00c-44de-af79-7b0886b2e948&name=image-01.jpg",
+   "truth": {
+    "names": [
+     "nexgard",
+     "afoxolaner"
+    ],
+    "strength": "11.3 mg",
+    "form": "chewable",
+    "route": "oral",
+    "ndc": null,
+    "directions": {
+     "intervalHours": 720
+    }
+   }
+  },
+  {
+   "id": "simparica-trio",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0f83bcf4-7e89-479f-a980-4cb40456ee78",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=0f83bcf4-7e89-479f-a980-4cb40456ee78&name=simparica-trio-1.jpg",
+   "truth": {
+    "names": [
+     "simparica trio",
+     "simparica",
+     "sarolaner, moxidectin, and pyrantel"
+    ],
+    "strength": null,
+    "form": "chewable",
+    "route": "oral",
+    "ndc": null
+   }
+  },
+  {
+   "id": "simparica",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=91fc9ba1-35e6-4e37-8c37-c5e40699bd5b",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=91fc9ba1-35e6-4e37-8c37-c5e40699bd5b&name=simparica-1.jpg",
+   "truth": {
+    "names": [
+     "simparica",
+     "sarolaner"
+    ],
+    "strength": "5 mg",
+    "form": "chewable",
+    "route": "oral",
+    "ndc": null
+   }
+  },
+  {
+   "id": "revolution-plus",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=cbcc7b04-f3ab-4f3e-a38f-dcdc313e1b8a",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=cbcc7b04-f3ab-4f3e-a38f-dcdc313e1b8a&name=revolution-plus-2.jpg",
+   "truth": {
+    "names": [
+     "revolution plus",
+     "revolution",
+     "selamectin and sarolaner"
+    ],
+    "strength": "15 mg/2.5 mg",
+    "form": "liquid",
+    "route": "topical",
+    "ndc": null
+   }
+  },
+  {
+   "id": "revolution",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8032a1ae-d192-4514-80f1-9a3b50dc2155",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=8032a1ae-d192-4514-80f1-9a3b50dc2155&name=revolution-2.jpg",
+   "truth": {
+    "names": [
+     "revolution",
+     "selamectin"
+    ],
+    "strength": "15 mg",
+    "form": "liquid",
+    "route": "topical",
+    "ndc": null,
+    "directions": {
+     "intervalHours": 720
+    }
+   }
+  },
+  {
+   "id": "clavamox-chewable",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=78c3cf22-9151-4f39-a857-d103eca12c93",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=78c3cf22-9151-4f39-a857-d103eca12c93&name=clavamox-1.jpg",
+   "crop": [
+    529,
+    2,
+    374,
+    516
+   ],
+   "truth": {
+    "names": [
+     "clavamox",
+     "amoxicillin and clavulanate potassium"
+    ],
+    "strength": "62.5 mg",
+    "form": "chewable",
+    "route": "oral",
+    "ndc": null
+   }
+  },
+  {
+   "id": "meloxicam-suspension",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5ccf646c-dfbf-477e-bd77-4f4f9da16ae0",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=5ccf646c-dfbf-477e-bd77-4f4f9da16ae0&name=cov0e-0001-12.jpg",
+   "crop": [
+    530,
+    307,
+    251,
+    509
+   ],
+   "truth": {
+    "names": [
+     "meloxicam"
+    ],
+    "strength": "0.5 mg/mL",
+    "form": "liquid",
+    "route": "oral",
+    "ndc": "11695-7050-1"
+   }
+  },
+  {
+   "id": "enroflox",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=616bddd8-1f23-4599-bb15-25a744fdf826",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=616bddd8-1f23-4599-bb15-25a744fdf826&name=enr05-0001-03.jpg",
+   "crop": [
+    362,
+    0,
+    249,
+    376
+   ],
+   "truth": {
+    "names": [
+     "enroflox",
+     "enrofloxacin"
+    ],
+    "strength": "22.7 mg",
+    "form": "chewable",
+    "route": "oral",
+    "ndc": "55529-180-34"
+   }
+  },
+  {
+   "id": "galliprant",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a38cc5c6-93e8-4c90-aabc-33bc8423beab",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=a38cc5c6-93e8-4c90-aabc-33bc8423beab&name=gal02-0001-02.jpg",
+   "crop": [
+    263,
+    309,
+    171,
+    341
+   ],
+   "truth": {
+    "names": [
+     "galliprant",
+     "grapiprant"
+    ],
+    "strength": "20 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": null
+   }
+  },
+  {
+   "id": "vetmedin-solution",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=cbc95ffc-0c9d-489c-b95a-959206c0f1a3",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=cbc95ffc-0c9d-489c-b95a-959206c0f1a3&name=image-01.jpg",
+   "truth": {
+    "names": [
+     "vetmedin",
+     "vetmedin solution",
+     "pimobendan"
+    ],
+    "strength": "1.5 mg/mL",
+    "form": "liquid",
+    "route": "oral",
+    "ndc": "0010-4131-01"
+   }
+  },
+  {
+   "id": "vetmedin-chewable",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5441e5b2-cdc0-477a-bd9a-ec5f8d912281",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=5441e5b2-cdc0-477a-bd9a-ec5f8d912281&name=image-02.jpg",
+   "truth": {
+    "names": [
+     "vetmedin",
+     "pimobendan"
+    ],
+    "strength": "1.25 mg",
+    "form": "chewable",
+    "route": "oral",
+    "ndc": "0010-4480-01"
+   }
+  },
+  {
+   "id": "methimazole-solution",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=44e3131e-ae41-4872-9bb6-4cdd6909356d",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=44e3131e-ae41-4872-9bb6-4cdd6909356d&name=container30ml.jpg",
+   "crop": [
+    102,
+    106,
+    801,
+    324
+   ],
+   "truth": {
+    "names": [
+     "methimazole",
+     "methimazole oral solution"
+    ],
+    "strength": "5 mg/mL",
+    "form": "liquid",
+    "route": "oral",
+    "ndc": "86101-079-52"
+   }
+  },
+  {
+   "id": "felanorm",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2231391d-c118-42ee-9aa9-5dc6883bff9a",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=2231391d-c118-42ee-9aa9-5dc6883bff9a&name=30%20mL%20Carton.jpg",
+   "crop": [
+    333,
+    167,
+    149,
+    348
+   ],
+   "truth": {
+    "names": [
+     "felanorm",
+     "methimazole"
+    ],
+    "strength": "5 mg/mL",
+    "form": "liquid",
+    "route": "oral",
+    "ndc": null
+   }
+  },
+  {
+   "id": "cerenia-injection",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6aeda328-97c9-4868-8ecb-b3a4dcdbc0a0",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=6aeda328-97c9-4868-8ecb-b3a4dcdbc0a0&name=cerenia-3.jpg",
+   "truth": {
+    "names": [
+     "cerenia",
+     "maropitant citrate",
+     "maropitant"
+    ],
+    "strength": "10 mg/mL",
+    "form": "injection",
+    "route": "injection",
+    "ndc": null
+   }
+  },
+  {
+   "id": "cerenia-tablets",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3bc065ce-09d6-4131-a5a0-dca3909e0bc8",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=3bc065ce-09d6-4131-a5a0-dca3909e0bc8&name=cerenia-2.jpg",
+   "crop": [
+    43,
+    9,
+    371,
+    310
+   ],
+   "truth": {
+    "names": [
+     "cerenia",
+     "maropitant citrate",
+     "maropitant"
+    ],
+    "strength": "16 mg",
+    "form": "tablet",
+    "route": "oral",
+    "ndc": null
+   }
+  },
+  {
+   "id": "credelio-cat",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=365b701f-e9a8-458f-90ff-33ca1fb947ca",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=365b701f-e9a8-458f-90ff-33ca1fb947ca&name=image-01.jpg",
+   "crop": [
+    371,
+    202,
+    225,
+    455
+   ],
+   "truth": {
+    "names": [
+     "credelio cat",
+     "credelio",
+     "lotilaner"
+    ],
+    "strength": "12 mg",
+    "form": "chewable",
+    "route": "oral",
+    "ndc": null
+   }
+  },
+  {
+   "id": "clavacillin-drops",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=013fccfc-463c-423f-be2a-cb259dae7e76",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=013fccfc-463c-423f-be2a-cb259dae7e76&name=Carton%20Label.jpg",
+   "crop": [
+    185,
+    208,
+    248,
+    433
+   ],
+   "truth": {
+    "names": [
+     "clavacillin",
+     "amoxicillin and clavulanate potassium"
+    ],
+    "strength": null,
+    "form": "liquid",
+    "route": "oral",
+    "ndc": null
+   }
+  },
+  {
+   "id": "proin-75",
+   "set": "pet",
+   "kind": "pet",
+   "source": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=089bde88-521a-401e-8f03-1320e7e6ae03",
+   "image": "https://dailymed.nlm.nih.gov/dailymed/image.cfm?setid=089bde88-521a-401e-8f03-1320e7e6ae03&name=Proin%2075%20mg%2060%20count.jpg",
+   "truth": {
+    "names": [
+     "proin",
+     "phenylpropanolamine hydrochloride"
+    ],
+    "strength": "75 mg",
+    "form": "chewable",
+    "route": "oral",
+    "ndc": "49427-316-48"
+   }
+  }
+ ]
+}
