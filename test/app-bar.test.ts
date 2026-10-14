@@ -7,6 +7,7 @@ import { displayNameOf, initialOf, isSuite, sameSite, versionLabel } from '../sr
 import { resetI18nForTests, setLangChoice } from '../src/i18n';
 import { offerUpdate, resetUpdatesForTests, startUpdates } from '../src/update';
 import { BAR_PADDING_Y, BAR_TABS_HEIGHT } from '../src/bar-size';
+import { SHARE_HOST, SHARE_URL, shareData, shareQrSvg } from '../src/share';
 
 describe('app bar helpers', () => {
   test('the initial comes from the name, then the email', () => {
@@ -233,7 +234,7 @@ describe('<hh-app-bar>', () => {
       await setLangChoice('es');
       expect((bar.shadowRoot!.activeElement as HTMLElement | null)?.dataset.lang).toBe('es');
       expect(localStorage.getItem('hh-lang')).toBe('es');
-      expect($('button.item')!.textContent).toBe('Cerrar sesión');
+      expect(Array.from(bar.shadowRoot!.querySelectorAll('button.item')).at(-1)!.textContent).toBe('Cerrar sesión');
       expect(langs().map((b) => b.textContent)).toEqual(['English', 'Español', 'Nederlands']);
       expect(langs()[1].getAttribute('aria-pressed')).toBe('true');
       bar.user = null;
@@ -262,9 +263,9 @@ describe('<hh-app-bar>', () => {
     expect($('.menu')!.hidden).toBe(true);
 
     bar.user = { email: 'sam@example.com' };
-    expect(items()).toEqual(['Baby settings', 'All apps', 'Notifications', 'In your own calendar', 'Use with your AI assistant', 'Privacy', 'Sign out']);
+    expect(items()).toEqual(['Baby settings', 'All apps', 'Notifications', 'In your own calendar', 'Use with your AI assistant', 'Share Huishouden', 'Privacy', 'Sign out']);
     bar.settings = '';
-    expect(items()).toEqual(['All apps', 'Notifications', 'In your own calendar', 'Use with your AI assistant', 'Privacy', 'Sign out']);
+    expect(items()).toEqual(['All apps', 'Notifications', 'In your own calendar', 'Use with your AI assistant', 'Share Huishouden', 'Privacy', 'Sign out']);
     bar.user = null;
     expect($('.menu-button')!.getAttribute('aria-label')).toBe('Theme, language and privacy');
   });
@@ -322,6 +323,118 @@ describe('<hh-app-bar>', () => {
     const links = Array.from($('.menu')!.querySelectorAll('a.item')).map((a) => a.textContent);
     expect(links).toEqual(['Notifications', 'In your own calendar', 'Use with your AI assistant', 'Privacy']);
     expect($('.menu a.item')!.getAttribute('href')).toBe(new URL('/notifications', location.href).href);
+  });
+
+  test('signed in, the menu offers Share Huishouden: the share sheet where there is one', async () => {
+    const { bar, $ } = mount();
+    const shared: ShareData[] = [];
+    bar.shareEnv = { share: async (d) => void shared.push(d), copy: async () => {} };
+    bar.user = { email: 'sam@example.com' };
+    ($('.avatar') as HTMLButtonElement).click();
+    const share = $('.menu [part="share"]') as HTMLButtonElement;
+    expect(share.textContent).toBe('Share Huishouden');
+    // Before Privacy and Sign out, after the portal's pages.
+    const items = Array.from($('.menu .items')!.querySelectorAll('.item')).map((el) => el.textContent);
+    expect(items.slice(-3)).toEqual(['Share Huishouden', 'Privacy', 'Sign out']);
+    share.click();
+    await Promise.resolve();
+    expect(shared).toEqual([shareData()]);
+    expect($('.menu')!.hidden).toBe(true);
+    expect($('.toast')).toBeNull();
+  });
+
+  test('without a share sheet, Share Huishouden copies the link and a toast says so', async () => {
+    const { bar, $ } = mount();
+    const copied: string[] = [];
+    bar.shareEnv = { copy: async (t) => void copied.push(t) };
+    bar.user = { email: 'sam@example.com' };
+    ($('.avatar') as HTMLButtonElement).click();
+    ($('.menu [part="share"]') as HTMLButtonElement).click();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(copied).toEqual([SHARE_URL]);
+    expect($('.toast')!.textContent).toBe('Link copied');
+    expect($('.toast')!.getAttribute('role')).toBe('status');
+  });
+
+  test('the QR code button opens a large code of the site address, with Copy link; Close and Escape close it', async () => {
+    const { bar, $ } = mount();
+    const copied: string[] = [];
+    bar.shareEnv = { copy: async (t) => void copied.push(t) };
+    bar.user = { email: 'sam@example.com' };
+    ($('.avatar') as HTMLButtonElement).click();
+    const qr = $('.menu [part="share-qr"]') as HTMLButtonElement;
+    expect(qr.getAttribute('aria-label')).toBe('Show QR code');
+    qr.click();
+    const dialog = $('dialog.sheet') as HTMLDialogElement;
+    expect(dialog).not.toBeNull();
+    expect($('.menu')!.hidden).toBe(true);
+    expect(dialog.querySelector('h2')!.textContent).toBe('Share Huishouden');
+    const code = dialog.querySelector<HTMLElement>('[part="share-qr-code"]')!;
+    expect(code.dataset.url).toBe(SHARE_URL);
+    expect(code.querySelector('svg')!.getAttribute('aria-label')).toBe(`QR code for ${SHARE_HOST}`);
+    expect(code.querySelector('path')!.getAttribute('d')).toBe(/ d="([^"]+)"/.exec(shareQrSvg())![1]);
+    expect(dialog.querySelector('.address')!.textContent).toBe(SHARE_HOST);
+    // No share sheet here: only Copy link.
+    const buttons = Array.from(dialog.querySelectorAll('.sheet-actions button')).map((b) => b.textContent);
+    expect(buttons).toEqual(['Copy link']);
+    dialog.querySelector<HTMLButtonElement>('.sheet-actions button')!.click();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(copied).toEqual([SHARE_URL]);
+    expect($('.toast')!.textContent).toBe('Link copied');
+    dialog.querySelector<HTMLButtonElement>('[aria-label="Close"]')!.click();
+    expect($('dialog.sheet')).toBeNull();
+
+    qr.click();
+    const again = $('dialog.sheet') as HTMLDialogElement;
+    again.dispatchEvent(new Event('cancel', { cancelable: true }));
+    expect($('dialog.sheet')).toBeNull();
+  });
+
+  test('the QR view offers the share sheet too, where there is one; signing out closes it', async () => {
+    const { bar, $ } = mount();
+    const shared: ShareData[] = [];
+    bar.shareEnv = { share: async (d) => void shared.push(d), copy: async () => {} };
+    bar.user = { email: 'sam@example.com' };
+    ($('.menu [part="share-qr"]') as HTMLButtonElement).click();
+    const buttons = Array.from($('dialog.sheet')!.querySelectorAll<HTMLButtonElement>('.sheet-actions button'));
+    expect(buttons.map((b) => b.textContent)).toEqual(['Copy link', 'Share link']);
+    buttons[1].click();
+    await Promise.resolve();
+    expect(shared).toHaveLength(1);
+    expect($('dialog.sheet')).toBeNull();
+    ($('.menu [part="share-qr"]') as HTMLButtonElement).click();
+    expect($('dialog.sheet')).not.toBeNull();
+    bar.user = null;
+    expect($('dialog.sheet')).toBeNull();
+  });
+
+  test('neither a share sheet nor a clipboard: the QR view opens with the address to read', async () => {
+    const { bar, $ } = mount();
+    bar.shareEnv = { copy: () => Promise.reject(new Error('denied')) };
+    bar.user = { email: 'sam@example.com' };
+    ($('.menu [part="share"]') as HTMLButtonElement).click();
+    await new Promise((r) => setTimeout(r, 0));
+    expect($('dialog.sheet .address')!.textContent).toBe(SHARE_HOST);
+  });
+
+  test('signed out there is no Share Huishouden', () => {
+    const { bar, $ } = mount();
+    bar.user = null;
+    expect($('[part="share"]')).toBeNull();
+  });
+
+  test('Share Huishouden in Spanish and Dutch', async () => {
+    const { bar, $ } = mount();
+    bar.user = { email: 'sam@example.com' };
+    try {
+      await setLangChoice('es');
+      expect($('[part="share"]')!.textContent).toBe('Compartir Huishouden');
+      await setLangChoice('nl');
+      expect($('[part="share"]')!.textContent).toBe('Huishouden delen');
+      expect($('[part="share-qr"]')!.getAttribute('aria-label')).toBe('QR-code tonen');
+    } finally {
+      resetI18nForTests();
+    }
   });
 
   test('section tabs that move to the bottom bar on phones mark the bar', async () => {

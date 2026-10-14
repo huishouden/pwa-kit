@@ -19,6 +19,7 @@ import {
   type TestRole,
   type TestUser,
 } from './staging.js';
+import { SUITE_ORIGIN } from './suite.js';
 import { PAGE_READS_KEY, ReadBudgetExceeded, ReadCountError, type PageReadMeter, type ReadTally } from './read-test.js';
 
 // Paths: every helper's default is `./`, which is BASE_URL itself. On the suite's one site BASE_URL
@@ -441,6 +442,112 @@ export async function openAppSettings(page: Page, name: string | RegExp, { timeo
     if (!(await item.isVisible())) await trigger.click();
     await item.click({ timeout: 2_000 });
   }, `open "${name}" from the app bar's menu`).toPass({ timeout });
+}
+
+/** What "Share Huishouden" shows at each step, for screenshots (`captureScreenshot`'s `prepare`). */
+export type ShareScene = 'menu' | 'copied' | 'qr';
+
+/** Makes the page's `navigator.share` record what it is given (in `window.__hhShared`), or removes it so the bar falls back to copying. */
+async function stubShareSheet(page: Page, present: boolean): Promise<void> {
+  await page.evaluate((present) => {
+    const w = window as unknown as { __hhShared: ShareData[]; __hhCopied: string[] };
+    w.__hhShared = [];
+    w.__hhCopied = [];
+    const share = present ? async (data: ShareData) => void w.__hhShared.push(data) : undefined;
+    Object.defineProperty(Navigator.prototype, 'share', { configurable: true, writable: true, value: share });
+    Object.defineProperty(Navigator.prototype, 'canShare', { configurable: true, writable: true, value: present ? () => true : undefined });
+    // The clipboard is recorded too, so the check needs no permission and leaves the machine's alone.
+    if (navigator.clipboard) Object.defineProperty(navigator.clipboard, 'writeText', { configurable: true, value: async (text: string) => void w.__hhCopied.push(text) });
+  }, present);
+}
+
+/**
+ * Clicks `name` in the signed-in account menu, opening it first. Retried as a whole, as
+ * `openAppSettings` is: while the app opens, its loaded frame replaces the opening one's bar, and
+ * the menu with it.
+ */
+async function clickInAccountMenu(page: Page, name: string, timeout: number) {
+  const bar = page.locator('hh-app-bar');
+  const avatar = bar.locator('.avatar');
+  const item = bar.getByRole('button', { name, exact: true, includeHidden: true });
+  await expect(avatar, 'signed in: the avatar in the app bar').toBeVisible({ timeout });
+  await expect(async () => {
+    if (!(await item.isVisible())) await avatar.click();
+    await item.click({ timeout: 2_000 });
+  }, `"${name}" in the account menu`).toPass({ timeout });
+}
+
+async function openAccountMenu(page: Page, timeout: number) {
+  const bar = page.locator('hh-app-bar');
+  const share = bar.getByRole('button', { name: 'Share Huishouden', exact: true });
+  await expect(bar.locator('.avatar'), 'signed in: the avatar in the app bar').toBeVisible({ timeout });
+  await expect(async () => {
+    if (!(await share.isVisible())) await bar.locator('.avatar').click();
+    await expect(share).toBeVisible({ timeout: 2_000 });
+  }, 'open the account menu').toPass({ timeout });
+}
+
+/**
+ * Brings "Share Huishouden" to `scene` on a signed-in page: the account menu open on it (`menu`),
+ * the link copied with its toast where there is no share sheet (`copied`), or the QR view (`qr`).
+ */
+export async function showShareScene(page: Page, scene: ShareScene, { timeout = 20_000 }: { timeout?: number } = {}): Promise<void> {
+  const bar = page.locator('hh-app-bar');
+  await stubShareSheet(page, false);
+  if (scene === 'menu') return openAccountMenu(page, timeout);
+  if (scene === 'copied') {
+    await clickInAccountMenu(page, 'Share Huishouden', timeout);
+    await expect(bar.getByRole('status')).toHaveText('Link copied');
+    return;
+  }
+  await clickInAccountMenu(page, 'Show QR code', timeout);
+  await expect(bar.getByRole('dialog', { name: 'Share Huishouden' }).getByRole('img', { name: /^QR code for / })).toBeVisible();
+}
+
+/**
+ * "Share Huishouden" in the app bar's account menu, end to end on a signed-in page (English): with a
+ * share sheet (`navigator.share`, stubbed) it is handed the suite's name, the pitch and the bare site
+ * address; without one the link is copied and a toast says so; "Show QR code" opens a large code
+ * of the same address, light modules white whatever the theme. Never the household, never the sharer.
+ */
+export async function expectShareHuishouden(page: Page, { timeout = 20_000 }: { timeout?: number } = {}): Promise<void> {
+  const url = `${SUITE_ORIGIN}/`;
+  const bar = page.locator('hh-app-bar');
+  const recorded = () =>
+    page.evaluate(() => {
+      const w = window as unknown as { __hhShared: ShareData[]; __hhCopied: string[] };
+      return { shared: w.__hhShared, copied: w.__hhCopied };
+    });
+
+  await stubShareSheet(page, true);
+  await clickInAccountMenu(page, 'Share Huishouden', timeout);
+  await expect.poll(async () => (await recorded()).shared.length, 'navigator.share called once').toBe(1);
+  const { shared, copied: copiedBefore } = await recorded();
+  expect(shared[0], 'the share sheet gets the name, the pitch and the bare address').toEqual({
+    title: 'Huishouden',
+    text: expect.stringMatching(/^Huishouden: .*Start your own household:$/),
+    url,
+  });
+  expect(copiedBefore, 'nothing copied when the share sheet opened').toEqual([]);
+  await expect(bar.getByRole('status'), 'no toast after sharing').toHaveCount(0);
+
+  await stubShareSheet(page, false);
+  await clickInAccountMenu(page, 'Share Huishouden', timeout);
+  await expect(bar.getByRole('status'), 'the copy fallback says so').toHaveText('Link copied');
+  expect((await recorded()).copied, 'the link, and only the link, is copied').toEqual([url]);
+
+  await clickInAccountMenu(page, 'Show QR code', timeout);
+  const dialog = bar.getByRole('dialog', { name: 'Share Huishouden' });
+  await expect(dialog).toBeVisible();
+  const code = dialog.locator('[part="share-qr-code"]');
+  await expect(code, 'the code is of the bare site address').toHaveAttribute('data-url', url);
+  await expect(code.getByRole('img', { name: `QR code for ${new URL(url).host}` })).toBeVisible();
+  const box = (await code.boundingBox())!;
+  expect(box.width, 'large enough to scan from a phone held next to it').toBeGreaterThanOrEqual(200);
+  expect(await code.evaluate((el) => getComputedStyle(el).backgroundColor), 'white behind the code in every theme').toBe('rgb(255, 255, 255)');
+  await expect(dialog.getByText(new URL(url).host, { exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
 }
 
 /**

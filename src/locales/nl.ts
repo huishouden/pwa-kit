@@ -27,6 +27,7 @@ import push from './nl/push.js';
 import reminders from './nl/reminders.js';
 import roles from './nl/roles.js';
 import schedule from './nl/schedule.js';
+import share from './nl/share.js';
 import suggestions from './nl/suggestions.js';
 import time from './nl/time.js';
 import todos from './nl/todos.js';
@@ -60,6 +61,7 @@ export default {
   ...reminders,
   ...roles,
   ...schedule,
+  ...share,
   ...suggestions,
   ...time,
   ...todos,

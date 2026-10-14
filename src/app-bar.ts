@@ -20,6 +20,10 @@
  * When a new version of the app is ready (`./update`), a small Update button sits before the account
  * area; tapping it applies the version and reloads. Nothing applies on its own while the page is in use.
  *
+ * Signed in, the menu offers "Share Huishouden" (`./share`): the system share sheet where there is
+ * one, else the link copied with a toast; beside it a QR code button opens a large code of the site's
+ * address for someone standing next to you. It shares the suite, not the household.
+ *
  * `bar.user = { name, email, photoURL }` once signed in, `null` when signed out; leave it
  * `undefined` while the session is being restored so neither the avatar nor Sign in flashes.
  */
@@ -28,6 +32,7 @@ import { LANG_CHOICES, LANG_NAMES, LANGS, getLang, getLangChoice, kt, onLangChan
 import { THEME_MODES, getThemeMode, onThemeChange, setThemeMode, startTheme, type ThemeMode } from './theme';
 import { applyUpdate, onUpdateReady, updateReady } from './update';
 import { BAR_PADDING_Y, BAR_TABS_HEIGHT } from './bar-size';
+import { SHARE_HOST, SHARE_URL, browserShareEnv, copyText, shareHuishouden, shareQrSvg, type ShareEnv } from './share.js';
 
 /** What the bar shows of the signed-in person. A Firebase `User` fits as it is. */
 export interface AppBarUser {
@@ -216,7 +221,7 @@ h1 { margin: 0; font-size: 18px; line-height: 1.25; font-weight: 700; letter-spa
   .end { margin-left: auto; }
 }
 button { font-family: inherit; }
-.signin {
+.signin, .primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -233,7 +238,7 @@ button { font-family: inherit; }
   white-space: nowrap;
   cursor: pointer;
 }
-.signin:hover { background: var(--primary-hover); }
+.signin:hover, .primary:hover { background: var(--primary-hover); }
 /* Phones: "Sign in" alone keeps the button beside a long app name; its label still says Google. */
 @media (max-width: 479px) { .signin .long { display: none; } }
 /* When the row would wrap (a narrow phone, a long app name, "Iniciar sesión"): the sign-in icon alone. */
@@ -364,10 +369,101 @@ button { font-family: inherit; }
 .update svg { width: 18px; height: 18px; flex-shrink: 0; }
 :host([compact]) .update { width: 44px; padding: 0; justify-content: center; }
 :host([compact]) .update .label { display: none; }
-.signin, .avatar, .item, .mode, .menu-button, .update { transition: background-color 150ms ease-out; }
+.share-row { display: flex; align-items: center; gap: 4px; }
+.share-row .item { flex: 1; min-width: 0; }
+.share-row .menu-button { color: var(--item-text); flex-shrink: 0; }
+/* The QR view: the kit's dialog shape (DESIGN.md "Dialog"), a bottom sheet on phones, centred on tablets. */
+.sheet {
+  width: min(440px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 20px 24px 24px;
+  overflow: auto;
+  border: 1px solid var(--menu-border);
+  border-radius: 24px;
+  background: var(--menu-bg);
+  color: var(--menu-text);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+.sheet::backdrop { background: rgb(0 0 0 / 0.4); }
+.sheet:not([open]) { display: none; }
+@media (max-width: 639px) {
+  .sheet {
+    width: 100%;
+    max-height: calc(100dvh - 24px);
+    margin: auto 0 0;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+    border-radius: 24px 24px 0 0;
+    border-width: 1px 0 0;
+  }
+}
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.sheet h2 { margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; color: var(--bar-title); }
+.sheet-head .menu-button { color: var(--menu-muted); }
+.sheet .scan { margin: 8px 0 0; font-size: 16px; line-height: 24px; }
+/* Dark modules on white in every theme: what cameras read best. Sized for a phone held next to it. */
+.qr {
+  display: block;
+  width: min(100%, 360px, calc(100dvh - 300px));
+  min-width: 200px;
+  margin: 16px auto 0;
+  padding: 0;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--hh-forest-900, #081c15);
+}
+.qr svg { display: block; width: 100%; height: auto; }
+.address { margin: 12px 0 0; text-align: center; font-size: 16px; line-height: 24px; font-weight: 600; overflow-wrap: anywhere; user-select: all; -webkit-user-select: all; }
+.sheet-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.sheet-actions button { flex: 1 1 auto; white-space: nowrap; }
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--menu-border);
+  border-radius: 12px;
+  background: var(--menu-bg);
+  color: var(--item-text);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.secondary:hover { background: var(--item-hover); }
+/* One toast at a time at the bottom, above a phone's tab bar (DESIGN.md "Toast"). */
+.toast-area {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: var(--hh-bottom-nav, 0px);
+  z-index: 60;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px max(24px, env(safe-area-inset-bottom));
+  pointer-events: none;
+}
+.toast {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  max-width: 576px;
+  padding: 8px 20px;
+  border-radius: 16px;
+  background: var(--hh-toast, #292524);
+  box-shadow: 0 0 0 1px var(--hh-toast-ring, transparent), 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  color: #fff;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+}
+.toast.error { background: #b91c1c; }
+.signin, .primary, .avatar, .item, .mode, .menu-button, .update, .secondary { transition: background-color 150ms ease-out; }
 a:focus-visible, button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) {
-  .signin, .avatar, .item, .mode, .menu-button, .update { transition: none; }
+  .signin, .primary, .avatar, .item, .mode, .menu-button, .update, .secondary { transition: none; }
 }
 `;
 
@@ -387,6 +483,7 @@ const TEMPLATE = `
     </div>
   </div>
 </header>
+<div class="toast-area" part="toast" aria-live="polite"></div>
 `;
 
 // Lets the module load where there is no DOM (unit tests, server rendering); it registers nothing there.
@@ -402,6 +499,13 @@ export class HhAppBar extends Base {
   #offTheme: (() => void) | undefined;
   #offLang: (() => void) | undefined;
   #offUpdate: (() => void) | undefined;
+  #toastTimer: ReturnType<typeof setTimeout> | undefined;
+
+  /** Replaces the browser's share sheet and clipboard (tests); by default they are looked up at each tap. */
+  shareEnv: ShareEnv | undefined;
+  #shareEnv(): ShareEnv {
+    return this.shareEnv ?? browserShareEnv();
+  }
 
   constructor() {
     super();
@@ -441,6 +545,7 @@ export class HhAppBar extends Base {
   set user(value: AppBarUser | null | undefined) {
     this.#user = value;
     this.#open = false;
+    if (!value) this.#closeQr();
     this.#renderAccount();
   }
 
@@ -478,6 +583,8 @@ export class HhAppBar extends Base {
   disconnectedCallback() {
     window.removeEventListener('resize', this.#onResize);
     this.#setOpen(false);
+    this.#closeQr();
+    clearTimeout(this.#toastTimer);
     this.#offTheme?.();
     this.#offTheme = undefined;
     this.#offLang?.();
@@ -676,7 +783,7 @@ export class HhAppBar extends Base {
     notifications.className = 'item';
     notifications.href = notificationsUrl(this.portalUrl, location.href);
     notifications.textContent = kt('appBar.notifications');
-    items.append(notifications, calendar, assistant);
+    items.append(notifications, calendar, assistant, this.#shareRow());
     items.append(this.#privacyLink());
     const out = document.createElement('button');
     out.type = 'button';
@@ -729,6 +836,126 @@ export class HhAppBar extends Base {
       this.#emit(SETTINGS_EVENT);
     });
     return [b];
+  }
+
+  /** "Share Huishouden" and, beside it, the QR code button. */
+  #shareRow(): HTMLElement {
+    const row = document.createElement('div');
+    row.className = 'share-row';
+    const share = document.createElement('button');
+    share.type = 'button';
+    share.className = 'item';
+    share.setAttribute('part', 'share');
+    share.textContent = kt('share.menu');
+    share.addEventListener('click', () => void this.#share());
+    const qr = document.createElement('button');
+    qr.type = 'button';
+    qr.className = 'menu-button';
+    qr.setAttribute('part', 'share-qr');
+    qr.setAttribute('aria-label', kt('share.showQr'));
+    qr.title = kt('share.showQr');
+    qr.innerHTML = QR_ICON; // trusted: static markup
+    qr.addEventListener('click', () => this.#openQr());
+    row.append(share, qr);
+    return row;
+  }
+
+  /** The share sheet, from the tap that asked for it; without one the link is copied and the toast says so. */
+  async #share(): Promise<void> {
+    this.#setOpen(false);
+    const outcome = await shareHuishouden(this.#shareEnv());
+    if (outcome === 'copied') this.#toast(kt('share.copied'));
+    // Neither a share sheet nor a clipboard: the QR view shows the address to read or select.
+    else if (outcome === 'failed') this.#openQr();
+  }
+
+  async #copy(): Promise<void> {
+    try {
+      await (this.#shareEnv().copy ?? copyText)(SHARE_URL);
+      this.#toast(kt('share.copied'));
+    } catch {
+      this.#toast(kt('share.copyFailed'), 'error');
+    }
+  }
+
+  /** The large QR code of the site's address, for someone standing next to you. */
+  #openQr() {
+    this.#setOpen(false);
+    this.#closeQr();
+    const dialog = document.createElement('dialog');
+    dialog.className = 'sheet';
+    dialog.setAttribute('part', 'share-dialog');
+    dialog.setAttribute('aria-labelledby', `${this.#menuId}-share`);
+    const head = document.createElement('div');
+    head.className = 'sheet-head';
+    const title = document.createElement('h2');
+    title.id = `${this.#menuId}-share`;
+    title.textContent = kt('share.title');
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'menu-button';
+    close.setAttribute('aria-label', kt('share.close'));
+    close.innerHTML = CLOSE_ICON; // trusted: static markup
+    close.addEventListener('click', () => this.#closeQr({ restoreFocus: true }));
+    head.append(title, close);
+    const code = document.createElement('div');
+    code.className = 'qr';
+    code.setAttribute('part', 'share-qr-code');
+    code.dataset.url = SHARE_URL;
+    code.innerHTML = shareQrSvg(); // trusted: generated here from the constant address; the label is escaped
+    const address = paragraph('address', SHARE_HOST);
+    address.translate = false;
+    const actions = document.createElement('div');
+    actions.className = 'sheet-actions';
+    const copy = document.createElement('button');
+    copy.type = 'button';
+    copy.className = 'secondary';
+    copy.textContent = kt('share.copy');
+    copy.addEventListener('click', () => void this.#copy());
+    actions.append(copy);
+    if (this.#shareEnv().share) {
+      const share = document.createElement('button');
+      share.type = 'button';
+      share.className = 'primary';
+      share.textContent = kt('share.share');
+      share.addEventListener('click', () => {
+        this.#closeQr();
+        void this.#share();
+      });
+      actions.append(share);
+    }
+    dialog.append(head, paragraph('scan', kt('share.scan')), code, address, actions);
+    // A tap on the scrim (the dialog itself, outside its content) closes it, as Escape does.
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) this.#closeQr({ restoreFocus: true });
+    });
+    dialog.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      this.#closeQr({ restoreFocus: true });
+    });
+    this.#root.append(dialog);
+    if (typeof dialog.showModal === 'function') dialog.showModal();
+    else dialog.setAttribute('open', '');
+  }
+
+  #closeQr({ restoreFocus = false } = {}) {
+    const dialog = this.#root.querySelector<HTMLDialogElement>('dialog.sheet');
+    if (!dialog) return;
+    if (typeof dialog.close === 'function' && dialog.open) dialog.close();
+    dialog.remove();
+    if (restoreFocus) this.#root.querySelector<HTMLButtonElement>('[data-trigger]')?.focus();
+  }
+
+  /** One toast at a time, 6 seconds (9 for an error), as the apps' own (DESIGN.md "Toast"). */
+  #toast(message: string, tone: 'info' | 'error' = 'info') {
+    const area = this.#root.querySelector<HTMLElement>('.toast-area')!;
+    const toast = document.createElement('div');
+    toast.className = tone === 'error' ? 'toast error' : 'toast';
+    toast.setAttribute('role', tone === 'error' ? 'alert' : 'status');
+    toast.textContent = message;
+    area.replaceChildren(toast);
+    clearTimeout(this.#toastTimer);
+    this.#toastTimer = setTimeout(() => area.replaceChildren(), tone === 'error' ? 9000 : 6000);
   }
 
   #privacyLink() {
@@ -849,6 +1076,14 @@ const SIGN_IN_ICON =
 
 const UPDATE_ICON =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>';
+
+// lucide "qr-code".
+const QR_ICON =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>';
+
+// lucide "x".
+const CLOSE_ICON =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
 
 const SETTINGS_ICON =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"/><path d="M19 7h-9"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>';
