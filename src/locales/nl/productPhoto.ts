@@ -1,0 +1,30 @@
+import type en from '../en/productPhoto.js';
+import type { CatalogueOf } from '../../i18n.js';
+
+export default {
+  'productPhoto.title': 'Toevoegen met foto',
+  'productPhoto.button': 'Toevoegen met foto',
+  'productPhoto.intro': 'Maak een foto van wat bijna op is, of kies foto’s. Het etiket aan de voorkant is genoeg, en op één foto mogen meerdere producten staan.',
+  'productPhoto.privacy': 'Foto’s worden op dit apparaat kleiner gemaakt en één keer naar Cloudflare gestuurd om de productnamen te lezen. Ze worden niet bewaard.',
+  'productPhoto.photoLabel': 'Productfoto’s',
+  'productPhoto.reading': '{count, plural, one {De foto wordt gelezen…} other {# foto’s worden gelezen…}}',
+  'productPhoto.found': '{count, plural, one {1 artikel gevonden. Controleer het en voeg het toe.} other {# artikelen gevonden. Controleer ze en voeg ze toe.}}',
+  'productPhoto.name': 'Naam',
+  'productPhoto.section': 'Afdeling',
+  'productPhoto.quantity': 'Aantal',
+  'productPhoto.pick': '{name} toevoegen',
+  'productPhoto.onList': 'Staat al op de lijst',
+  'productPhoto.barcode': 'Via de streepjescode',
+  'productPhoto.add': '{count, plural, =0 {Artikelen toevoegen} one {1 artikel toevoegen} other {# artikelen toevoegen}}',
+  'productPhoto.another': 'Nog een foto',
+  'productPhoto.typeInstead': 'Zelf typen',
+  'productPhoto.tryAgain': 'Andere foto proberen',
+  'productPhoto.none': 'Geen producten gevonden. Probeer een foto van dichterbij van het etiket aan de voorkant, of typ het artikel.',
+  'productPhoto.failed': 'De foto’s kunnen nu niet worden gelezen. Probeer het opnieuw, of typ de artikelen.',
+  'productPhoto.signIn': 'Log opnieuw in om foto’s te lezen, of typ de artikelen.',
+  'productPhoto.notMember': 'Alleen leden van dit huishouden kunnen hier foto’s laten lezen. Typ de artikelen.',
+  'productPhoto.cappedHousehold': 'Je huishouden heeft het lezen van foto’s voor vandaag opgebruikt. Typ de artikelen; morgen werken foto’s weer.',
+  'productPhoto.cappedEveryone': 'Het lezen van foto’s is voor vandaag op. Typ de artikelen; morgen werken foto’s weer.',
+  'productPhoto.someCapped': '{count, plural, one {1 foto is niet gelezen: het lezen van foto’s is voor vandaag op.} other {# foto’s zijn niet gelezen: het lezen van foto’s is voor vandaag op.}}',
+  'productPhoto.someFailed': '{count, plural, one {1 foto kon niet worden gelezen.} other {# foto’s konden niet worden gelezen.}}',
+} satisfies CatalogueOf<typeof en>;

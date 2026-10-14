@@ -1,0 +1,11 @@
+{
+  "jsonObject": {
+    "products": [
+      { "category": "Dairy & Eggs", "name": "Coffee mate Italian Sweet Crème creamer, Zero Sugar" },
+      { "category": "Dairy & Eggs", "name": "Reddi-wip Original Whipped Topping" }
+    ]
+  },
+  "codeFence": "```json\n{\n  \"items\": [\n    {\n      \"name\": \"Barilla Spaghetti n.5\",\n      \"category\": \"Pantry & Dry Goods\"\n    },\n    {\n      \"name\": \"HEINZ TOMATO KETCHUP 32 OZ\",\n      \"category\": \"Condiments\"\n    },\n    {\n      \"name\": \"Reddi-wip ORIGINAL WHIPPED TOPPING MADE WITH REAL CREAM\",\n      \"category\": \"Dairy & Eggs\"\n    },\n    {\n      \"name\": \"reddi-wip original whipped topping made with real cream\",\n      \"category\": \"Dairy & Eggs\"\n    }\n  ]\n}\n```",
+  "notJson": "I can see a bottle of creamer and a can of whipped cream.",
+  "empty": { "products": [] }
+}

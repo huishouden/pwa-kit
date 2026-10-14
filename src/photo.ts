@@ -110,14 +110,14 @@ interface Surface {
   toBlob(type: string, quality: number): Promise<Blob | null>;
 }
 
-function surface(size: number): Surface {
+function surface(width: number, height = width): Surface {
   if (typeof OffscreenCanvas !== 'undefined') {
-    const canvas = new OffscreenCanvas(size, size);
+    const canvas = new OffscreenCanvas(width, height);
     return { canvas, toBlob: (type, quality) => canvas.convertToBlob({ type, quality }).catch(() => null) };
   }
   const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
+  canvas.width = width;
+  canvas.height = height;
   return { canvas, toBlob: (type, quality) => new Promise((resolve) => canvas.toBlob(resolve, type, quality)) };
 }
 
@@ -164,4 +164,45 @@ export async function squarePhoto(file: Blob, options: SquarePhotoOptions = {}):
 /** Whether a stored value is a photo this module made (a WebP or JPEG data URL). */
 export function isPhotoDataUrl(value: unknown): value is string {
   return typeof value === 'string' && /^data:image\/(webp|jpeg);base64,[A-Za-z0-9+/]+=*$/.test(value);
+}
+
+/** The size a `width` × `height` image is drawn at so its long edge is at most `longEdge` (never enlarged). */
+export function fitWithin(width: number, height: number, longEdge: number): { width: number; height: number } {
+  const scale = Math.min(1, longEdge / Math.max(width, height, 1));
+  return { width: Math.max(1, Math.round(width * scale)), height: Math.max(1, Math.round(height * scale)) };
+}
+
+export interface ShrunkPhoto {
+  /** `data:image/jpeg;base64,…` */
+  dataUrl: string;
+  width: number;
+  height: number;
+}
+
+/**
+ * A whole photo (not cropped) turned upright from its EXIF orientation, made at most `longEdge`
+ * pixels on its long side and encoded as JPEG, for sending somewhere once (a model reading product
+ * names) rather than keeping. Throws a `PhotoError` with words to show.
+ */
+export async function shrinkPhoto(file: Blob, { longEdge = 768, quality = 0.8 }: { longEdge?: number; quality?: number } = {}): Promise<ShrunkPhoto> {
+  if (typeof createImageBitmap !== 'function') throw new PhotoError(kt('photo.cantRead'), 'unsupported');
+  let bitmap: ImageBitmap;
+  try {
+    bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+  } catch {
+    throw new PhotoError(kt('photo.unreadable'), 'unreadable');
+  }
+  try {
+    const size = fitWithin(bitmap.width, bitmap.height, longEdge);
+    const s = surface(size.width, size.height);
+    const ctx = s.canvas.getContext('2d') as OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D | null;
+    if (!ctx) throw new PhotoError(kt('photo.cantShrink'), 'unsupported');
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(bitmap, 0, 0, size.width, size.height);
+    const blob = await s.toBlob('image/jpeg', quality);
+    if (!blob || blob.type !== 'image/jpeg') throw new PhotoError(kt('photo.cantShrink'), 'unsupported');
+    return { dataUrl: await toDataUrl(blob), ...size };
+  } finally {
+    bitmap.close();
+  }
 }

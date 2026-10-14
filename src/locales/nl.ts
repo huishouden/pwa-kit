@@ -23,6 +23,7 @@ import invite from './nl/invite.js';
 import people from './nl/people.js';
 import photo from './nl/photo.js';
 import places from './nl/places.js';
+import productPhoto from './nl/productPhoto.js';
 import push from './nl/push.js';
 import reminders from './nl/reminders.js';
 import roles from './nl/roles.js';
@@ -57,6 +58,7 @@ export default {
   ...people,
   ...photo,
   ...places,
+  ...productPhoto,
   ...push,
   ...reminders,
   ...roles,

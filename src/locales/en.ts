@@ -21,6 +21,7 @@ import invite from './en/invite.js';
 import people from './en/people.js';
 import photo from './en/photo.js';
 import places from './en/places.js';
+import productPhoto from './en/productPhoto.js';
 import push from './en/push.js';
 import reminders from './en/reminders.js';
 import roles from './en/roles.js';
@@ -55,6 +56,7 @@ export default {
   ...people,
   ...photo,
   ...places,
+  ...productPhoto,
   ...push,
   ...reminders,
   ...roles,

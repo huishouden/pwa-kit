@@ -477,6 +477,30 @@ The portal's household panel edits one document, `households/{id}/settings/food`
   1000 expressions, too few to check every person's fields, so always write with `saveFood` (which
   clips each person to `FOOD_PERSON_FIELDS` and `FOOD_LIMITS`) and read with `watchFood`.
 
+## Photos read by a model
+
+Add by photo (`./product-photo`, README "Add by photo") is the pattern for any feature that sends a
+person's photo to a model.
+
+- **The device first.** Whatever the browser can do itself is done there: a barcode is read with
+  `BarcodeDetector` and looked up by its number alone; only photos without one leave the device.
+- **Small, once, kept nowhere.** A photo is made small on the device (`shrinkPhoto`, 768 pixels on
+  the long side, JPEG) and sent once. The server passes it to the model and forgets it: no storage,
+  no image bytes or names read in any log (counts only). The dialog says so under the picker, and
+  the portal's privacy page must say who receives photos and that they are not kept, in every
+  language, by the release that first offers the feature.
+- **A model that doesn't learn from it.** Workers AI (Cloudflare does not train on what it is sent),
+  on the free allocation; never the Gemini Developer API's free tier, which may keep and review
+  inputs.
+- **Free, with caps.** A daily cap per household and one for everyone together, well under the free
+  allocation (huishouden/calendar README, "Add by photo"), counted before the model is called; when a
+  cap is reached the app says whose and offers typing instead.
+- **Nothing added without a tap.** What the model read is a checklist the person edits and confirms
+  ("Add N items"); anything already on the list starts unticked.
+- **No extra reads.** Checking "already on the list" uses what the screen already has; adding goes
+  through the same write as typing, so it costs what typing costs (the app's read-budget test
+  compares the two).
+
 ## Read budgets
 
 Firestore's free plan has 50,000 document reads a day for the whole project: every household, app

@@ -185,6 +185,11 @@ rather than copying the class strings; the shapes are:
   `/react/ui`: the terracotta "Sample data" chip and one sentence (what it is, that nothing is
   saved, what signing in shows). On phones one line, the chip and a short "Nothing is saved." that
   opens the sentence on a tap.
+- **Add by photo:** a camera icon button (`AddByPhotoButton`) inside the add field's bar, before
+  Add; it opens `AddByPhotoDialog`: the photo picker, a placeholder shaped like the rows while the
+  photos are read, then a checklist (each product ticked, name, section and quantity editable,
+  "Already on list" unticked) and one primary "Add N items". A cap or a failure is one sentence and
+  Type instead.
 - **Empty and loading states:** one sentence and, if useful, one action. No spinners longer than a
   second without text. While an app opens (the session restoring, the household being found, the
   first data arriving) it shows `AppOpening` from `/react/frame`: its own frame, with the tabs it

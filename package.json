@@ -194,6 +194,14 @@
       "types": "./dist/photo.d.ts",
       "default": "./dist/photo.js"
     },
+    "./product-photo": {
+      "types": "./dist/product-photo.d.ts",
+      "default": "./dist/product-photo.js"
+    },
+    "./product-photo-core": {
+      "types": "./dist/product-photo-core.d.ts",
+      "default": "./dist/product-photo-core.js"
+    },
     "./places": {
       "types": "./dist/places.d.ts",
       "default": "./dist/places.js"
@@ -249,6 +257,10 @@
     "./react/photo": {
       "types": "./dist/react/photo.d.ts",
       "default": "./dist/react/photo.js"
+    },
+    "./react/product-photo": {
+      "types": "./dist/react/product-photo.d.ts",
+      "default": "./dist/react/product-photo.js"
     },
     "./react/schedule": {
       "types": "./dist/react/schedule.d.ts",
