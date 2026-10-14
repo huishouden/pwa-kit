@@ -113,9 +113,11 @@ describe('readProductPhotos', () => {
   }
   const options = (fetch: Fetch) => ({ endpoint: 'https://worker.example/', household: 'h1', idToken: async () => 'id-token', categories: SECTIONS, fetch });
 
-  test('a barcode skips the model; the rest go three at a time; a product in two photos comes once', async () => {
+  test('a barcode skips the model; the rest one a request; a product in two photos comes once, in photo order', async () => {
     const w = worker([
-      { photos: [{ products: [{ name: 'Coffee mate Italian Sweet Crème creamer, Zero Sugar', category: 'Dairy & Eggs' }, { name: 'Reddi-wip Original' }] }, { products: [] }, { products: [{ name: 'Reddi-wip original' }] }], left: 20 },
+      { photos: [{ products: [{ name: 'Coffee mate Italian Sweet Crème creamer, Zero Sugar', category: 'Dairy & Eggs' }, { name: 'Reddi-wip Original' }] }], left: 22 },
+      { photos: [{ products: [] }], left: 21 },
+      { photos: [{ products: [{ name: 'Reddi-wip original' }] }], left: 20 },
       { photos: [{ products: [{ name: 'Heinz Tomato Ketchup', category: 'Pantry & Dry Goods' }] }], left: 19 },
     ]);
     const files = [photo('code-3017620422003.jpg'), photo('a-1000x800.jpg'), photo('b.jpg'), photo('c.jpg'), photo('d.jpg')];
@@ -127,16 +129,18 @@ describe('readProductPhotos', () => {
       { name: 'Heinz Tomato Ketchup', category: 'Pantry & Dry Goods', photo: 4, via: 'photo' },
     ]);
     expect(reading).toMatchObject({ failed: 0, left: 19 });
-    expect(w.requests.map((r) => r.photos.length)).toEqual([3, 1]);
+    expect(w.requests.map((r) => r.photos.length)).toEqual([1, 1, 1, 1]);
     expect(w.requests[0]).toMatchObject({ household: 'h1', categories: SECTIONS, auth: 'Bearer id-token' });
   });
 
   test("a cap part way: the photos after it aren't sent, and are counted", async () => {
-    const w = worker([{ photos: [{ products: [{ name: 'Test oats' }] }, { capped: true }, { capped: true }], capped: 'household', left: 0 }]);
+    const capped: ProductPhotoResponse = { photos: [{ capped: true }], capped: 'household', left: 0 };
+    const w = worker([{ photos: [{ products: [{ name: 'Test oats' }] }], left: 0 }, capped, capped, capped]);
     const reading = await readProductPhotos([photo('a.jpg'), photo('b.jpg'), photo('c.jpg'), photo('d.jpg'), photo('e.jpg')], options(w.fetch));
     expect(reading.products.map((p) => p.name)).toEqual(['Test oats']);
     expect(reading.capped).toEqual({ photos: 4, by: 'household' });
-    expect(w.requests).toHaveLength(1);
+    // The first alone, then three in flight at once; none sent after a cap came back.
+    expect(w.requests).toHaveLength(4);
   });
 
   test('an unreadable photo is counted, the others still read', async () => {

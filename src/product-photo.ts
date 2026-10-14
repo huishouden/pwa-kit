@@ -3,9 +3,9 @@
  * things to buy). Each photo is tried on the device first: a retail barcode found by the browser's
  * own `BarcodeDetector` is looked up in Open Food Facts (free, no key; only the number is sent). The
  * photos without one are made small on the device (`shrinkPhoto`, 768 pixels, JPEG) and sent once to
- * the Worker (`PRODUCT_PHOTO_PATH`, huishouden/calendar), which asks a vision model for the product
- * names and keeps nothing. Nothing here adds anything: the app shows the products for the person to
- * check (`./react/product-photo`).
+ * the Worker (`PRODUCT_PHOTO_PATH`, huishouden/calendar), one a request and three at a time, which
+ * asks a vision model for the product names and keeps nothing. Nothing here adds anything: the app
+ * shows the products for the person to check (`./react/product-photo`).
  *
  * ```ts
  * const reading = await readProductPhotos(files, {
@@ -172,7 +172,7 @@ export interface ProductReading {
 
 /**
  * Reads products from photos (at most `PRODUCT_PHOTO_LIMITS.photosPerPick`): barcodes on the device
- * and Open Food Facts first, then the rest through the Worker, `photosPerRequest` at a time. The same
+ * and Open Food Facts first, then the rest through the Worker, `concurrentRequests` at a time. The same
  * product in two photos comes back once. Throws `ProductPhotoError` only when nothing could be asked
  * at all (signed out, not a member, offline); otherwise what was read, with counts of what wasn't.
  */
@@ -206,14 +206,12 @@ export async function readProductPhotos(files: readonly Blob[], options: ReadPro
   const base = options.endpoint.replace(/\/+$/, '');
   let answered = false;
   let refused: ProductPhotoError['reason'] | null = null;
-  for (let i = 0; i < toSend.length; i += PRODUCT_PHOTO_LIMITS.photosPerRequest) {
-    const part = toSend.slice(i, i + PRODUCT_PHOTO_LIMITS.photosPerRequest);
-    // Signed out or not a member: the next request would be refused too.
-    if (reading.capped || refused === 'sign-in' || refused === 'not-member') {
-      if (reading.capped) reading.capped.photos += part.length;
-      else reading.failed += part.length;
-      continue;
-    }
+  const parts: (typeof toSend)[] = [];
+  for (let i = 0; i < toSend.length; i += PRODUCT_PHOTO_LIMITS.photosPerRequest) parts.push(toSend.slice(i, i + PRODUCT_PHOTO_LIMITS.photosPerRequest));
+  const answers: { part: typeof toSend; body: ProductPhotoResponse | null }[] = [];
+  const send = async (part: typeof toSend) => {
+    // Signed out, not a member, or capped: the next request would be refused too.
+    if (refused === 'sign-in' || refused === 'not-member' || answers.some((a) => a.body?.capped)) return answers.push({ part, body: null });
     let body: ProductPhotoResponse | null = null;
     try {
       const res = await fetchImpl(`${base}${PRODUCT_PHOTO_PATH}`, {
@@ -226,13 +224,28 @@ export async function readProductPhotos(files: readonly Blob[], options: ReadPro
     } catch {
       // Offline, or the Worker unreachable.
     }
-    if (!body || !Array.isArray(body.photos)) {
-      refused ??= 'unavailable';
-      reading.failed += part.length;
+    if (!body || !Array.isArray(body.photos)) refused ??= 'unavailable';
+    answers.push({ part, body: body && Array.isArray(body.photos) ? body : null });
+  };
+  // The first alone (the Worker then remembers the member for an hour: one household read), then
+  // a few at a time, in order of the photos.
+  let next = 0;
+  if (parts.length) await send(parts[next++]);
+  await Promise.all(
+    Array.from({ length: Math.min(PRODUCT_PHOTO_LIMITS.concurrentRequests, parts.length) }, async () => {
+      while (next < parts.length) await send(parts[next++]);
+    }),
+  );
+  answers.sort((a, b) => a.part[0].photo - b.part[0].photo);
+  const cappedBy = answers.find((a) => a.body?.capped)?.body?.capped;
+  for (const { part, body } of answers) {
+    if (!body) {
+      if (cappedBy) reading.capped = { photos: (reading.capped?.photos ?? 0) + part.length, by: cappedBy };
+      else reading.failed += part.length;
       continue;
     }
     answered = true;
-    if (typeof body.left === 'number') reading.left = body.left;
+    if (typeof body.left === 'number') reading.left = reading.left === undefined ? body.left : Math.min(reading.left, body.left);
     part.forEach((sent, j) => {
       const answer = body.photos[j];
       if (answer && 'products' in answer) for (const p of answer.products) add({ ...p, photo: sent.photo, via: 'photo' });

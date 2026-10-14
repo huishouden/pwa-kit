@@ -13,8 +13,10 @@
 export const PRODUCT_PHOTO_PATH = '/api/photo/products';
 
 export const PRODUCT_PHOTO_LIMITS = {
-  /** Photos in one request; more are sent in further requests. Keeps a request well inside a free Worker's CPU time. */
-  photosPerRequest: 3,
+  /** Photos in one request: one, so a request stays inside a free Worker's 10 ms of CPU (three measured 14 to 16 ms). */
+  photosPerRequest: 1,
+  /** Requests in flight at once. */
+  concurrentRequests: 3,
   /** Photos read in one go. */
   photosPerPick: 8,
   /** Longest data URL accepted: a 768-pixel JPEG is 60 to 200 KB of base64. */
@@ -31,7 +33,7 @@ export const PRODUCT_PHOTO_LIMITS = {
 /** The long edge photos are made small to on the device before they are sent. */
 export const PRODUCT_PHOTO_EDGE = 768;
 
-/** What the app sends: the household (the Worker checks the caller is a member), the photos and the sections to choose from. */
+/** What the app sends: the household (the Worker checks the caller is a member), the photo and the sections to choose from. */
 export interface ProductPhotoRequest {
   household: string;
   /** `data:image/jpeg;base64,…`, one per photo. */
