@@ -35,19 +35,19 @@ export interface Listing {
 
 type Fetch = (url: string) => Promise<Response>;
 
-/** openFDA could not be reached or refused: the label is used as read. Anything else is a bug and is thrown. */
+/** openFDA could not be reached, refused, or answered with something other than its JSON: the label is used as read. Anything else is a bug and is thrown. */
 export class OpenFdaError extends Error {}
 
-async function ask(fetcher: Fetch, url: string): Promise<Response | null> {
-  let r: Response;
+/** openFDA's answer as JSON, null when nothing is listed; anything from the wire that fails (a captive portal's page too) is an `OpenFdaError`. */
+async function ask(fetcher: Fetch, url: string): Promise<any | null> {
   try {
-    r = await fetcher(url);
+    const r = await fetcher(url);
+    if (r.status === 404) return null;
+    if (!r.ok) throw new OpenFdaError(`openFDA ${r.status}`);
+    return await r.json();
   } catch (e) {
-    throw new OpenFdaError(String(e));
+    throw e instanceof OpenFdaError ? e : new OpenFdaError(String(e));
   }
-  if (r.status === 404) return null;
-  if (!r.ok) throw new OpenFdaError(`openFDA ${r.status}`);
-  return r;
 }
 
 /** "500 mg/1" -> "500 mg", "5 mg/g" stays, "90 ug/1" -> "90 mcg". */
@@ -61,9 +61,9 @@ export async function ndcListing(ndc: string, fetcher: Fetch = fetch): Promise<L
   if (parts.length !== 3) return null;
   const product = `${parts[0]}-${parts[1]}`;
   for (const q of [`product_ndc:"${product}"`, `packaging.package_ndc:"${ndc}"`]) {
-    const r = await ask(fetcher, `${OPENFDA_NDC}?search=${encodeURIComponent(q)}&limit=1`);
-    if (!r) continue;
-    const hit = ((await r.json()) as { results?: any[] }).results?.[0];
+    const body = await ask(fetcher, `${OPENFDA_NDC}?search=${encodeURIComponent(q)}&limit=1`);
+    if (!body) continue;
+    const hit = (body as { results?: any[] }).results?.[0];
     if (hit) return toProduct(hit);
   }
   return null;
@@ -98,9 +98,8 @@ export async function nameListings(name: string, fetcher: Fetch = fetch): Promis
   // A common generic has hundreds of listings: three pages at most, narrowed on the device.
   const out: ListedProduct[] = [];
   for (let skip = 0; skip < 300; skip += 100) {
-    const r = await ask(fetcher, `${OPENFDA_NDC}?search=${q}&limit=100${skip ? `&skip=${skip}` : ''}`);
-    if (!r) break;
-    const body = (await r.json()) as { meta?: { results?: { total?: number } }; results?: any[] };
+    const body = (await ask(fetcher, `${OPENFDA_NDC}?search=${q}&limit=100${skip ? `&skip=${skip}` : ''}`)) as { meta?: { results?: { total?: number } }; results?: any[] } | null;
+    if (!body) break;
     out.push(...(body.results ?? []).map(toProduct));
     if (out.length >= (body.meta?.results?.total ?? 0) || !body.results?.length) break;
   }

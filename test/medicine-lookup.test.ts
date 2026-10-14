@@ -158,8 +158,11 @@ describe('matchCode and nameListings, more', () => {
 
   test('a fault that is not openFDA\'s is not swallowed', async () => {
     const names = namesMatcher(['Caduet'], []);
-    const broken = async () => new Response('not json');
-    await expect(withListing(read({ name: 'Caduet' }), { fetch: broken, names, codes: ['5815106493'] })).rejects.toThrow();
+    // A captive portal's page in place of openFDA's answer is the network's fault: the label as read.
+    await expect(withListing(read({ name: 'Caduet' }), { fetch: async () => new Response('<html>Log in</html>'), names, codes: ['5815106493'] })).resolves.toMatchObject({ name: 'Caduet' });
+    // A fault in the matching on the device is thrown.
+    const faulty = { ...names, match: () => { throw new TypeError('bug'); } };
+    await expect(withListing(read({ name: 'Caduet' }), { fetch: byName(), names: faulty, codes: ['5815106493'] })).rejects.toThrow('bug');
     await expect(withListing(read({ name: 'Caduet' }), { fetch: async () => new Response('', { status: 503 }), names, codes: ['5815106493'] })).resolves.toMatchObject({ name: 'Caduet' });
   });
 
