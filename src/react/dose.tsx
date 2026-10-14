@@ -3,7 +3,8 @@
  * several at once for the front and back of a box: `./image-picker`) read on the device
  * (`../ocr` `readLabelLines`: several passes, unsure words dropped; nothing uploaded or kept) and
  * parsed (`../medicine-label` `parseLabel`, with the medicine names kept on the device). When the
- * label shows an NDC, the FDA's listing for that code (only the code is sent) supplies the exact
+ * label shows an NDC, the FDA's listing for that code (only the code, or for a half-read code the
+ * medicine's listed name, is sent) supplies the exact
  * name, strength and form, if it agrees with what was read (`../medicine-lookup`). The app fills
  * its own form from the result and says what it filled. The card then shows, in this order, what
  * was filled in (field by field) and where it came from, the strengths to pick from when the
@@ -24,8 +25,8 @@ import { ScanText } from 'lucide-react';
 import { combineLabelTexts } from '../dose';
 import type { LabelReading } from '../label-read';
 import { parseLabel, type LabelCourse } from '../medicine-label';
-import { withListing } from '../medicine-lookup';
-import { medicineNames, type MedicineNames } from '../medicine-names-match';
+import { withListing, type ListingOptions } from '../medicine-lookup';
+import { medicineNames } from '../medicine-names-match';
 import { readLabelLines } from '../ocr';
 import { useKitT } from './i18n';
 import { ImagePicker } from './image-picker';
@@ -63,7 +64,7 @@ export interface LabelScanProps {
   /** Reads the photo (tests); default `readLabelLines`, or `window.__mockLabelText` when set. */
   read?: (photo: Blob, onProgress: (progress: number) => void) => Promise<string | LabelReading>;
   /** The FDA listing step (tests); default `withListing` (openFDA, the NDC only). `null`: never look up. */
-  listing?: ((course: LabelCourse, names?: MedicineNames) => Promise<LabelCourse>) | null;
+  listing?: ((course: LabelCourse, options: ListingOptions) => Promise<LabelCourse>) | null;
   /** Photos to read as soon as this shows, such as ones shared in from the gallery (`../shared-images`). */
   images?: File[];
 }
@@ -74,8 +75,8 @@ const defaultRead = (photo: Blob, onProgress: (progress: number) => void) =>
 /** A lookup that takes longer than this is skipped: the label as read is filled in. */
 const LISTING_TIMEOUT_MS = 6000;
 
-const defaultListing = (course: LabelCourse, names?: MedicineNames) =>
-  Promise.race([withListing(course, { names }), new Promise<LabelCourse>((resolve) => setTimeout(() => resolve(course), LISTING_TIMEOUT_MS))]);
+const defaultListing = (course: LabelCourse, options: ListingOptions) =>
+  Promise.race([withListing(course, options), new Promise<LabelCourse>((resolve) => setTimeout(() => resolve(course), LISTING_TIMEOUT_MS))]);
 
 export function LabelScan({ onRead, onStrength, intro, read = defaultRead, listing = defaultListing, images }: LabelScanProps) {
   const kt = useKitT();
@@ -93,7 +94,7 @@ export function LabelScan({ onRead, onStrength, intro, read = defaultRead, listi
     for (const [n, photo] of photos.entries()) {
       try {
         const r = await read(photo, (progress) => id === run.current && setScan({ status: 'reading', progress, photo: n + 1, photos: photos.length }));
-        readings.push(typeof r === 'string' ? { text: r, lines: [], words: [], turns: 0, passes: 1 } : r);
+        readings.push(typeof r === 'string' ? { text: r, lines: [], words: [], codes: [], turns: 0, passes: 1 } : r);
       } catch {
         // One unreadable photo does not lose the others; all of them failing is the error.
       }
@@ -108,8 +109,9 @@ export function LabelScan({ onRead, onStrength, intro, read = defaultRead, listi
       // Print sizes compare within one photo only.
       const lines = readings.length === 1 && readings[0].lines.length ? readings[0].lines : undefined;
       const names = await medicineNames().catch(() => undefined);
+      const codes = [...new Set(readings.flatMap((r) => r.codes))];
       let parsed = parseLabel(text, { lines, isMedicineName: names?.match });
-      if (listing) parsed = await listing(parsed, names).catch(() => parsed);
+      if (listing) parsed = await listing(parsed, { names, text, codes }).catch(() => parsed);
       if (id !== run.current) return;
       const filled = onRead(parsed, text).filter((f) => f.value.trim());
       setScan({ status: 'done', text, filled, parsed });

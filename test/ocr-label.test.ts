@@ -10,7 +10,7 @@ describe('readLabelLines without OffscreenCanvas', () => {
     expect(typeof (globalThis as { OffscreenCanvas?: unknown }).OffscreenCanvas).toBe('undefined');
     const photo = new Blob(['photo'], { type: 'image/jpeg' });
     const read = await readLabelLines(photo, { paths });
-    expect(read).toEqual({ text: 'Lisinopril 10 mg tablets\nTake 1 tablet by mouth daily', lines: [], words: [], turns: 0, passes: 1 });
+    expect(read).toEqual({ text: 'Lisinopril 10 mg tablets\nTake 1 tablet by mouth daily', lines: [], words: [], codes: [], turns: 0, passes: 1 });
     expect(await readLabel(photo, { paths })).toBe('Lisinopril 10 mg tablets\nTake 1 tablet by mouth daily');
     await releaseOcr();
   });

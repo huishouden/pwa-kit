@@ -85,7 +85,7 @@ export async function readLabelLines(image: Blob, options: ReadLabelLinesOptions
   if (!canDraw()) {
     // No OffscreenCanvas (Safari before 16.4): the photo as it is, read once, as before this reader.
     const text = await readImageText(image, { paths, onProgress, maxSide: passOptions.maxSide });
-    return { text, lines: [], words: [], turns: 0, passes: 1 };
+    return { text, lines: [], words: [], codes: [], turns: 0, passes: 1 };
   }
   let pass = 1;
   let total = 2;

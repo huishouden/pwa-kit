@@ -18,7 +18,7 @@ export default {
   'dose.everyDays': 'Every {n} days',
   'dose.everyHours': 'Every {n} hours',
   'dose.route': '{route, select, by_mouth {By mouth} under_the_skin {Under the skin} by_injection {By injection} in_the_eye {In the eye} in_the_ear {In the ear} in_the_nose {In the nose} inhaled {Inhaled} on_the_skin {On the skin} other {{route}}}',
-  'dose.scanIntro': 'Take a photo of the pharmacy label, or choose one you already have. A box with a front and a back: choose both photos at once. It is read on this device and not kept; only the NDC code printed on it is looked up in the FDA’s public list.',
+  'dose.scanIntro': 'Take a photo of the pharmacy label, or choose one you already have. A box with a front and a back: choose both photos at once. It is read on this device and not kept; only the medicine’s code (NDC) or name is looked up in the FDA’s public list.',
   'dose.labelPhoto': 'Label photo',
   'dose.reading': 'Reading the label {percent}%',
   'dose.readingMany': 'Reading photo {n} of {total}, {percent}%',

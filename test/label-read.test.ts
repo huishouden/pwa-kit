@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { clahe, crop, rotate, scale, stretch, toBmp, toGray, type Gray } from '../src/label-image';
-import { fixNumberWord, linesOf, mergeWords, readLabelImage, readingScore, wordsToLines, type OcrWord, type Psm } from '../src/label-read';
+import { codesOf, fixNumberWord, linesOf, mergeWords, readLabelImage, readingScore, wordsToLines, type OcrWord, type Psm } from '../src/label-read';
 
 const word = (text: string, x0: number, y0: number, w = 60, h = 20, confidence = 90): OcrWord => ({ text, confidence, box: { x0, y0, x1: x0 + w, y1: y0 + h } });
 const gray = (width: number, height: number, f: (x: number, y: number) => number): Gray => {
@@ -50,6 +50,13 @@ describe('lines from words', () => {
   });
 });
 
+describe('codesOf', () => {
+  test('digit runs of eight or more on a line, sure or not, numbers fixed; short numbers and words left out', () => {
+    const words = [word('NDC', 0, 0, 40, 20, 90), word('24208-9lO', 50, 0, 90, 20, 0), word('-55', 150, 0, 30, 20, 10), word('Qty:', 0, 100), word('30', 70, 100), word('(555)', 0, 200), word('014-2290', 70, 200)];
+    expect(codesOf(words)).toEqual(['24208-910-55']);
+  });
+});
+
 describe('readLabelImage', () => {
   test('a sideways photo is read in the turn that gives the most sure text', async () => {
     const img = gray(400, 200, () => 255);
@@ -65,6 +72,29 @@ describe('readLabelImage', () => {
     expect(r.turns === 1 || r.turns === 3).toBe(true);
     expect(r.text).toBe('Carprofen\nChewable\nTablets');
     expect(seen[0].psm).toBe('11');
+  });
+});
+
+describe('the code pass', () => {
+  test('no clear NDC but a long run of digits: one more pass reads them, its codes first', async () => {
+    const psms: Psm[] = [];
+    const first = [word('NDC', 0, 0, 40, 20, 90), word('24208-9102', 50, 0, 90, 20, 0), word('Ointment', 0, 60, 200, 40), word('Sterile', 0, 120, 200, 40)];
+    const recognize = async (_bmp: Uint8Array, psm: Psm) => {
+      psms.push(psm);
+      return { words: psms.length >= 2 ? [word('NDC', 0, 0, 40, 20, 90), word('24208-910-55', 50, 0, 90, 20, 70)] : first };
+    };
+    const r = await readLabelImage(gray(300, 300, () => 255), recognize, { turns: false, morePassesBelow: 0 });
+    expect(r.codes).toEqual(['24208-910-55', '24208-9102']);
+    expect(r.passes).toBe(2);
+    expect(psms).toEqual(['11', '11']);
+  });
+
+  test('a clear NDC read: no extra pass', async () => {
+    let passes = 0;
+    const recognize = async () => (passes++, { words: [word('NDC', 0, 0, 40, 20, 90), word('59390-217-02', 50, 0, 90, 20, 95)] });
+    const r = await readLabelImage(gray(300, 300, () => 255), recognize, { turns: false, morePassesBelow: 0 });
+    expect(passes).toBe(1);
+    expect(r.codes).toEqual(['59390-217-02']);
   });
 });
 

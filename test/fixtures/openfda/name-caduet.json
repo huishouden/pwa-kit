@@ -1,0 +1,443 @@
+{
+ "meta": {
+  "results": {
+   "skip": 0,
+   "limit": 100,
+   "total": 16
+  }
+ },
+ "results": [
+  {
+   "product_ndc": "0069-6323",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Pfizer Laboratories Div Pfizer Inc",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "5 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "20 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "0069-6323-30",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (0069-6323-30)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "0069-6180",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Pfizer Laboratories Div Pfizer Inc",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "5 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "10 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "0069-6180-30",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (0069-6180-30)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "0069-7232",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Pfizer Laboratories Div Pfizer Inc",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "10 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "20 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "0069-7232-30",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (0069-7232-30)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "0069-6565",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Pfizer Laboratories Div Pfizer Inc",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "5 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "40 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "0069-6565-30",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (0069-6565-30)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "0069-7654",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Pfizer Laboratories Div Pfizer Inc",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "10 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "40 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "0069-7654-30",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (0069-7654-30)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "0069-7810",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Pfizer Laboratories Div Pfizer Inc",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "10 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "10 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "0069-7810-30",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (0069-7810-30)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "0069-7476",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Pfizer Laboratories Div Pfizer Inc",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "10 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "80 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "0069-7476-30",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (0069-7476-30)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "0069-6747",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Pfizer Laboratories Div Pfizer Inc",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "5 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "80 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "0069-6747-30",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (0069-6747-30)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "58151-063",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Viatris Specialty LLC",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "10 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "80 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "58151-063-93",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (58151-063-93)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "58151-060",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Viatris Specialty LLC",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "10 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "10 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "58151-060-93",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (58151-060-93)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "58151-061",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Viatris Specialty LLC",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "10 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "20 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "58151-061-93",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (58151-061-93)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "58151-062",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Viatris Specialty LLC",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "10 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "40 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "58151-062-93",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (58151-062-93)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "58151-066",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Viatris Specialty LLC",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "5 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "40 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "58151-066-93",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (58151-066-93)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "58151-064",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Viatris Specialty LLC",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "5 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "10 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "58151-064-93",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (58151-064-93)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "58151-065",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Viatris Specialty LLC",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "5 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "20 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "58151-065-93",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (58151-065-93)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  },
+  {
+   "product_ndc": "58151-067",
+   "generic_name": "amlodipine and atorvastatin",
+   "labeler_name": "Viatris Specialty LLC",
+   "brand_name": "Caduet",
+   "active_ingredients": [
+    {
+     "name": "AMLODIPINE BESYLATE",
+     "strength": "5 mg/1"
+    },
+    {
+     "name": "ATORVASTATIN CALCIUM TRIHYDRATE",
+     "strength": "80 mg/1"
+    }
+   ],
+   "packaging": [
+    {
+     "package_ndc": "58151-067-93",
+     "description": "30 TABLET, FILM COATED in 1 BOTTLE (58151-067-93)",
+     "sample": false
+    }
+   ],
+   "dosage_form": "TABLET, FILM COATED",
+   "route": [
+    "ORAL"
+   ]
+  }
+ ]
+}
