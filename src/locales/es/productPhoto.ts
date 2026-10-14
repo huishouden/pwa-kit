@@ -1,0 +1,30 @@
+import type en from '../en/productPhoto.js';
+import type { CatalogueOf } from '../../i18n.js';
+
+export default {
+  'productPhoto.title': 'Añadir con foto',
+  'productPhoto.button': 'Añadir con foto',
+  'productPhoto.intro': 'Haz una foto de lo que se está acabando o elige fotos. Basta con la etiqueta de delante, y una foto puede tener varios productos.',
+  'productPhoto.privacy': 'Las fotos se reducen en este dispositivo y se envían una vez a Cloudflare para leer los nombres de los productos. No se guardan.',
+  'productPhoto.photoLabel': 'Fotos de productos',
+  'productPhoto.reading': '{count, plural, one {Leyendo la foto…} other {Leyendo # fotos…}}',
+  'productPhoto.found': '{count, plural, one {Se encontró 1 artículo. Revísalo y añádelo.} other {Se encontraron # artículos. Revísalos y añádelos.}}',
+  'productPhoto.name': 'Nombre',
+  'productPhoto.section': 'Sección',
+  'productPhoto.quantity': 'Cantidad',
+  'productPhoto.pick': 'Añadir {name}',
+  'productPhoto.onList': 'Ya está en la lista',
+  'productPhoto.barcode': 'Por el código de barras',
+  'productPhoto.add': '{count, plural, =0 {Añadir artículos} one {Añadir 1 artículo} other {Añadir # artículos}}',
+  'productPhoto.another': 'Otra foto',
+  'productPhoto.typeInstead': 'Escribirlo',
+  'productPhoto.tryAgain': 'Probar otra foto',
+  'productPhoto.none': 'No se encontraron productos. Prueba con una foto más cercana de la etiqueta de delante, o escribe el artículo.',
+  'productPhoto.failed': 'Ahora no se pueden leer las fotos. Vuelve a intentarlo o escribe los artículos.',
+  'productPhoto.signIn': 'Vuelve a iniciar sesión para leer fotos, o escribe los artículos.',
+  'productPhoto.notMember': 'Solo los miembros de este hogar pueden leer fotos aquí. Escribe los artículos.',
+  'productPhoto.cappedHousehold': 'Tu hogar ya ha usado la lectura de fotos de hoy. Escribe los artículos; las fotos vuelven a funcionar mañana.',
+  'productPhoto.cappedEveryone': 'La lectura de fotos se ha agotado por hoy. Escribe los artículos; las fotos vuelven a funcionar mañana.',
+  'productPhoto.someCapped': '{count, plural, one {1 foto no se leyó: la lectura de fotos de hoy se agotó.} other {# fotos no se leyeron: la lectura de fotos de hoy se agotó.}}',
+  'productPhoto.someFailed': '{count, plural, one {No se pudo leer 1 foto.} other {No se pudieron leer # fotos.}}',
+} satisfies CatalogueOf<typeof en>;
