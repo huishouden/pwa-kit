@@ -8,7 +8,7 @@
 import sharp from 'sharp';
 import { parseDirections, type ParsedCourse } from '../../src/dose';
 import { toGray } from '../../src/label-image';
-import { linesOf, readLabelImage, type LabelLine, type OcrWord, type Psm, type ReadLabelPassOptions, type Recognize } from '../../src/label-read';
+import { codesOf, linesOf, readLabelImage, type LabelLine, type OcrWord, type Psm, type ReadLabelPassOptions, type Recognize } from '../../src/label-read';
 import { parseLabel, type LabelCourse } from '../../src/medicine-label';
 import type { Reading } from './score';
 
@@ -23,6 +23,8 @@ export interface Read {
   lines?: LabelLine[];
   /** The kit reader's words before filtering, so `--reuse` rebuilds lines with the current code. */
   words?: OcrWord[];
+  /** The kit reader's digit runs (`LabelReading.codes`). */
+  codes?: string[];
   passes: number;
 }
 
@@ -69,7 +71,7 @@ export const READERS: Record<string, Reader> = {
   },
   async kit(file, ocr) {
     const read = await readLabelImage(await grayOf(file), nodeRecognize(ocr), benchOptions);
-    return { text: read.text, lines: read.lines, words: read.words, passes: read.passes };
+    return { text: read.text, lines: read.lines, words: read.words, codes: read.codes, passes: read.passes };
   },
 };
 
@@ -78,7 +80,7 @@ const loadNames = () => (names ??= import('../../src/medicine-names-match'));
 
 /** A reused reading's lines rebuilt from its words with the current code (`--reuse`). */
 export function relined(r: Read): Read {
-  return r.words ? { ...r, ...linesOf(r.words, benchOptions) } : r;
+  return r.words ? { ...r, ...linesOf(r.words, benchOptions), codes: process.env.BENCH_WORD_CODES ? codesOf(r.words) : (r.codes ?? codesOf(r.words)) } : r;
 }
 
 /**
@@ -109,8 +111,8 @@ export const PARSERS: Record<string, Parser> = {
   async fda(r) {
     const { medicineNames } = await loadNames();
     const { withListing } = await import('../../src/medicine-lookup');
-    const course: LabelCourse = parseLabel(r.text, { lines: r.lines, isMedicineName: (await medicineNames()).match });
-    return withListing(course, { fetch: cachedFetch, names: await medicineNames() });
+    const course: LabelCourse = parseLabel(r.text, { lines: r.lines, codes: r.codes, isMedicineName: (await medicineNames()).match });
+    return withListing(course, { fetch: cachedFetch, names: await medicineNames(), text: r.text });
   },
 };
 

@@ -23,7 +23,12 @@ export interface LabelCourse extends ParsedCourse {
   /** The National Drug Code as printed ("59390-217-02"). */
   ndc?: string;
   /** Where name, strength, form and route came from; absent means the label. */
-  sources?: Partial<Record<'name' | 'strength' | 'form' | 'route', FieldSource>>;
+  sources?: Partial<Record<'name' | 'strength' | 'form' | 'route' | 'ndc', FieldSource>>;
+  /**
+   * Runs of digits read on the label that may be its NDC (`./label-read` `codes`): `./medicine-lookup`
+   * matches them against the FDA's listing when the NDC was not read, or not read right. On the device only.
+   */
+  codes?: string[];
   /** Strengths the medicine comes in, when the label's own was unreadable (from a listing), for the person to pick. */
   strengthChoices?: string[];
 }
@@ -163,6 +168,8 @@ export interface ParseLabelOptions {
   lines?: LabelLine[];
   /** Whether a word is a known medicine name (a list on the device); improves the name on hard photos. */
   isMedicineName?: (word: string) => string | undefined;
+  /** Digit runs the reader found (`LabelReading.codes`), kept when no NDC was read clearly. */
+  codes?: string[];
 }
 
 /**
@@ -175,6 +182,7 @@ export function parseLabel(text: string, options: ParseLabelOptions = {}): Label
   const course: LabelCourse = read;
   const ndc = findNdc(text);
   if (ndc) course.ndc = ndc;
+  if (options.codes?.length) course.codes = options.codes;
   const dispensing = isDispensingLabel(text);
   const lines: Line[] = (options.lines ?? text.split('\n').map((t): Line => ({ text: t, height: 0 })))
     .map((l): Line => ({ text: l.text.replace(/[|_~`]+/g, ' ').replace(/\s+/g, ' ').trim(), height: l.height, box: 'box' in l ? l.box : undefined }))

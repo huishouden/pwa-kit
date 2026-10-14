@@ -2,9 +2,10 @@ import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { LabelCourse } from '../src/medicine-label';
-import { ndcListing, sameStrength, withListing } from '../src/medicine-lookup';
+import { elevenDigits, matchCode, nameListings, ndcListing, sameStrength, withListing } from '../src/medicine-lookup';
 import { namesMatcher } from '../src/medicine-names-match';
 
+const CADUET = readFileSync(join(import.meta.dir, 'fixtures', 'openfda', 'name-caduet.json'), 'utf8');
 const CIPROFLOXACIN = readFileSync(join(import.meta.dir, 'fixtures', 'openfda', 'ndc-59390-217.json'), 'utf8');
 
 /** openFDA as the fixture: the one product, 404 for anything else; records the URLs asked. */
@@ -72,4 +73,61 @@ describe('sameStrength', () => {
     ['10 mg', '20 mg', false],
     ['125mg', '875 mg / 125 mg', false],
   ])('%s and %s: %p', (a, b, same) => expect(sameStrength(a, b)).toBe(same));
+});
+
+/** openFDA for a name search: Caduet's listings; nothing else is listed. */
+function byName(calls: string[] = []) {
+  return async (url: string) => {
+    calls.push(decodeURIComponent(url));
+    return decodeURIComponent(url).includes('"Caduet"') ? new Response(CADUET) : new Response('{"error":{"code":"NOT_FOUND"}}', { status: 404 });
+  };
+}
+
+describe('an NDC half read: the medicine named, its listed packages matched on the device', () => {
+  const names = namesMatcher(['Caduet', 'Marinol'], []);
+
+  test('two digits off, the strength read decides between its products; only the name is sent', async () => {
+    const calls: string[] = [];
+    // "58151-064-93" read as "68151-06493" with a digit lost: 5 mg / 10 mg on the label.
+    const out = await withListing(read({ name: 'Caduet', strength: '5 mg/10 mg', codes: ['68151-0493', '0123456789'] }), { fetch: byName(calls), names });
+    expect(out.ndc).toBe('58151-064-93');
+    expect(out.sources).toMatchObject({ ndc: 'fda', name: 'fda' });
+    expect(out.codes).toBeUndefined();
+    expect(calls).toEqual(['https://api.fda.gov/drug/ndc.json?search=(brand_name:"Caduet" generic_name:"Caduet")&limit=100']);
+  });
+
+  test('a clear NDC a digit off that is not listed is put right; a code printed in full for the product stays as printed', async () => {
+    const out = await withListing(read({ name: 'Caduet', strength: '5 mg/10 mg', ndc: '58161-064-93' }), { fetch: byName(), names });
+    expect(out.ndc).toBe('58151-064-93');
+    const printed = await withListing(read({ name: 'Caduet', strength: '5 mg/10 mg', codes: ['58151-064-930', '58151-064-93'] }), { fetch: byName(), names });
+    expect(printed.ndc).toBe('58151-064-93');
+  });
+
+  test('nothing is looked up without a name read, or with a name not on the list (a person\'s)', async () => {
+    const calls: string[] = [];
+    expect((await withListing(read({ codes: ['58151-064-93'] }), { fetch: byName(calls), names })).ndc).toBeUndefined();
+    expect((await withListing(read({ name: 'Marisol Quenby', codes: ['5815106493'] }), { fetch: byName(calls), names })).ndc).toBeUndefined();
+    expect(calls).toEqual([]);
+  });
+
+  test('a code in full NDC shape is looked up only when a name was read, and kept only when it is that medicine', async () => {
+    const calls: string[] = [];
+    const cipro = await withListing(read({ name: 'Ciprofloxacin', codes: ['59390-217-02'] }), { fetch: fda(calls) });
+    expect(cipro.ndc).toBe('59390-217-02');
+    const other = await withListing(read({ name: 'Lisinopril', codes: ['59390-217-02'] }), { fetch: fda() });
+    expect(other.ndc).toBeUndefined();
+  });
+
+  test('matchCode: too far, or two products equally near, is no match', async () => {
+    const products = await nameListings('Caduet', byName());
+    expect(matchCode(['9999999999'], products)).toBeNull();
+    // 58151-060-93 to 58151-064-93 are all one digit from "58151-0693" with no strength to choose.
+    expect(matchCode(['58151-0693'], products)).toBeNull();
+    expect(matchCode(['58151-0693'], products, { strength: '5 mg/10 mg' })?.ndc).toBe('58151-064-93');
+  });
+
+  test('labels print the 11-digit form', () => {
+    expect(elevenDigits('70518-4742-0')).toBe('70518-4742-00');
+    expect(elevenDigits('0069-6180-30')).toBe('00069-6180-30');
+  });
 });

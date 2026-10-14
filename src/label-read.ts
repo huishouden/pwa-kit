@@ -54,6 +54,11 @@ export interface LabelReading {
   lines: LabelLine[];
   /** Every word the passes found, before the unsure ones were dropped (`linesOf` rebuilds the lines). */
   words: OcrWord[];
+  /**
+   * Runs of digits read on the label, sure or not ("24208-9102"), that may be its NDC: for
+   * `./medicine-lookup` to match against the FDA's listing. They stay on the device.
+   */
+  codes: string[];
   /** Quarter turns clockwise the photo was read at. */
   turns: number;
   /** OCR passes run. */
@@ -83,6 +88,8 @@ export interface ReadLabelPassOptions {
   minLineConfidence?: number;
   /** Read again, larger, inside the area where the text was found when it is a small part of the photo. Default false: no gain on the benchmark. */
   zoom?: boolean;
+  /** When no clear NDC was read but a long run of digits was, read once more with local contrast for its digits. Default true. */
+  codePass?: boolean;
   /** Fix O/0, l/1, S/5 and unit misreadings in numbers. Default true. */
   fixNumbers?: boolean;
   /** Called before each pass with the pass number (from 1) and the total planned. */
@@ -101,6 +108,7 @@ const DEFAULTS: Required<Omit<ReadLabelPassOptions, 'onPass'>> = {
   minWordConfidence: 50,
   minLineConfidence: 45,
   zoom: false,
+  codePass: true,
   fixNumbers: true,
 };
 
@@ -317,7 +325,35 @@ export async function readLabelImage(gray: Gray, recognize: Recognize, options: 
     }
   }
 
-  return { ...linesOf(words, options), words, turns, passes };
+  const read = linesOf(words, options);
+  let codes = codesOf(words);
+  if (o.codePass && !NDC_SHAPE.test(read.text) && codes.some((c) => digitCount(c) >= 8)) {
+    // An NDC is small print, often on a coloured band or round a curve: local contrast reads its
+    // digits better (measured on the label benchmark), at no cost to the rest of the reading.
+    codes = [...new Set([...codesOf(await run(clahe(turns ? rotate(base, turns) : base), '11')), ...codes])].slice(0, MAX_CODES);
+  }
+  return { ...read, words, codes, turns, passes };
+}
+
+const NDC_SHAPE = /(?<![\d-])\d{4,5}-\d{3,4}-\d{1,2}(?![\d-])/;
+const MAX_CODES = 8;
+const digitCount = (s: string) => (s.match(/\d/g) ?? []).length;
+
+/**
+ * Runs of digits on each line of every word read, sure or not (numbers fixed as in `fixNumberWord`,
+ * spaces dropped, dashes kept): "NDC 24208-9102" gives "24208-9102". Eight digits or more, the
+ * longest first; an NDC has ten or eleven.
+ */
+export function codesOf(words: OcrWord[]): string[] {
+  const out = new Set<string>();
+  for (const line of groupLines(words)) {
+    const text = line.map((w) => fixNumberWord(w.text)).join(' ');
+    for (const m of text.matchAll(/\d[\d\s\-‐‑–—]*\d/g)) {
+      const run = m[0].replace(/\s+/g, '').replace(/[‐‑–—]/g, '-').replace(/-{2,}/g, '-');
+      if (digitCount(run) >= 8 && digitCount(run) <= 14) out.add(run);
+    }
+  }
+  return [...out].sort((a, b) => digitCount(b) - digitCount(a)).slice(0, MAX_CODES);
 }
 
 /** The label's lines from the words the passes found: confusions fixed, unsure words and noise dropped. */

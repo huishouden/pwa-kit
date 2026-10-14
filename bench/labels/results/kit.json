@@ -2,19 +2,19 @@
  "summary": {
   "human, package labels": {
    "images": 124,
-   "name": "78% (8% wrong, n=124)",
-   "strength": "76% (8% wrong, n=124)",
-   "strengthOffered": "0% (0% wrong, n=20)",
+   "name": "80% (6% wrong, n=124)",
+   "strength": "82% (6% wrong, n=124)",
+   "strengthOffered": "0% (0% wrong, n=14)",
    "form": "93% (1% wrong, n=124)",
    "route": "90% (2% wrong, n=124)",
-   "ndc": "55% (5% wrong, n=116)",
+   "ndc": "66% (3% wrong, n=116)",
    "directions": "–",
    "keyRecall": "0.64",
    "cer": "–",
    "wordPrecision": "–",
    "wordRecall": "–",
    "leaks": 0,
-   "secondsPerImage": "4.6"
+   "secondsPerImage": "5.1"
   },
   "human, pharmacy labels (synthetic)": {
    "images": 32,
@@ -23,14 +23,14 @@
    "strengthOffered": "0% (0% wrong, n=1)",
    "form": "97% (0% wrong, n=32)",
    "route": "94% (3% wrong, n=32)",
-   "ndc": "84% (0% wrong, n=32)",
+   "ndc": "94% (0% wrong, n=32)",
    "directions": "94% (6% wrong, n=32)",
    "keyRecall": "0.61",
    "cer": "0.25",
    "wordPrecision": "0.87",
    "wordRecall": "0.81",
    "leaks": 0,
-   "secondsPerImage": "3.5"
+   "secondsPerImage": "3.6"
   },
   "pet, package labels": {
    "images": 96,
@@ -46,7 +46,7 @@
    "wordPrecision": "–",
    "wordRecall": "–",
    "leaks": 0,
-   "secondsPerImage": "4.4"
+   "secondsPerImage": "4.5"
   },
   "pet, vet labels (synthetic)": {
    "images": 28,
@@ -62,23 +62,23 @@
    "wordPrecision": "0.89",
    "wordRecall": "0.92",
    "leaks": 0,
-   "secondsPerImage": "3.6"
+   "secondsPerImage": "3.4"
   },
   "human, all": {
    "images": 156,
-   "name": "81% (7% wrong, n=156)",
-   "strength": "79% (7% wrong, n=156)",
-   "strengthOffered": "0% (0% wrong, n=21)",
+   "name": "83% (6% wrong, n=156)",
+   "strength": "85% (6% wrong, n=156)",
+   "strengthOffered": "0% (0% wrong, n=15)",
    "form": "94% (1% wrong, n=156)",
    "route": "90% (3% wrong, n=156)",
-   "ndc": "61% (4% wrong, n=148)",
+   "ndc": "72% (3% wrong, n=148)",
    "directions": "94% (6% wrong, n=32)",
    "keyRecall": "0.64",
    "cer": "0.25",
    "wordPrecision": "0.87",
    "wordRecall": "0.81",
    "leaks": 0,
-   "secondsPerImage": "4.3"
+   "secondsPerImage": "4.8"
   },
   "pet, all": {
    "images": 124,
@@ -103,7 +103,7 @@
    "strengthOffered": "75% (0% wrong, n=4)",
    "form": "99% (1% wrong, n=70)",
    "route": "94% (4% wrong, n=70)",
-   "ndc": "84% (7% wrong, n=44)",
+   "ndc": "91% (5% wrong, n=44)",
    "directions": "100% (0% wrong, n=19)",
    "keyRecall": "0.73",
    "cer": "0.07",
@@ -119,39 +119,39 @@
    "strengthOffered": "–",
    "form": "100% (0% wrong, n=15)",
    "route": "100% (0% wrong, n=15)",
-   "ndc": "63% (0% wrong, n=8)",
+   "ndc": "88% (0% wrong, n=8)",
    "directions": "60% (40% wrong, n=15)",
    "keyRecall": "0.24",
    "cer": "0.41",
    "wordPrecision": "0.60",
    "wordRecall": "0.68",
    "leaks": 0,
-   "secondsPerImage": "4.3"
+   "secondsPerImage": "4.5"
   },
   "variant: perspective": {
    "images": 33,
    "name": "76% (12% wrong, n=33)",
-   "strength": "65% (13% wrong, n=31)",
-   "strengthOffered": "14% (0% wrong, n=7)",
+   "strength": "68% (13% wrong, n=31)",
+   "strengthOffered": "17% (0% wrong, n=6)",
    "form": "91% (0% wrong, n=33)",
    "route": "85% (9% wrong, n=33)",
-   "ndc": "52% (14% wrong, n=21)",
+   "ndc": "67% (10% wrong, n=21)",
    "directions": "88% (0% wrong, n=8)",
    "keyRecall": "0.52",
    "cer": "0.12",
    "wordPrecision": "0.97",
    "wordRecall": "0.92",
    "leaks": 0,
-   "secondsPerImage": "4.4"
+   "secondsPerImage": "5.6"
   },
   "variant: cylinder": {
    "images": 33,
    "name": "70% (9% wrong, n=33)",
-   "strength": "59% (6% wrong, n=32)",
-   "strengthOffered": "18% (9% wrong, n=11)",
+   "strength": "63% (6% wrong, n=32)",
+   "strengthOffered": "20% (10% wrong, n=10)",
    "form": "85% (0% wrong, n=33)",
    "route": "67% (9% wrong, n=33)",
-   "ndc": "48% (5% wrong, n=21)",
+   "ndc": "57% (0% wrong, n=21)",
    "directions": "86% (0% wrong, n=7)",
    "keyRecall": "0.46",
    "cer": "0.09",
@@ -162,19 +162,19 @@
   },
   "variant: blur": {
    "images": 31,
-   "name": "61% (16% wrong, n=31)",
-   "strength": "66% (14% wrong, n=29)",
-   "strengthOffered": "0% (0% wrong, n=6)",
+   "name": "68% (10% wrong, n=31)",
+   "strength": "79% (7% wrong, n=29)",
+   "strengthOffered": "0% (0% wrong, n=4)",
    "form": "87% (3% wrong, n=31)",
    "route": "87% (3% wrong, n=31)",
-   "ndc": "20% (5% wrong, n=20)",
+   "ndc": "40% (5% wrong, n=20)",
    "directions": "100% (0% wrong, n=7)",
    "keyRecall": "0.55",
    "cer": "0.16",
    "wordPrecision": "0.95",
    "wordRecall": "0.83",
    "leaks": 0,
-   "secondsPerImage": "4.9"
+   "secondsPerImage": "5.5"
   },
   "variant: glare": {
    "images": 33,
@@ -190,7 +190,7 @@
    "wordPrecision": "0.96",
    "wordRecall": "0.86",
    "leaks": 0,
-   "secondsPerImage": "3.9"
+   "secondsPerImage": "4.3"
   },
   "variant: lowlight": {
    "images": 32,
@@ -206,23 +206,23 @@
    "wordPrecision": "1.00",
    "wordRecall": "0.96",
    "leaks": 0,
-   "secondsPerImage": "3.8"
+   "secondsPerImage": "4.0"
   },
   "variant: rotation": {
    "images": 33,
    "name": "70% (6% wrong, n=33)",
-   "strength": "52% (10% wrong, n=31)",
-   "strengthOffered": "50% (0% wrong, n=12)",
+   "strength": "58% (10% wrong, n=31)",
+   "strengthOffered": "60% (0% wrong, n=10)",
    "form": "85% (6% wrong, n=33)",
    "route": "85% (3% wrong, n=33)",
-   "ndc": "33% (0% wrong, n=21)",
+   "ndc": "38% (5% wrong, n=21)",
    "directions": "88% (0% wrong, n=8)",
    "keyRecall": "0.54",
    "cer": "0.15",
    "wordPrecision": "0.94",
    "wordRecall": "0.91",
    "leaks": 0,
-   "secondsPerImage": "9.3"
+   "secondsPerImage": "9.2"
   }
  },
  "results": [
@@ -240,8 +240,25 @@
    },
    "keyRecall": 0.6,
    "leaks": 0,
-   "ms": 1792,
+   "ms": 1682,
    "passes": 1
+  },
+  {
+   "id": "amoxicillin-500-caps",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 2546,
+   "passes": 2
   },
   {
    "id": "amox-clav-875",
@@ -257,7 +274,7 @@
    },
    "keyRecall": 0.6,
    "leaks": 0,
-   "ms": 2895,
+   "ms": 2758,
    "passes": 1
   },
   {
@@ -274,7 +291,7 @@
    },
    "keyRecall": 0.6,
    "leaks": 0,
-   "ms": 3072,
+   "ms": 2882,
    "passes": 1
   },
   {
@@ -291,25 +308,8 @@
    },
    "keyRecall": 0.6,
    "leaks": 0,
-   "ms": 3477,
+   "ms": 3208,
    "passes": 1
-  },
-  {
-   "id": "amoxicillin-500-caps",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 3592,
-   "passes": 2
   },
   {
    "id": "lisinopril-2.5",
@@ -325,41 +325,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1340,
-   "passes": 1
-  },
-  {
-   "id": "amoxicillin-500-caps",
-   "variant": "cylinder",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 4661,
-   "passes": 2
-  },
-  {
-   "id": "lisinopril-hctz",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.6,
-   "leaks": 0,
-   "ms": 1476,
+   "ms": 1223,
    "passes": 1
   },
   {
@@ -376,8 +342,42 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 3357,
+   "ms": 2548,
    "passes": 1
+  },
+  {
+   "id": "lisinopril-hctz",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.6,
+   "leaks": 0,
+   "ms": 1270,
+   "passes": 1
+  },
+  {
+   "id": "amoxicillin-500-caps",
+   "variant": "cylinder",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 7475,
+   "passes": 3
   },
   {
    "id": "amoxicillin-500-caps",
@@ -393,8 +393,8 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 4440,
-   "passes": 2
+   "ms": 6204,
+   "passes": 3
   },
   {
    "id": "lisinopril-2.5",
@@ -411,8 +411,8 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 6352,
-   "passes": 6
+   "ms": 8109,
+   "passes": 7
   },
   {
    "id": "lisinopril-hctz",
@@ -428,7 +428,24 @@
    },
    "keyRecall": 0.6,
    "leaks": 0,
-   "ms": 4201,
+   "ms": 4023,
+   "passes": 2
+  },
+  {
+   "id": "lisinopril-hctz",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.6,
+   "leaks": 0,
+   "ms": 4318,
    "passes": 2
   },
   {
@@ -445,25 +462,8 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 8632,
-   "passes": 7
-  },
-  {
-   "id": "atorvastatin-10",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 1083,
-   "passes": 1
+   "ms": 10216,
+   "passes": 8
   },
   {
    "id": "lisinopril-hctz",
@@ -479,59 +479,8 @@
    },
    "keyRecall": 0.6,
    "leaks": 0,
-   "ms": 4178,
+   "ms": 3826,
    "passes": 2
-  },
-  {
-   "id": "lisinopril-hctz",
-   "variant": "lowlight",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.6,
-   "leaks": 0,
-   "ms": 4733,
-   "passes": 2
-  },
-  {
-   "id": "atorvastatin-10",
-   "variant": "lowlight",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 2206,
-   "passes": 1
-  },
-  {
-   "id": "caduet",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.75,
-   "leaks": 0,
-   "ms": 1050,
-   "passes": 1
   },
   {
    "id": "lisinopril-2.5",
@@ -547,8 +496,42 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 9571,
+   "ms": 8826,
    "passes": 7
+  },
+  {
+   "id": "atorvastatin-10",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 2079,
+   "passes": 2
+  },
+  {
+   "id": "caduet",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.75,
+   "leaks": 0,
+   "ms": 980,
+   "passes": 1
   },
   {
    "id": "caduet",
@@ -564,24 +547,7 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 2135,
-   "passes": 1
-  },
-  {
-   "id": "caduet",
-   "variant": "blur",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "wrong",
-    "strength": "wrong",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.75,
-   "leaks": 0,
-   "ms": 2313,
+   "ms": 1919,
    "passes": 1
   },
   {
@@ -598,7 +564,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1036,
+   "ms": 948,
    "passes": 1
   },
   {
@@ -615,8 +581,59 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 4276,
+   "ms": 4213,
    "passes": 2
+  },
+  {
+   "id": "atorvastatin-10",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 5662,
+   "passes": 2
+  },
+  {
+   "id": "caduet",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.75,
+   "leaks": 0,
+   "ms": 3978,
+   "passes": 2
+  },
+  {
+   "id": "amlodipine-5",
+   "variant": "glare",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 1823,
+   "passes": 1
   },
   {
    "id": "amlodipine-olmesartan",
@@ -632,24 +649,7 @@
    },
    "keyRecall": 0.833,
    "leaks": 0,
-   "ms": 1194,
-   "passes": 1
-  },
-  {
-   "id": "amlodipine-5",
-   "variant": "glare",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 2048,
+   "ms": 1106,
    "passes": 1
   },
   {
@@ -667,11 +667,11 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 3749,
+   "ms": 3480,
    "passes": 2
   },
   {
-   "id": "amlodipine-olmesartan",
+   "id": "amlodipine-5",
    "variant": "cylinder",
    "set": "human",
    "kind": "human-rx",
@@ -682,27 +682,9 @@
     "route": "right",
     "ndc": "right"
    },
-   "keyRecall": 0.833,
-   "leaks": 0,
-   "ms": 2197,
-   "passes": 1
-  },
-  {
-   "id": "amlodipine-5",
-   "variant": "cylinder",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "right",
-    "route": "right",
-    "ndc": "wrong"
-   },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 3690,
+   "ms": 3450,
    "passes": 2
   },
   {
@@ -720,29 +702,12 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 8771,
+   "ms": 8526,
    "passes": 7
   },
   {
-   "id": "sertraline-solution",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "wrong",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 1663,
-   "passes": 1
-  },
-  {
    "id": "amlodipine-olmesartan",
-   "variant": "lowlight",
+   "variant": "cylinder",
    "set": "human",
    "kind": "human-rx",
    "fields": {
@@ -752,27 +717,10 @@
     "route": "right",
     "ndc": "right"
    },
-   "keyRecall": 0.667,
+   "keyRecall": 0.833,
    "leaks": 0,
-   "ms": 2481,
+   "ms": 1872,
    "passes": 1
-  },
-  {
-   "id": "amlodipine-olmesartan",
-   "variant": "blur",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "wrong",
-    "strength": "wrong",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 4160,
-   "passes": 2
   },
   {
    "id": "caduet",
@@ -788,8 +736,76 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 9587,
+   "ms": 8256,
    "passes": 7
+  },
+  {
+   "id": "sertraline-solution",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "wrong",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 1658,
+   "passes": 1
+  },
+  {
+   "id": "amlodipine-olmesartan",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 2273,
+   "passes": 1
+  },
+  {
+   "id": "prednisone-10",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 2355,
+   "passes": 2
+  },
+  {
+   "id": "amlodipine-olmesartan",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "wrong",
+    "strength": "wrong",
+    "form": "right",
+    "route": "right",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 5417,
+   "passes": 3
   },
   {
    "id": "sertraline-solution",
@@ -806,42 +822,8 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 2820,
-   "passes": 1
-  },
-  {
-   "id": "prednisone-10",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 1195,
-   "passes": 1
-  },
-  {
-   "id": "evexithroid",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.6,
-   "leaks": 0,
-   "ms": 1166,
-   "passes": 1
+   "ms": 5203,
+   "passes": 2
   },
   {
    "id": "prednisone-10",
@@ -857,12 +839,12 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 2335,
-   "passes": 1
+   "ms": 4099,
+   "passes": 2
   },
   {
-   "id": "prednisone-10",
-   "variant": "lowlight",
+   "id": "evexithroid",
+   "variant": "flat",
    "set": "human",
    "kind": "human-rx",
    "fields": {
@@ -872,9 +854,9 @@
     "route": "right",
     "ndc": "right"
    },
-   "keyRecall": 1,
+   "keyRecall": 0.6,
    "leaks": 0,
-   "ms": 2471,
+   "ms": 1024,
    "passes": 1
   },
   {
@@ -891,389 +873,11 @@
    },
    "keyRecall": 0.6,
    "leaks": 0,
-   "ms": 2040,
-   "passes": 1
-  },
-  {
-   "id": "evexithroid",
-   "variant": "cylinder",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.6,
-   "leaks": 0,
-   "ms": 2216,
+   "ms": 1866,
    "passes": 1
   },
   {
    "id": "prednisone-10",
-   "variant": "perspective",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 4681,
-   "passes": 2
-  },
-  {
-   "id": "azithromycin-250",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 1618,
-   "passes": 1
-  },
-  {
-   "id": "sertraline-solution",
-   "variant": "blur",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 9448,
-   "passes": 6
-  },
-  {
-   "id": "azithromycin-250",
-   "variant": "perspective",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 2856,
-   "passes": 1
-  },
-  {
-   "id": "ciprofloxacin-eye",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "wrong"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 1718,
-   "passes": 2
-  },
-  {
-   "id": "evexithroid",
-   "variant": "rotation",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 6616,
-   "passes": 6
-  },
-  {
-   "id": "sertraline-solution",
-   "variant": "rotation",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "wrong",
-    "form": "right",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 10395,
-   "passes": 7
-  },
-  {
-   "id": "azithromycin-250",
-   "variant": "rotation",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.333,
-   "leaks": 0,
-   "ms": 6329,
-   "passes": 2
-  },
-  {
-   "id": "albuterol-inhalation",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 2589,
-   "passes": 2
-  },
-  {
-   "id": "ciprofloxacin-eye",
-   "variant": "perspective",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "wrong"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 3749,
-   "passes": 2
-  },
-  {
-   "id": "azithromycin-250",
-   "variant": "blur",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 7587,
-   "passes": 6
-  },
-  {
-   "id": "ciprofloxacin-eye",
-   "variant": "cylinder",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "wrong",
-    "strength": "right",
-    "form": "right",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.333,
-   "leaks": 0,
-   "ms": 5566,
-   "passes": 6
-  },
-  {
-   "id": "gabapentin-100",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 1105,
-   "passes": 1
-  },
-  {
-   "id": "ciprofloxacin-eye",
-   "variant": "glare",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 5674,
-   "passes": 6
-  },
-  {
-   "id": "albuterol-inhalation",
-   "variant": "cylinder",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 5256,
-   "passes": 2
-  },
-  {
-   "id": "gabapentin-100",
-   "variant": "glare",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 2811,
-   "passes": 1
-  },
-  {
-   "id": "albuterol-inhalation",
-   "variant": "blur",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "wrong",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.333,
-   "leaks": 0,
-   "ms": 5534,
-   "passes": 2
-  },
-  {
-   "id": "gabapentin-100",
-   "variant": "blur",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "right",
-    "route": "right",
-    "ndc": "wrong"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 3746,
-   "passes": 2
-  },
-  {
-   "id": "albuterol-inhalation",
-   "variant": "lowlight",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 5728,
-   "passes": 2
-  },
-  {
-   "id": "omeprazole-20",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 1721,
-   "passes": 1
-  },
-  {
-   "id": "cephalexin-suspension",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 3674,
-   "passes": 2
-  },
-  {
-   "id": "omeprazole-20",
    "variant": "lowlight",
    "set": "human",
    "kind": "human-rx",
@@ -1286,253 +890,14 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 2450,
-   "passes": 1
-  },
-  {
-   "id": "cephalexin-suspension",
-   "variant": "perspective",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "wrong",
-    "strength": "wrong",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 4368,
+   "ms": 4204,
    "passes": 2
   },
   {
-   "id": "gabapentin-100",
-   "variant": "rotation",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 8560,
-   "passes": 7
-  },
-  {
-   "id": "cephalexin-suspension",
-   "variant": "lowlight",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 5793,
-   "passes": 2
-  },
-  {
-   "id": "cephalexin-suspension",
-   "variant": "glare",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "wrong",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.75,
-   "leaks": 0,
-   "ms": 6477,
-   "passes": 6
-  },
-  {
-   "id": "omeprazole-20",
-   "variant": "cylinder",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 2453,
-   "passes": 1
-  },
-  {
-   "id": "zegerid",
+   "id": "azithromycin-250",
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 3696,
-   "passes": 2
-  },
-  {
-   "id": "ibuwin",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-otc",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.75,
-   "leaks": 0,
-   "ms": 2734,
-   "passes": 2
-  },
-  {
-   "id": "omeprazole-20",
-   "variant": "rotation",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 8406,
-   "passes": 6
-  },
-  {
-   "id": "zegerid",
-   "variant": "perspective",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 6359,
-   "passes": 2
-  },
-  {
-   "id": "zegerid",
-   "variant": "blur",
-   "set": "human",
-   "kind": "human-rx",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.25,
-   "leaks": 0,
-   "ms": 6187,
-   "passes": 2
-  },
-  {
-   "id": "ibuwin",
-   "variant": "perspective",
-   "set": "human",
-   "kind": "human-otc",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.25,
-   "leaks": 0,
-   "ms": 5367,
-   "passes": 2
-  },
-  {
-   "id": "acetaminophen-ibuprofen",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-otc",
-   "fields": {
-    "name": "wrong",
-    "strength": "wrong",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.6,
-   "leaks": 0,
-   "ms": 3030,
-   "passes": 2
-  },
-  {
-   "id": "ibuwin",
-   "variant": "cylinder",
-   "set": "human",
-   "kind": "human-otc",
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 5788,
-   "passes": 2
-  },
-  {
-   "id": "ibuwin",
-   "variant": "glare",
-   "set": "human",
-   "kind": "human-otc",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 5441,
-   "passes": 2
-  },
-  {
-   "id": "loratadine-bulk",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-otc",
    "fields": {
     "name": "right",
     "strength": "right",
@@ -1546,12 +911,97 @@
    "passes": 1
   },
   {
-   "id": "acetaminophen-ibuprofen",
+   "id": "sertraline-solution",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 9133,
+   "passes": 6
+  },
+  {
+   "id": "evexithroid",
    "variant": "cylinder",
    "set": "human",
-   "kind": "human-otc",
+   "kind": "human-rx",
    "fields": {
-    "name": "wrong",
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.6,
+   "leaks": 0,
+   "ms": 1953,
+   "passes": 1
+  },
+  {
+   "id": "prednisone-10",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 5943,
+   "passes": 3
+  },
+  {
+   "id": "sertraline-solution",
+   "variant": "rotation",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "wrong",
+    "form": "right",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 9580,
+   "passes": 7
+  },
+  {
+   "id": "ciprofloxacin-eye",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 2526,
+   "passes": 3
+  },
+  {
+   "id": "evexithroid",
+   "variant": "rotation",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
     "strength": "empty",
     "strengthOffered": "empty",
     "form": "empty",
@@ -1560,26 +1010,520 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 6040,
+   "ms": 5978,
+   "passes": 6
+  },
+  {
+   "id": "azithromycin-250",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 5431,
    "passes": 2
   },
   {
-   "id": "acetaminophen-ibuprofen",
-   "variant": "blur",
+   "id": "ciprofloxacin-eye",
+   "variant": "perspective",
    "set": "human",
-   "kind": "human-otc",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 5408,
+   "passes": 3
+  },
+  {
+   "id": "albuterol-inhalation",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 2600,
+   "passes": 2
+  },
+  {
+   "id": "ciprofloxacin-eye",
+   "variant": "cylinder",
+   "set": "human",
+   "kind": "human-rx",
    "fields": {
     "name": "wrong",
+    "strength": "right",
+    "form": "right",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.333,
+   "leaks": 0,
+   "ms": 5061,
+   "passes": 6
+  },
+  {
+   "id": "ciprofloxacin-eye",
+   "variant": "glare",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 5232,
+   "passes": 6
+  },
+  {
+   "id": "azithromycin-250",
+   "variant": "rotation",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.333,
+   "leaks": 0,
+   "ms": 8602,
+   "passes": 3
+  },
+  {
+   "id": "gabapentin-100",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 1053,
+   "passes": 1
+  },
+  {
+   "id": "azithromycin-250",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
     "strength": "empty",
     "strengthOffered": "empty",
     "form": "right",
     "route": "right",
     "ndc": "empty"
    },
-   "keyRecall": 0.4,
+   "keyRecall": 0,
    "leaks": 0,
-   "ms": 5909,
+   "ms": 9533,
+   "passes": 7
+  },
+  {
+   "id": "albuterol-inhalation",
+   "variant": "cylinder",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 4824,
    "passes": 2
+  },
+  {
+   "id": "gabapentin-100",
+   "variant": "glare",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 2692,
+   "passes": 1
+  },
+  {
+   "id": "gabapentin-100",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "wrong"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 3629,
+   "passes": 2
+  },
+  {
+   "id": "albuterol-inhalation",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 5428,
+   "passes": 2
+  },
+  {
+   "id": "cephalexin-suspension",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 3254,
+   "passes": 2
+  },
+  {
+   "id": "albuterol-inhalation",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.333,
+   "leaks": 0,
+   "ms": 7885,
+   "passes": 3
+  },
+  {
+   "id": "omeprazole-20",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 1557,
+   "passes": 1
+  },
+  {
+   "id": "cephalexin-suspension",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 5498,
+   "passes": 2
+  },
+  {
+   "id": "cephalexin-suspension",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "wrong",
+    "strength": "wrong",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 4282,
+   "passes": 2
+  },
+  {
+   "id": "omeprazole-20",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 2347,
+   "passes": 1
+  },
+  {
+   "id": "gabapentin-100",
+   "variant": "rotation",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "wrong"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 9932,
+   "passes": 8
+  },
+  {
+   "id": "omeprazole-20",
+   "variant": "cylinder",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 2268,
+   "passes": 1
+  },
+  {
+   "id": "cephalexin-suspension",
+   "variant": "glare",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "wrong",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.75,
+   "leaks": 0,
+   "ms": 8657,
+   "passes": 7
+  },
+  {
+   "id": "zegerid",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 3670,
+   "passes": 2
+  },
+  {
+   "id": "ibuwin",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.75,
+   "leaks": 0,
+   "ms": 2583,
+   "passes": 2
+  },
+  {
+   "id": "zegerid",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 5903,
+   "passes": 2
+  },
+  {
+   "id": "omeprazole-20",
+   "variant": "rotation",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 9847,
+   "passes": 7
+  },
+  {
+   "id": "acetaminophen-ibuprofen",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "wrong",
+    "strength": "wrong",
+    "form": "right",
+    "route": "right",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.6,
+   "leaks": 0,
+   "ms": 2794,
+   "passes": 2
+  },
+  {
+   "id": "zegerid",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.25,
+   "leaks": 0,
+   "ms": 8961,
+   "passes": 3
+  },
+  {
+   "id": "ibuwin",
+   "variant": "glare",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 5091,
+   "passes": 2
+  },
+  {
+   "id": "ibuwin",
+   "variant": "cylinder",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 9470,
+   "passes": 3
+  },
+  {
+   "id": "loratadine-bulk",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 1462,
+   "passes": 1
   },
   {
    "id": "zegerid",
@@ -1595,8 +1539,26 @@
    },
    "keyRecall": 0.25,
    "leaks": 0,
-   "ms": 14147,
-   "passes": 7
+   "ms": 16920,
+   "passes": 8
+  },
+  {
+   "id": "acetaminophen-ibuprofen",
+   "variant": "cylinder",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "wrong",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 8553,
+   "passes": 3
   },
   {
    "id": "loratadine-bulk",
@@ -1612,8 +1574,25 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 3186,
+   "ms": 2897,
    "passes": 1
+  },
+  {
+   "id": "acetaminophen-ibuprofen",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.4,
+   "leaks": 0,
+   "ms": 9003,
+   "passes": 3
   },
   {
    "id": "acetaminophen-ibuprofen",
@@ -1630,8 +1609,8 @@
    },
    "keyRecall": 0.4,
    "leaks": 0,
-   "ms": 6709,
-   "passes": 2
+   "ms": 8812,
+   "passes": 3
   },
   {
    "id": "loratadine-bulk",
@@ -1647,7 +1626,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 6619,
+   "ms": 6015,
    "passes": 2
   },
   {
@@ -1664,7 +1643,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 3522,
+   "ms": 3451,
    "passes": 2
   },
   {
@@ -1682,7 +1661,7 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 5253,
+   "ms": 4805,
    "passes": 2
   },
   {
@@ -1699,7 +1678,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 5735,
+   "ms": 5179,
    "passes": 2
   },
   {
@@ -1716,7 +1695,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 3775,
+   "ms": 3568,
    "passes": 2
   },
   {
@@ -1733,7 +1712,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 5191,
+   "ms": 5050,
    "passes": 2
   },
   {
@@ -1750,7 +1729,7 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 4451,
+   "ms": 4109,
    "passes": 2
   },
   {
@@ -1767,25 +1746,8 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 4074,
+   "ms": 3831,
    "passes": 2
-  },
-  {
-   "id": "loratadine-bulk",
-   "variant": "rotation",
-   "set": "human",
-   "kind": "human-otc",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 12964,
-   "passes": 7
   },
   {
    "id": "cetirizine-amazon",
@@ -1802,30 +1764,12 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 6447,
+   "ms": 5989,
    "passes": 6
   },
   {
-   "id": "cetirizine-500",
-   "variant": "perspective",
-   "set": "human",
-   "kind": "human-otc",
-   "fields": {
-    "name": "right",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.333,
-   "leaks": 0,
-   "ms": 5066,
-   "passes": 2
-  },
-  {
-   "id": "sleep-aid",
-   "variant": "flat",
+   "id": "loratadine-bulk",
+   "variant": "rotation",
    "set": "human",
    "kind": "human-otc",
    "fields": {
@@ -1833,12 +1777,12 @@
     "strength": "right",
     "form": "right",
     "route": "right",
-    "ndc": "right"
+    "ndc": "empty"
    },
-   "keyRecall": 1,
+   "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 3500,
-   "passes": 2
+   "ms": 14670,
+   "passes": 8
   },
   {
    "id": "cetirizine-amazon",
@@ -1854,8 +1798,42 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 10041,
+   "ms": 9313,
    "passes": 7
+  },
+  {
+   "id": "sleep-aid",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 3287,
+   "passes": 2
+  },
+  {
+   "id": "ibuwin",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.25,
+   "leaks": 0,
+   "ms": 34141,
+   "passes": 3
   },
   {
    "id": "cetirizine-500",
@@ -1871,8 +1849,25 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 5286,
+   "ms": 4751,
    "passes": 2
+  },
+  {
+   "id": "cetirizine-500",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 0.333,
+   "leaks": 0,
+   "ms": 7561,
+   "passes": 3
   },
   {
    "id": "diphenhydramine-solution",
@@ -1888,7 +1883,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 2123,
+   "ms": 1910,
    "passes": 1
   },
   {
@@ -1898,33 +1893,15 @@
    "kind": "human-otc",
    "fields": {
     "name": "right",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 10713,
-   "passes": 7
-  },
-  {
-   "id": "sleep-aid",
-   "variant": "cylinder",
-   "set": "human",
-   "kind": "human-otc",
-   "fields": {
-    "name": "right",
     "strength": "right",
     "form": "right",
     "route": "right",
-    "ndc": "empty"
+    "ndc": "right"
    },
-   "keyRecall": 0.75,
+   "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 5629,
-   "passes": 2
+   "ms": 11978,
+   "passes": 8
   },
   {
    "id": "sleep-aid",
@@ -1940,7 +1917,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 5868,
+   "ms": 5276,
    "passes": 2
   },
   {
@@ -1957,23 +1934,24 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 3098,
+   "ms": 3019,
    "passes": 1
   },
   {
-   "id": "famotidine-cvs",
-   "variant": "flat",
+   "id": "sleep-aid",
+   "variant": "cylinder",
    "set": "human",
    "kind": "human-otc",
    "fields": {
     "name": "right",
     "strength": "right",
     "form": "right",
-    "route": "right"
+    "route": "right",
+    "ndc": "empty"
    },
-   "keyRecall": 1,
+   "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 2201,
+   "ms": 5274,
    "passes": 2
   },
   {
@@ -1990,7 +1968,23 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 5881,
+   "ms": 5416,
+   "passes": 2
+  },
+  {
+   "id": "famotidine-cvs",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 2176,
    "passes": 2
   },
   {
@@ -2007,7 +2001,7 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 3951,
+   "ms": 3813,
    "passes": 2
   },
   {
@@ -2024,24 +2018,8 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 3847,
+   "ms": 3605,
    "passes": 1
-  },
-  {
-   "id": "famotidine-cvs",
-   "variant": "blur",
-   "set": "human",
-   "kind": "human-otc",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 4419,
-   "passes": 2
   },
   {
    "id": "famotidine-amazon",
@@ -2057,8 +2035,24 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 2128,
+   "ms": 1934,
    "passes": 1
+  },
+  {
+   "id": "famotidine-cvs",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 4015,
+   "passes": 2
   },
   {
    "id": "famotidine-cvs",
@@ -2073,7 +2067,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 4101,
+   "ms": 3947,
    "passes": 2
   },
   {
@@ -2090,7 +2084,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 2311,
+   "ms": 2165,
    "passes": 1
   },
   {
@@ -2107,25 +2101,8 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 5006,
+   "ms": 5077,
    "passes": 2
-  },
-  {
-   "id": "naproxen-220",
-   "variant": "lowlight",
-   "set": "human",
-   "kind": "human-otc",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 3632,
-   "passes": 1
   },
   {
    "id": "famotidine-amazon",
@@ -2141,12 +2118,12 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 5641,
+   "ms": 5188,
    "passes": 2
   },
   {
-   "id": "famotidine-amazon",
-   "variant": "perspective",
+   "id": "naproxen-220",
+   "variant": "lowlight",
    "set": "human",
    "kind": "human-otc",
    "fields": {
@@ -2154,12 +2131,12 @@
     "strength": "right",
     "form": "right",
     "route": "right",
-    "ndc": "empty"
+    "ndc": "right"
    },
-   "keyRecall": 0.75,
+   "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 5199,
-   "passes": 2
+   "ms": 3530,
+   "passes": 1
   },
   {
    "id": "naproxen-220",
@@ -2175,7 +2152,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 2984,
+   "ms": 2924,
    "passes": 1
   },
   {
@@ -2191,8 +2168,25 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 9174,
+   "ms": 8655,
    "passes": 7
+  },
+  {
+   "id": "famotidine-amazon",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.75,
+   "leaks": 0,
+   "ms": 7093,
+   "passes": 3
   },
   {
    "id": "fluticasone-children",
@@ -2208,7 +2202,7 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 3583,
+   "ms": 3406,
    "passes": 2
   },
   {
@@ -2224,42 +2218,8 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1231,
-   "passes": 1
-  },
-  {
-   "id": "fluticasone-welmate",
-   "variant": "perspective",
-   "set": "human",
-   "kind": "human-otc",
-   "fields": {
-    "name": "wrong",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "right",
-    "route": "wrong"
-   },
-   "keyRecall": 0.333,
-   "leaks": 0,
-   "ms": 2331,
-   "passes": 1
-  },
-  {
-   "id": "fluticasone-welmate",
-   "variant": "cylinder",
-   "set": "human",
-   "kind": "human-otc",
-   "fields": {
-    "name": "right",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "right",
-    "route": "wrong"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 2483,
-   "passes": 1
+   "ms": 2299,
+   "passes": 2
   },
   {
    "id": "fluticasone-children",
@@ -2276,7 +2236,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 5729,
+   "ms": 5345,
    "passes": 2
   },
   {
@@ -2293,23 +2253,24 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 5389,
+   "ms": 5377,
    "passes": 2
   },
   {
-   "id": "carprofen-zyvet",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "pet",
+   "id": "fluticasone-welmate",
+   "variant": "cylinder",
+   "set": "human",
+   "kind": "human-otc",
    "fields": {
     "name": "right",
-    "strength": "right",
+    "strength": "empty",
+    "strengthOffered": "empty",
     "form": "right",
-    "route": "right"
+    "route": "wrong"
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1697,
+   "ms": 2449,
    "passes": 1
   },
   {
@@ -2326,23 +2287,40 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 9944,
+   "ms": 9511,
    "passes": 6
   },
   {
    "id": "fluticasone-welmate",
-   "variant": "glare",
+   "variant": "perspective",
    "set": "human",
    "kind": "human-otc",
    "fields": {
-    "name": "empty",
+    "name": "wrong",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "right",
+    "route": "wrong"
+   },
+   "keyRecall": 0.333,
+   "leaks": 0,
+   "ms": 4517,
+   "passes": 2
+  },
+  {
+   "id": "carprofen-zyvet",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
     "strength": "right",
     "form": "right",
     "route": "right"
    },
-   "keyRecall": 0.333,
+   "keyRecall": 1,
    "leaks": 0,
-   "ms": 2369,
+   "ms": 1625,
    "passes": 1
   },
   {
@@ -2359,7 +2337,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 2462,
+   "ms": 2324,
    "passes": 1
   },
   {
@@ -2375,7 +2353,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 2420,
+   "ms": 2276,
    "passes": 1
   },
   {
@@ -2391,7 +2369,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 2623,
+   "ms": 2450,
    "passes": 1
   },
   {
@@ -2408,25 +2386,24 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 2867,
+   "ms": 2712,
    "passes": 2
   },
   {
-   "id": "apoquel-chewable",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "pet",
+   "id": "fluticasone-welmate",
+   "variant": "glare",
+   "set": "human",
+   "kind": "human-otc",
    "fields": {
-    "name": "right",
-    "strength": "empty",
-    "strengthOffered": "right",
+    "name": "empty",
+    "strength": "right",
     "form": "right",
     "route": "right"
    },
-   "keyRecall": 0.5,
+   "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 2048,
-   "passes": 1
+   "ms": 4552,
+   "passes": 2
   },
   {
    "id": "fluticasone-children",
@@ -2442,8 +2419,42 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 13822,
+   "ms": 12849,
    "passes": 7
+  },
+  {
+   "id": "apoquel-chewable",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "empty",
+    "strengthOffered": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 3688,
+   "passes": 2
+  },
+  {
+   "id": "apoquel-chewable",
+   "variant": "lowlight",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "empty",
+    "strengthOffered": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 3258,
+   "passes": 1
   },
   {
    "id": "carprofen-felix",
@@ -2459,24 +2470,23 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 5863,
-   "passes": 2
+   "ms": 8035,
+   "passes": 3
   },
   {
-   "id": "apoquel-chewable",
-   "variant": "glare",
+   "id": "apoquel",
+   "variant": "flat",
    "set": "pet",
    "kind": "pet",
    "fields": {
     "name": "right",
-    "strength": "empty",
-    "strengthOffered": "right",
+    "strength": "wrong",
     "form": "right",
     "route": "right"
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 3795,
+   "ms": 1546,
    "passes": 1
   },
   {
@@ -2493,28 +2503,12 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 5908,
-   "passes": 2
-  },
-  {
-   "id": "apoquel",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "wrong",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 1721,
-   "passes": 1
+   "ms": 8655,
+   "passes": 3
   },
   {
    "id": "apoquel-chewable",
-   "variant": "lowlight",
+   "variant": "glare",
    "set": "pet",
    "kind": "pet",
    "fields": {
@@ -2526,8 +2520,25 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 3593,
-   "passes": 1
+   "ms": 7120,
+   "passes": 2
+  },
+  {
+   "id": "carprofen-felix",
+   "variant": "rotation",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "wrong",
+    "route": "right",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.333,
+   "leaks": 0,
+   "ms": 9965,
+   "passes": 7
   },
   {
    "id": "apoquel",
@@ -2542,7 +2553,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 3197,
+   "ms": 2917,
    "passes": 1
   },
   {
@@ -2559,7 +2570,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 2291,
+   "ms": 2057,
    "passes": 1
   },
   {
@@ -2575,40 +2586,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 5774,
-   "passes": 2
-  },
-  {
-   "id": "carprofen-felix",
-   "variant": "rotation",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "wrong",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.333,
-   "leaks": 0,
-   "ms": 10751,
-   "passes": 7
-  },
-  {
-   "id": "apoquel",
-   "variant": "cylinder",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 5183,
+   "ms": 5936,
    "passes": 2
   },
   {
@@ -2624,8 +2602,24 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1626,
+   "ms": 1603,
    "passes": 1
+  },
+  {
+   "id": "apoquel",
+   "variant": "cylinder",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 5038,
+   "passes": 2
   },
   {
    "id": "heartgard-plus",
@@ -2642,7 +2636,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 3625,
+   "ms": 3610,
    "passes": 2
   },
   {
@@ -2658,7 +2652,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 8969,
+   "ms": 7972,
    "passes": 6
   },
   {
@@ -2674,7 +2668,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 3417,
+   "ms": 3227,
    "passes": 1
   },
   {
@@ -2692,8 +2686,24 @@
    },
    "keyRecall": 0.25,
    "leaks": 0,
-   "ms": 6018,
+   "ms": 5968,
    "passes": 6
+  },
+  {
+   "id": "nexgard-combo",
+   "variant": "glare",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "wrong",
+    "form": "wrong",
+    "route": "wrong",
+    "directions": "right"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 2894,
+   "passes": 1
   },
   {
    "id": "heartgard-plus",
@@ -2709,7 +2719,7 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 7950,
+   "ms": 7453,
    "passes": 6
   },
   {
@@ -2726,23 +2736,38 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 2256,
+   "ms": 2053,
    "passes": 1
   },
   {
    "id": "nexgard-combo",
-   "variant": "glare",
+   "variant": "cylinder",
    "set": "pet",
    "kind": "pet",
    "fields": {
-    "name": "wrong",
-    "form": "wrong",
+    "name": "right",
+    "form": "right",
     "route": "wrong",
     "directions": "right"
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 3024,
+   "ms": 5328,
+   "passes": 2
+  },
+  {
+   "id": "simparica-trio",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 1489,
    "passes": 1
   },
   {
@@ -2759,39 +2784,8 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 2685,
+   "ms": 2695,
    "passes": 1
-  },
-  {
-   "id": "simparica-trio",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 1631,
-   "passes": 1
-  },
-  {
-   "id": "nexgard-combo",
-   "variant": "cylinder",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "form": "right",
-    "route": "wrong",
-    "directions": "right"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 6076,
-   "passes": 2
   },
   {
    "id": "nexgard",
@@ -2807,22 +2801,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 3190,
-   "passes": 1
-  },
-  {
-   "id": "simparica-trio",
-   "variant": "glare",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "wrong",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 2679,
+   "ms": 2777,
    "passes": 1
   },
   {
@@ -2840,8 +2819,23 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 5702,
+   "ms": 4640,
    "passes": 2
+  },
+  {
+   "id": "simparica-trio",
+   "variant": "glare",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "wrong",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 2332,
+   "passes": 1
   },
   {
    "id": "simparica",
@@ -2856,7 +2850,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 3160,
+   "ms": 2862,
    "passes": 2
   },
   {
@@ -2872,7 +2866,7 @@
    },
    "keyRecall": 0.25,
    "leaks": 0,
-   "ms": 1408,
+   "ms": 1261,
    "passes": 1
   },
   {
@@ -2887,7 +2881,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 7174,
+   "ms": 6896,
    "passes": 6
   },
   {
@@ -2904,7 +2898,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 6073,
+   "ms": 5007,
    "passes": 2
   },
   {
@@ -2920,7 +2914,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 2798,
+   "ms": 2424,
    "passes": 1
   },
   {
@@ -2937,7 +2931,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 5808,
+   "ms": 4535,
    "passes": 2
   },
   {
@@ -2953,7 +2947,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 6136,
+   "ms": 5179,
    "passes": 2
   },
   {
@@ -2968,7 +2962,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 8929,
+   "ms": 7907,
    "passes": 6
   },
   {
@@ -2984,7 +2978,7 @@
    },
    "keyRecall": 0.25,
    "leaks": 0,
-   "ms": 2777,
+   "ms": 2296,
    "passes": 1
   },
   {
@@ -3002,7 +2996,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 3486,
+   "ms": 3023,
    "passes": 2
   },
   {
@@ -3018,7 +3012,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1899,
+   "ms": 1634,
    "passes": 1
   },
   {
@@ -3035,7 +3029,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 6833,
+   "ms": 5539,
    "passes": 2
   },
   {
@@ -3053,24 +3047,56 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 6636,
+   "ms": 6278,
    "passes": 2
   },
   {
-   "id": "revolution-plus",
-   "variant": "rotation",
+   "id": "clavamox-chewable",
+   "variant": "glare",
    "set": "pet",
    "kind": "pet",
    "fields": {
     "name": "wrong",
     "strength": "wrong",
     "form": "right",
-    "route": "wrong"
+    "route": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 2871,
+   "passes": 1
+  },
+  {
+   "id": "clavamox-chewable",
+   "variant": "cylinder",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "wrong",
+    "strength": "wrong",
+    "form": "right",
+    "route": "right"
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 11331,
-   "passes": 7
+   "ms": 5481,
+   "passes": 2
+  },
+  {
+   "id": "clavamox-chewable",
+   "variant": "perspective",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 6288,
+   "passes": 2
   },
   {
    "id": "meloxicam-suspension",
@@ -3086,56 +3112,24 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 2075,
+   "ms": 2048,
    "passes": 2
   },
   {
-   "id": "clavamox-chewable",
-   "variant": "perspective",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 6672,
-   "passes": 2
-  },
-  {
-   "id": "clavamox-chewable",
-   "variant": "cylinder",
+   "id": "revolution-plus",
+   "variant": "rotation",
    "set": "pet",
    "kind": "pet",
    "fields": {
     "name": "wrong",
     "strength": "wrong",
     "form": "right",
-    "route": "right"
+    "route": "wrong"
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 6461,
-   "passes": 2
-  },
-  {
-   "id": "clavamox-chewable",
-   "variant": "glare",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "wrong",
-    "strength": "wrong",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 3517,
-   "passes": 1
+   "ms": 10785,
+   "passes": 7
   },
   {
    "id": "revolution",
@@ -3152,7 +3146,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 11964,
+   "ms": 11034,
    "passes": 7
   },
   {
@@ -3169,7 +3163,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1541,
+   "ms": 1543,
    "passes": 1
   },
   {
@@ -3187,7 +3181,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 3907,
+   "ms": 3306,
    "passes": 2
   },
   {
@@ -3204,8 +3198,59 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 3188,
+   "ms": 2902,
    "passes": 1
+  },
+  {
+   "id": "meloxicam-suspension",
+   "variant": "lowlight",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 4236,
+   "passes": 2
+  },
+  {
+   "id": "enroflox",
+   "variant": "glare",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.333,
+   "leaks": 0,
+   "ms": 2928,
+   "passes": 1
+  },
+  {
+   "id": "galliprant",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "empty",
+    "strengthOffered": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 3078,
+   "passes": 3
   },
   {
    "id": "meloxicam-suspension",
@@ -3221,59 +3266,8 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 4449,
-   "passes": 2
-  },
-  {
-   "id": "meloxicam-suspension",
-   "variant": "lowlight",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 4462,
-   "passes": 2
-  },
-  {
-   "id": "enroflox",
-   "variant": "glare",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.333,
-   "leaks": 0,
-   "ms": 3014,
-   "passes": 1
-  },
-  {
-   "id": "galliprant",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "empty",
-    "strengthOffered": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 2424,
-   "passes": 2
+   "ms": 6242,
+   "passes": 3
   },
   {
    "id": "vetmedin-solution",
@@ -3289,57 +3283,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1432,
-   "passes": 2
-  },
-  {
-   "id": "galliprant",
-   "variant": "lowlight",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 3854,
-   "passes": 2
-  },
-  {
-   "id": "galliprant",
-   "variant": "glare",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "empty",
-    "strengthOffered": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 4128,
-   "passes": 2
-  },
-  {
-   "id": "galliprant",
-   "variant": "perspective",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 3841,
+   "ms": 1515,
    "passes": 2
   },
   {
@@ -3357,8 +3301,25 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 3632,
+   "ms": 3177,
    "passes": 2
+  },
+  {
+   "id": "galliprant",
+   "variant": "glare",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "empty",
+    "strengthOffered": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 6101,
+   "passes": 3
   },
   {
    "id": "vetmedin-chewable",
@@ -3374,8 +3335,24 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 2869,
+   "ms": 2722,
    "passes": 2
+  },
+  {
+   "id": "galliprant",
+   "variant": "lowlight",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 8052,
+   "passes": 3
   },
   {
    "id": "enroflox",
@@ -3391,25 +3368,8 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 9322,
-   "passes": 6
-  },
-  {
-   "id": "methimazole-solution",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 1500,
-   "passes": 1
+   "ms": 11742,
+   "passes": 7
   },
   {
    "id": "vetmedin-solution",
@@ -3426,8 +3386,25 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 5436,
+   "ms": 5058,
    "passes": 6
+  },
+  {
+   "id": "galliprant",
+   "variant": "perspective",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 9296,
+   "passes": 3
   },
   {
    "id": "vetmedin-solution",
@@ -3444,8 +3421,42 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 7541,
+   "ms": 7055,
    "passes": 7
+  },
+  {
+   "id": "methimazole-solution",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 1470,
+   "passes": 1
+  },
+  {
+   "id": "methimazole-solution",
+   "variant": "perspective",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 2360,
+   "passes": 1
   },
   {
    "id": "vetmedin-chewable",
@@ -3461,12 +3472,12 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 5279,
+   "ms": 4921,
    "passes": 2
   },
   {
    "id": "methimazole-solution",
-   "variant": "perspective",
+   "variant": "glare",
    "set": "pet",
    "kind": "pet",
    "fields": {
@@ -3474,12 +3485,45 @@
     "strength": "right",
     "form": "right",
     "route": "right",
-    "ndc": "empty"
+    "ndc": "right"
    },
-   "keyRecall": 0.667,
+   "keyRecall": 1,
    "leaks": 0,
-   "ms": 2397,
+   "ms": 2178,
    "passes": 1
+  },
+  {
+   "id": "felanorm",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 1644,
+   "passes": 2
+  },
+  {
+   "id": "vetmedin-chewable",
+   "variant": "blur",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 4715,
+   "passes": 2
   },
   {
    "id": "methimazole-solution",
@@ -3495,58 +3539,8 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 2373,
-   "passes": 1
-  },
-  {
-   "id": "vetmedin-chewable",
-   "variant": "blur",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 5280,
+   "ms": 4585,
    "passes": 2
-  },
-  {
-   "id": "felanorm",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 1869,
-   "passes": 2
-  },
-  {
-   "id": "methimazole-solution",
-   "variant": "glare",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 2321,
-   "passes": 1
   },
   {
    "id": "cerenia-injection",
@@ -3561,24 +3555,8 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1278,
-   "passes": 1
-  },
-  {
-   "id": "cerenia-injection",
-   "variant": "blur",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 2744,
-   "passes": 1
+   "ms": 2295,
+   "passes": 2
   },
   {
    "id": "felanorm",
@@ -3593,26 +3571,24 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 3574,
+   "ms": 3432,
    "passes": 2
   },
   {
-   "id": "vetmedin-chewable",
-   "variant": "rotation",
+   "id": "cerenia-injection",
+   "variant": "blur",
    "set": "pet",
    "kind": "pet",
    "fields": {
     "name": "right",
-    "strength": "empty",
-    "strengthOffered": "right",
+    "strength": "right",
     "form": "right",
-    "route": "right",
-    "ndc": "right"
+    "route": "right"
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 11042,
-   "passes": 7
+   "ms": 2691,
+   "passes": 1
   },
   {
    "id": "felanorm",
@@ -3627,25 +3603,8 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 4035,
+   "ms": 3615,
    "passes": 2
-  },
-  {
-   "id": "cerenia-injection",
-   "variant": "glare",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "empty",
-    "strengthOffered": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 2752,
-   "passes": 1
   },
   {
    "id": "felanorm",
@@ -3661,8 +3620,59 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 5226,
+   "ms": 5036,
    "passes": 6
+  },
+  {
+   "id": "vetmedin-chewable",
+   "variant": "rotation",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "empty",
+    "strengthOffered": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 11091,
+   "passes": 7
+  },
+  {
+   "id": "cerenia-tablets",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 3709,
+   "passes": 2
+  },
+  {
+   "id": "cerenia-injection",
+   "variant": "glare",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "empty",
+    "strengthOffered": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 4801,
+   "passes": 2
   },
   {
    "id": "credelio-cat",
@@ -3678,39 +3688,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1358,
-   "passes": 1
-  },
-  {
-   "id": "cerenia-tablets",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 3935,
-   "passes": 2
-  },
-  {
-   "id": "credelio-cat",
-   "variant": "lowlight",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 2542,
+   "ms": 1204,
    "passes": 1
   },
   {
@@ -3726,39 +3704,8 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 5393,
+   "ms": 5001,
    "passes": 2
-  },
-  {
-   "id": "cerenia-tablets",
-   "variant": "perspective",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 5464,
-   "passes": 2
-  },
-  {
-   "id": "clavacillin-drops",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "form": "right",
-    "route": "right"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 1451,
-   "passes": 1
   },
   {
    "id": "cerenia-tablets",
@@ -3773,7 +3720,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 6181,
+   "ms": 5443,
    "passes": 2
   },
   {
@@ -3790,8 +3737,55 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 7314,
+   "ms": 6774,
    "passes": 6
+  },
+  {
+   "id": "credelio-cat",
+   "variant": "lowlight",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 2374,
+   "passes": 1
+  },
+  {
+   "id": "cerenia-tablets",
+   "variant": "perspective",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 5187,
+   "passes": 2
+  },
+  {
+   "id": "clavacillin-drops",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 1359,
+   "passes": 1
   },
   {
    "id": "proin-75",
@@ -3807,7 +3801,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1549,
+   "ms": 1453,
    "passes": 1
   },
   {
@@ -3824,7 +3818,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 4100,
+   "ms": 4177,
    "passes": 2
   },
   {
@@ -3839,7 +3833,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 2631,
+   "ms": 2490,
    "passes": 1
   },
   {
@@ -3854,7 +3848,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 4880,
+   "ms": 4623,
    "passes": 2
   },
   {
@@ -3871,25 +3865,8 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 3125,
+   "ms": 3028,
    "passes": 1
-  },
-  {
-   "id": "credelio-cat",
-   "variant": "rotation",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "right",
-    "strength": "empty",
-    "strengthOffered": "right",
-    "form": "right",
-    "route": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 9013,
-   "passes": 7
   },
   {
    "id": "syn-atorvastatin",
@@ -3909,8 +3886,25 @@
    "precision": 1,
    "recall": 0.909,
    "leaks": 0,
-   "ms": 1269,
+   "ms": 1222,
    "passes": 1
+  },
+  {
+   "id": "credelio-cat",
+   "variant": "rotation",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "empty",
+    "strengthOffered": "right",
+    "form": "right",
+    "route": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 8856,
+   "passes": 7
   },
   {
    "id": "proin-75",
@@ -3927,25 +3921,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 4872,
-   "passes": 6
-  },
-  {
-   "id": "proin-75",
-   "variant": "glare",
-   "set": "pet",
-   "kind": "pet",
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.333,
-   "leaks": 0,
-   "ms": 5150,
+   "ms": 4745,
    "passes": 6
   },
   {
@@ -3966,7 +3942,7 @@
    "precision": 0.966,
    "recall": 0.864,
    "leaks": 0,
-   "ms": 2116,
+   "ms": 2019,
    "passes": 1
   },
   {
@@ -3987,7 +3963,7 @@
    "precision": 1,
    "recall": 0.889,
    "leaks": 0,
-   "ms": 1221,
+   "ms": 1104,
    "passes": 1
   },
   {
@@ -4002,50 +3978,26 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 9926,
+   "ms": 9215,
    "passes": 6
   },
   {
-   "id": "syn-atorvastatin",
-   "variant": "vial",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
+   "id": "proin-75",
+   "variant": "glare",
+   "set": "pet",
+   "kind": "pet",
    "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty",
-    "directions": "wrong"
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
    },
-   "keyRecall": 0,
-   "cer": 0.505,
-   "precision": 0.574,
-   "recall": 0.53,
+   "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 4549,
-   "passes": 2
-  },
-  {
-   "id": "syn-lisinopril",
-   "variant": "perspective",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right",
-    "directions": "right"
-   },
-   "keyRecall": 0.667,
-   "cer": 0.178,
-   "precision": 1,
-   "recall": 0.937,
-   "leaks": 0,
-   "ms": 1920,
-   "passes": 1
+   "ms": 6923,
+   "passes": 7
   },
   {
    "id": "syn-lisinopril",
@@ -4065,8 +4017,50 @@
    "precision": 1,
    "recall": 0.937,
    "leaks": 0,
-   "ms": 2275,
+   "ms": 2218,
    "passes": 1
+  },
+  {
+   "id": "syn-lisinopril",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right",
+    "directions": "right"
+   },
+   "keyRecall": 0.667,
+   "cer": 0.178,
+   "precision": 1,
+   "recall": 0.937,
+   "leaks": 0,
+   "ms": 2012,
+   "passes": 1
+  },
+  {
+   "id": "syn-atorvastatin",
+   "variant": "vial",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right",
+    "directions": "wrong"
+   },
+   "keyRecall": 0,
+   "cer": 0.505,
+   "precision": 0.574,
+   "recall": 0.53,
+   "leaks": 0,
+   "ms": 6637,
+   "passes": 3
   },
   {
    "id": "syn-metformin",
@@ -4086,50 +4080,8 @@
    "precision": 0.983,
    "recall": 0.905,
    "leaks": 0,
-   "ms": 2513,
+   "ms": 2315,
    "passes": 2
-  },
-  {
-   "id": "syn-lisinopril",
-   "variant": "vial",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "fields": {
-    "name": "wrong",
-    "strength": "wrong",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty",
-    "directions": "right"
-   },
-   "keyRecall": 0,
-   "cer": 0.423,
-   "precision": 0.576,
-   "recall": 0.603,
-   "leaks": 0,
-   "ms": 4572,
-   "passes": 2
-  },
-  {
-   "id": "syn-atorvastatin",
-   "variant": "rotation",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right",
-    "directions": "right"
-   },
-   "keyRecall": 0.667,
-   "cer": 0.28,
-   "precision": 0.968,
-   "recall": 0.909,
-   "leaks": 0,
-   "ms": 7082,
-   "passes": 6
   },
   {
    "id": "syn-amoxicillin",
@@ -4149,8 +4101,50 @@
    "precision": 0.983,
    "recall": 0.892,
    "leaks": 0,
-   "ms": 1318,
+   "ms": 1212,
    "passes": 1
+  },
+  {
+   "id": "syn-atorvastatin",
+   "variant": "rotation",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right",
+    "directions": "right"
+   },
+   "keyRecall": 0.667,
+   "cer": 0.28,
+   "precision": 0.968,
+   "recall": 0.909,
+   "leaks": 0,
+   "ms": 6607,
+   "passes": 6
+  },
+  {
+   "id": "syn-lisinopril",
+   "variant": "vial",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "wrong",
+    "strength": "wrong",
+    "form": "right",
+    "route": "right",
+    "ndc": "empty",
+    "directions": "right"
+   },
+   "keyRecall": 0,
+   "cer": 0.423,
+   "precision": 0.576,
+   "recall": 0.603,
+   "leaks": 0,
+   "ms": 6367,
+   "passes": 3
   },
   {
    "id": "syn-metformin",
@@ -4170,7 +4164,7 @@
    "precision": 0.652,
    "recall": 0.683,
    "leaks": 0,
-   "ms": 4774,
+   "ms": 4236,
    "passes": 2
   },
   {
@@ -4191,7 +4185,7 @@
    "precision": 0.963,
    "recall": 0.825,
    "leaks": 0,
-   "ms": 4220,
+   "ms": 3769,
    "passes": 2
   },
   {
@@ -4212,29 +4206,8 @@
    "precision": 1,
    "recall": 0.889,
    "leaks": 0,
-   "ms": 1197,
+   "ms": 1037,
    "passes": 1
-  },
-  {
-   "id": "syn-amoxicillin",
-   "variant": "vial",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right",
-    "directions": "right"
-   },
-   "keyRecall": 0.333,
-   "cer": 0.55,
-   "precision": 0.513,
-   "recall": 0.6,
-   "leaks": 0,
-   "ms": 4522,
-   "passes": 2
   },
   {
    "id": "syn-metformin",
@@ -4254,7 +4227,7 @@
    "precision": 0.967,
    "recall": 0.921,
    "leaks": 0,
-   "ms": 6871,
+   "ms": 6214,
    "passes": 6
   },
   {
@@ -4275,12 +4248,12 @@
    "precision": 0.935,
    "recall": 0.892,
    "leaks": 0,
-   "ms": 4147,
+   "ms": 3826,
    "passes": 2
   },
   {
    "id": "syn-amoxicillin",
-   "variant": "blur",
+   "variant": "vial",
    "set": "human",
    "kind": "synthetic-pharmacy",
    "fields": {
@@ -4288,15 +4261,15 @@
     "strength": "right",
     "form": "right",
     "route": "right",
-    "ndc": "empty",
+    "ndc": "right",
     "directions": "right"
    },
    "keyRecall": 0.333,
-   "cer": 0.308,
-   "precision": 0.891,
-   "recall": 0.631,
+   "cer": 0.55,
+   "precision": 0.513,
+   "recall": 0.6,
    "leaks": 0,
-   "ms": 4666,
+   "ms": 4472,
    "passes": 2
   },
   {
@@ -4317,29 +4290,8 @@
    "precision": 1,
    "recall": 0.926,
    "leaks": 0,
-   "ms": 1300,
+   "ms": 1200,
    "passes": 1
-  },
-  {
-   "id": "syn-prednisone",
-   "variant": "vial",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right",
-    "directions": "right"
-   },
-   "keyRecall": 0.667,
-   "cer": 0.447,
-   "precision": 0.559,
-   "recall": 0.603,
-   "leaks": 0,
-   "ms": 4784,
-   "passes": 2
   },
   {
    "id": "syn-prednisone",
@@ -4359,33 +4311,12 @@
    "precision": 0.962,
    "recall": 0.81,
    "leaks": 0,
-   "ms": 4041,
+   "ms": 3447,
    "passes": 2
   },
   {
-   "id": "syn-ofloxacin",
-   "variant": "flat",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "right",
-    "directions": "right"
-   },
-   "keyRecall": 1,
-   "cer": 0.161,
-   "precision": 0.983,
-   "recall": 0.908,
-   "leaks": 0,
-   "ms": 1133,
-   "passes": 1
-  },
-  {
-   "id": "syn-ventolin",
-   "variant": "lowlight",
+   "id": "syn-prednisone",
+   "variant": "vial",
    "set": "human",
    "kind": "synthetic-pharmacy",
    "fields": {
@@ -4397,12 +4328,33 @@
     "directions": "right"
    },
    "keyRecall": 0.667,
-   "cer": 0.098,
-   "precision": 1,
-   "recall": 0.912,
+   "cer": 0.447,
+   "precision": 0.559,
+   "recall": 0.603,
    "leaks": 0,
-   "ms": 2159,
-   "passes": 1
+   "ms": 4311,
+   "passes": 2
+  },
+  {
+   "id": "syn-amoxicillin",
+   "variant": "blur",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right",
+    "directions": "right"
+   },
+   "keyRecall": 0.333,
+   "cer": 0.308,
+   "precision": 0.891,
+   "recall": 0.631,
+   "leaks": 0,
+   "ms": 6415,
+   "passes": 3
   },
   {
    "id": "syn-prednisone",
@@ -4423,29 +4375,50 @@
    "precision": 0.943,
    "recall": 0.794,
    "leaks": 0,
-   "ms": 3750,
+   "ms": 3755,
    "passes": 2
   },
   {
-   "id": "syn-ventolin",
-   "variant": "blur",
+   "id": "syn-ofloxacin",
+   "variant": "flat",
    "set": "human",
    "kind": "synthetic-pharmacy",
    "fields": {
     "name": "right",
     "strength": "right",
     "form": "right",
-    "route": "wrong",
-    "ndc": "empty",
+    "route": "right",
+    "ndc": "right",
     "directions": "right"
    },
-   "keyRecall": 0.333,
-   "cer": 0.281,
-   "precision": 0.923,
-   "recall": 0.706,
+   "keyRecall": 1,
+   "cer": 0.161,
+   "precision": 0.983,
+   "recall": 0.908,
    "leaks": 0,
-   "ms": 4073,
-   "passes": 2
+   "ms": 1119,
+   "passes": 1
+  },
+  {
+   "id": "syn-ventolin",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right",
+    "directions": "right"
+   },
+   "keyRecall": 0.667,
+   "cer": 0.098,
+   "precision": 1,
+   "recall": 0.912,
+   "leaks": 0,
+   "ms": 1933,
+   "passes": 1
   },
   {
    "id": "syn-ventolin",
@@ -4465,7 +4438,7 @@
    "precision": 0.577,
    "recall": 0.603,
    "leaks": 0,
-   "ms": 4759,
+   "ms": 4639,
    "passes": 2
   },
   {
@@ -4486,7 +4459,7 @@
    "precision": 0.966,
    "recall": 0.877,
    "leaks": 0,
-   "ms": 2104,
+   "ms": 2014,
    "passes": 1
   },
   {
@@ -4507,7 +4480,7 @@
    "precision": 1,
    "recall": 0.934,
    "leaks": 0,
-   "ms": 2279,
+   "ms": 2083,
    "passes": 2
   },
   {
@@ -4528,8 +4501,29 @@
    "precision": 0.615,
    "recall": 0.615,
    "leaks": 0,
-   "ms": 4597,
+   "ms": 4219,
    "passes": 2
+  },
+  {
+   "id": "syn-ventolin",
+   "variant": "blur",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "wrong",
+    "ndc": "empty",
+    "directions": "right"
+   },
+   "keyRecall": 0.333,
+   "cer": 0.281,
+   "precision": 0.923,
+   "recall": 0.706,
+   "leaks": 0,
+   "ms": 5913,
+   "passes": 3
   },
   {
    "id": "syn-sertraline",
@@ -4549,7 +4543,7 @@
    "precision": 1,
    "recall": 0.934,
    "leaks": 0,
-   "ms": 2467,
+   "ms": 2239,
    "passes": 1
   },
   {
@@ -4569,7 +4563,7 @@
    "precision": 1,
    "recall": 1,
    "leaks": 0,
-   "ms": 2094,
+   "ms": 2000,
    "passes": 2
   },
   {
@@ -4589,7 +4583,7 @@
    "precision": 0.672,
    "recall": 0.811,
    "leaks": 0,
-   "ms": 2406,
+   "ms": 2268,
    "passes": 1
   },
   {
@@ -4610,49 +4604,8 @@
    "precision": 0.982,
    "recall": 0.918,
    "leaks": 0,
-   "ms": 4072,
+   "ms": 3550,
    "passes": 2
-  },
-  {
-   "id": "syn-sertraline",
-   "variant": "vial",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty",
-    "directions": "right"
-   },
-   "keyRecall": 0.333,
-   "cer": 0.487,
-   "precision": 0.528,
-   "recall": 0.623,
-   "leaks": 0,
-   "ms": 4799,
-   "passes": 2
-  },
-  {
-   "id": "syn-vet-carprofen",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "right"
-   },
-   "keyRecall": 0.5,
-   "cer": 0,
-   "precision": 1,
-   "recall": 1,
-   "leaks": 0,
-   "ms": 896,
-   "passes": 1
   },
   {
    "id": "syn-ofloxacin",
@@ -4672,12 +4625,12 @@
    "precision": 0.869,
    "recall": 0.815,
    "leaks": 0,
-   "ms": 6979,
+   "ms": 6276,
    "passes": 6
   },
   {
-   "id": "syn-vet-prednisolone",
-   "variant": "cylinder",
+   "id": "syn-vet-carprofen",
+   "variant": "flat",
    "set": "pet",
    "kind": "synthetic-vet",
    "fields": {
@@ -4687,13 +4640,13 @@
     "route": "right",
     "directions": "right"
    },
-   "keyRecall": 1,
-   "cer": 0.006,
-   "precision": 0.962,
-   "recall": 0.962,
+   "keyRecall": 0.5,
+   "cer": 0,
+   "precision": 1,
+   "recall": 1,
    "leaks": 0,
-   "ms": 3724,
-   "passes": 2
+   "ms": 838,
+   "passes": 1
   },
   {
    "id": "syn-vet-carprofen",
@@ -4712,28 +4665,29 @@
    "precision": 0.606,
    "recall": 0.755,
    "leaks": 0,
-   "ms": 2393,
+   "ms": 2056,
    "passes": 1
   },
   {
-   "id": "syn-vet-gabapentin",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "synthetic-vet",
+   "id": "syn-sertraline",
+   "variant": "vial",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
    "fields": {
     "name": "right",
     "strength": "right",
     "form": "right",
     "route": "right",
+    "ndc": "right",
     "directions": "right"
    },
-   "keyRecall": 0.5,
-   "cer": 0,
-   "precision": 1,
-   "recall": 1,
+   "keyRecall": 0.333,
+   "cer": 0.487,
+   "precision": 0.528,
+   "recall": 0.623,
    "leaks": 0,
-   "ms": 1761,
-   "passes": 2
+   "ms": 7114,
+   "passes": 3
   },
   {
    "id": "syn-vet-carprofen",
@@ -4752,8 +4706,48 @@
    "precision": 1,
    "recall": 1,
    "leaks": 0,
-   "ms": 2116,
+   "ms": 2040,
    "passes": 1
+  },
+  {
+   "id": "syn-vet-prednisolone",
+   "variant": "cylinder",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "right"
+   },
+   "keyRecall": 1,
+   "cer": 0.006,
+   "precision": 0.962,
+   "recall": 0.962,
+   "leaks": 0,
+   "ms": 3505,
+   "passes": 2
+  },
+  {
+   "id": "syn-vet-gabapentin",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "right"
+   },
+   "keyRecall": 0.5,
+   "cer": 0,
+   "precision": 1,
+   "recall": 1,
+   "leaks": 0,
+   "ms": 1601,
+   "passes": 2
   },
   {
    "id": "syn-vet-carprofen",
@@ -4772,7 +4766,7 @@
    "precision": 0.92,
    "recall": 0.868,
    "leaks": 0,
-   "ms": 4559,
+   "ms": 3978,
    "passes": 2
   },
   {
@@ -4792,7 +4786,7 @@
    "precision": 0.98,
    "recall": 1,
    "leaks": 0,
-   "ms": 1863,
+   "ms": 1580,
    "passes": 2
   },
   {
@@ -4812,47 +4806,7 @@
    "precision": 0.98,
    "recall": 0.962,
    "leaks": 0,
-   "ms": 3772,
-   "passes": 2
-  },
-  {
-   "id": "syn-vet-gabapentin",
-   "variant": "glare",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "right"
-   },
-   "keyRecall": 0.5,
-   "cer": 0.097,
-   "precision": 0.979,
-   "recall": 0.885,
-   "leaks": 0,
-   "ms": 3855,
-   "passes": 2
-  },
-  {
-   "id": "syn-vet-gabapentin",
-   "variant": "vial",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "wrong"
-   },
-   "keyRecall": 0.5,
-   "cer": 0.287,
-   "precision": 0.667,
-   "recall": 0.769,
-   "leaks": 0,
-   "ms": 4692,
+   "ms": 3707,
    "passes": 2
   },
   {
@@ -4873,8 +4827,48 @@
    "precision": 0.962,
    "recall": 0.962,
    "leaks": 0,
-   "ms": 9154,
+   "ms": 8476,
    "passes": 7
+  },
+  {
+   "id": "syn-vet-gabapentin",
+   "variant": "glare",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "right"
+   },
+   "keyRecall": 0.5,
+   "cer": 0.097,
+   "precision": 0.979,
+   "recall": 0.885,
+   "leaks": 0,
+   "ms": 3476,
+   "passes": 2
+  },
+  {
+   "id": "syn-vet-gabapentin",
+   "variant": "vial",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "wrong"
+   },
+   "keyRecall": 0.5,
+   "cer": 0.287,
+   "precision": 0.667,
+   "recall": 0.769,
+   "leaks": 0,
+   "ms": 4806,
+   "passes": 2
   },
   {
    "id": "syn-vet-cephalexin",
@@ -4893,27 +4887,7 @@
    "precision": 1,
    "recall": 1,
    "leaks": 0,
-   "ms": 1733,
-   "passes": 2
-  },
-  {
-   "id": "syn-vet-amoxicillin",
-   "variant": "blur",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "right"
-   },
-   "keyRecall": 0.5,
-   "cer": 0.05,
-   "precision": 1,
-   "recall": 0.979,
-   "leaks": 0,
-   "ms": 4100,
+   "ms": 1712,
    "passes": 2
   },
   {
@@ -4933,7 +4907,27 @@
    "precision": 0.629,
    "recall": 0.813,
    "leaks": 0,
-   "ms": 4693,
+   "ms": 4248,
+   "passes": 2
+  },
+  {
+   "id": "syn-vet-amoxicillin",
+   "variant": "blur",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "right"
+   },
+   "keyRecall": 0.5,
+   "cer": 0.05,
+   "precision": 1,
+   "recall": 0.979,
+   "leaks": 0,
+   "ms": 3856,
    "passes": 2
   },
   {
@@ -4953,7 +4947,7 @@
    "precision": 1,
    "recall": 1,
    "leaks": 0,
-   "ms": 914,
+   "ms": 852,
    "passes": 1
   },
   {
@@ -4973,7 +4967,7 @@
    "precision": 1,
    "recall": 1,
    "leaks": 0,
-   "ms": 4128,
+   "ms": 4154,
    "passes": 2
   },
   {
@@ -4993,7 +4987,7 @@
    "precision": 0.638,
    "recall": 0.725,
    "leaks": 0,
-   "ms": 4505,
+   "ms": 4239,
    "passes": 2
   },
   {
@@ -5013,7 +5007,7 @@
    "precision": 0.936,
    "recall": 0.863,
    "leaks": 0,
-   "ms": 4238,
+   "ms": 4196,
    "passes": 2
   },
   {
@@ -5033,27 +5027,7 @@
    "precision": 1,
    "recall": 1,
    "leaks": 0,
-   "ms": 2236,
-   "passes": 1
-  },
-  {
-   "id": "syn-vet-metronidazole",
-   "variant": "perspective",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "right"
-   },
-   "keyRecall": 0.5,
-   "cer": 0,
-   "precision": 1,
-   "recall": 1,
-   "leaks": 0,
-   "ms": 1972,
+   "ms": 2104,
    "passes": 1
   },
   {
@@ -5073,8 +5047,28 @@
    "precision": 1,
    "recall": 1,
    "leaks": 0,
-   "ms": 1765,
+   "ms": 1632,
    "passes": 2
+  },
+  {
+   "id": "syn-vet-metronidazole",
+   "variant": "perspective",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "right"
+   },
+   "keyRecall": 0.5,
+   "cer": 0,
+   "precision": 1,
+   "recall": 1,
+   "leaks": 0,
+   "ms": 1903,
+   "passes": 1
   },
   {
    "id": "syn-vet-metronidazole",
@@ -5093,47 +5087,7 @@
    "precision": 0.606,
    "recall": 0.769,
    "leaks": 0,
-   "ms": 4554,
-   "passes": 2
-  },
-  {
-   "id": "syn-vet-meloxicam",
-   "variant": "vial",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "wrong"
-   },
-   "keyRecall": 0,
-   "cer": 0.369,
-   "precision": 0.597,
-   "recall": 0.771,
-   "leaks": 0,
-   "ms": 4642,
-   "passes": 2
-  },
-  {
-   "id": "syn-vet-meloxicam",
-   "variant": "cylinder",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "right"
-   },
-   "keyRecall": 0.5,
-   "cer": 0.014,
-   "precision": 0.957,
-   "recall": 0.938,
-   "leaks": 0,
-   "ms": 3769,
+   "ms": 4004,
    "passes": 2
   },
   {
@@ -5153,8 +5107,48 @@
    "precision": 1,
    "recall": 1,
    "leaks": 0,
-   "ms": 7737,
+   "ms": 7365,
    "passes": 7
+  },
+  {
+   "id": "syn-vet-meloxicam",
+   "variant": "cylinder",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "right"
+   },
+   "keyRecall": 0.5,
+   "cer": 0.014,
+   "precision": 0.957,
+   "recall": 0.938,
+   "leaks": 0,
+   "ms": 3519,
+   "passes": 2
+  },
+  {
+   "id": "syn-vet-meloxicam",
+   "variant": "vial",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "wrong"
+   },
+   "keyRecall": 0,
+   "cer": 0.369,
+   "precision": 0.597,
+   "recall": 0.771,
+   "leaks": 0,
+   "ms": 4514,
+   "passes": 2
   },
   {
    "id": "syn-vet-meloxicam",
@@ -5174,7 +5168,7 @@
    "precision": 0.854,
    "recall": 0.854,
    "leaks": 0,
-   "ms": 7185,
+   "ms": 6877,
    "passes": 7
   }
  ]

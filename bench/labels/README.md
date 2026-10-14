@@ -46,18 +46,18 @@ in a saved field. `--save` writes the scores (no text) to `results/`.
 
 | Field | Human before | Human now | Pet before | Pet now |
 | --- | --- | --- | --- | --- |
-| Name | 17 (13) | 81 (7) | 15 (29) | 71 (11) |
-| Strength | 42 (35) | 79 (7) | 49 (21) | 60 (13) |
-| Strength unread, the right one offered to pick | – | 0% of 21 | – | 60% of 30 |
+| Name | 17 (13) | 83 (6) | 15 (29) | 71 (11) |
+| Strength | 42 (35) | 85 (6) | 49 (21) | 60 (13) |
+| Strength unread, the right one offered to pick | – | 0% of 15 | – | 60% of 30 |
 | Form | 14 (0) | 94 (1) | 25 (2) | 88 (6) |
 | Route | 20 (5) | 90 (3) | 23 (2) | 82 (7) |
-| NDC | 0 (0) | 61 (4) | 0 (0) | 50 (7) |
+| NDC | 0 (0) | 72 (3) | 0 (0) | 50 (7) |
 | Directions (pharmacy and vet labels) | 84 (6) | 94 (6) | 68 (14) | 80 (14) |
 | Key-token recall | 0.50 | 0.64 | 0.49 | 0.51 |
 | Word precision, synthetic labels | 0.72 | 0.87 | 0.74 | 0.89 |
 | Character error rate, synthetic labels | 0.36 | 0.25 | 0.28 | 0.11 |
 | Private strings in a medicine field | 0 | 0 | 0 | 0 |
-| Seconds per image (one engine, M-series core) | 1.2 | 4.3 | 1.1 | 4.2 |
+| Seconds per image (one engine, M-series core) | 1.2 | 4.8 | 1.1 | 4.2 |
 
 What each step adds (human name / strength, pet name / strength; same images):
 
@@ -71,6 +71,7 @@ What each step adds (human name / strength, pet name / strength; same images):
 | now | label fields | 31 / 63 | 20 / 60 |
 | now | + medicine names | 69 / 63 | 71 / 60 |
 | now | + FDA listing | 81 / 79 | 71 / 60 |
+| now | + half-read NDCs matched by name | 83 / 85 | 71 / 60 |
 
 Reader options tried (with the current parser; human name / strength / NDC, pet name / strength / NDC, seconds):
 
@@ -93,6 +94,23 @@ Dropped: CLAHE (pet strength up 7, human name down 4: a wash, and slower), Sauvo
 everywhere), the zoomed read (no gain), PSM 3 alone. Kept: PSM 11 first, PSM 3 only when needed,
 the quarter turns, word confidences, lines rebuilt from word positions, the number fixes, the
 package-label fields, the medicine names, the FDA listing.
+
+The NDC (October 2026, after the first release): right on 61% of human labels (4% wrong), 72%
+(3% wrong) now. A label's NDC is small print, often white on a coloured band or round a curve, so
+it is often read a digit or two off, or with its dashes lost. What helped:
+
+| Step | Human NDC | Pet NDC |
+| --- | --- | --- |
+| v0.124.0: a clear NDC in the text, confirmed by the listing | 61 (4) | 50 (7) |
+| + the digits read (sure or not) matched to the packages of the medicine named (name sent, digits not) | 71 (3) | 50 (7) |
+| + one more pass with local contrast when no clear NDC was read | 72 (3) | 50 (7) |
+
+The extra pass adds one point on the set but is what reads the codes on two of the three local
+photos (a curved tube, a white-on-blue band); both now get their NDC, against none before. Pet
+labels gain nothing: animal drugs are mostly not in the human NDC directory. Inverting the image
+gave nothing (the engine already tries inverted lines), nor did a digits-only re-read of the code's
+line. A bare code with no "NDC" before it is looked up only in full NDC shape, only with a name
+read, and kept only when its product is that medicine; phone and Rx numbers never have that shape.
 
 A vision model on Workers AI, the same 70 photo-like images (one per label), for comparison only
 (`cloud.ts`; never a household photo):

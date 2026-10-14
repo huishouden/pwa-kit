@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { clahe, crop, rotate, scale, stretch, toBmp, toGray, type Gray } from '../src/label-image';
-import { fixNumberWord, linesOf, mergeWords, readLabelImage, readingScore, wordsToLines, type OcrWord, type Psm } from '../src/label-read';
+import { codesOf, fixNumberWord, linesOf, mergeWords, readLabelImage, readingScore, wordsToLines, type OcrWord, type Psm } from '../src/label-read';
 
 const word = (text: string, x0: number, y0: number, w = 60, h = 20, confidence = 90): OcrWord => ({ text, confidence, box: { x0, y0, x1: x0 + w, y1: y0 + h } });
 const gray = (width: number, height: number, f: (x: number, y: number) => number): Gray => {
@@ -47,6 +47,13 @@ describe('lines from words', () => {
 
   test('readingScore counts the letters of sure words only', () => {
     expect(readingScore([word('Cephalexins', 0, 0, 100, 20, 90), word('xq', 0, 0, 10, 10, 30)])).toBe(11);
+  });
+});
+
+describe('codesOf', () => {
+  test('digit runs of eight or more on a line, sure or not, numbers fixed; short numbers and words left out', () => {
+    const words = [word('NDC', 0, 0, 40, 20, 90), word('24208-9lO', 50, 0, 90, 20, 0), word('-55', 150, 0, 30, 20, 10), word('Qty:', 0, 100), word('30', 70, 100), word('(555)', 0, 200), word('014-2290', 70, 200)];
+    expect(codesOf(words)).toEqual(['24208-910-55']);
   });
 });
 
