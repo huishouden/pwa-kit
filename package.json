@@ -66,6 +66,14 @@
       "types": "./dist/dose.d.ts",
       "default": "./dist/dose.js"
     },
+    "./medicine-label": {
+      "types": "./dist/medicine-label.d.ts",
+      "default": "./dist/medicine-label.js"
+    },
+    "./medicine-lookup": {
+      "types": "./dist/medicine-lookup.d.ts",
+      "default": "./dist/medicine-lookup.js"
+    },
     "./e2e": {
       "types": "./dist/e2e.d.ts",
       "default": "./dist/e2e.js"

@@ -1,0 +1,51 @@
+{
+ "meta": {
+  "disclaimer": "Do not rely on openFDA to make decisions regarding medical care. While we make every effort to ensure that data is accurate, you should assume all results are unvalidated. We may limit or otherwise restrict your access to the API in line with our Terms of Service.",
+  "results": {
+   "skip": 0,
+   "limit": 1,
+   "total": 1
+  }
+ },
+ "results": [
+  {
+   "product_ndc": "59390-217",
+   "generic_name": "Ciprofloxacin Hydrochloride",
+   "labeler_name": "Altaire Pharmaceuticals Inc.",
+   "brand_name": "Ciprofloxacin HCl Ophthalmic",
+   "active_ingredients": [
+    {
+     "name": "CIPROFLOXACIN HYDROCHLORIDE",
+     "strength": "3 mg/mL"
+    }
+   ],
+   "finished": true,
+   "packaging": [
+    {
+     "package_ndc": "59390-217-02",
+     "description": "2.5 mL in 1 BOTTLE, PLASTIC (59390-217-02)",
+     "marketing_start_date": "20180504",
+     "sample": false
+    },
+    {
+     "package_ndc": "59390-217-05",
+     "description": "5 mL in 1 BOTTLE, PLASTIC (59390-217-05)",
+     "marketing_start_date": "20180504",
+     "sample": false
+    },
+    {
+     "package_ndc": "59390-217-10",
+     "description": "10 mL in 1 BOTTLE, PLASTIC (59390-217-10)",
+     "marketing_start_date": "20180504",
+     "sample": false
+    }
+   ],
+   "dosage_form": "SOLUTION",
+   "route": [
+    "OPHTHALMIC"
+   ],
+   "product_type": "HUMAN PRESCRIPTION DRUG",
+   "marketing_category": "ANDA"
+  }
+ ]
+}

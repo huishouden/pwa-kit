@@ -1,0 +1,453 @@
+{
+ "model": "@cf/meta/llama-4-scout-17b-16e-instruct",
+ "items": [
+  "amox-clav-875~perspective",
+  "lisinopril-hctz~glare",
+  "caduet~rotation",
+  "amlodipine-olmesartan~cylinder",
+  "evexithroid~lowlight",
+  "ciprofloxacin-eye~perspective",
+  "gabapentin-100~blur",
+  "zegerid~rotation",
+  "acetaminophen-ibuprofen~cylinder",
+  "loratadine-30~glare",
+  "sleep-aid~perspective",
+  "famotidine-cvs~blur",
+  "naproxen-220~lowlight",
+  "carprofen-zyvet~cylinder",
+  "apoquel-chewable~glare",
+  "heartgard-plus~rotation",
+  "simparica-trio~blur",
+  "revolution-plus~lowlight",
+  "clavamox-chewable~perspective",
+  "galliprant~glare",
+  "vetmedin-chewable~rotation",
+  "felanorm~cylinder",
+  "credelio-cat~lowlight",
+  "proin-75~perspective",
+  "syn-lisinopril~vial",
+  "syn-prednisone~vial",
+  "syn-ofloxacin~vial",
+  "syn-vet-prednisolone~vial",
+  "syn-vet-amoxicillin~vial",
+  "syn-vet-metronidazole~vial"
+ ],
+ "results": [
+  {
+   "id": "amox-clav-875",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "wrong",
+    "strength": "right",
+    "form": "right",
+    "route": "empty",
+    "ndc": "right"
+   },
+   "ms": 3313
+  },
+  {
+   "id": "lisinopril-hctz",
+   "variant": "glare",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "empty",
+    "ndc": "right"
+   },
+   "ms": 3337
+  },
+  {
+   "id": "caduet",
+   "variant": "rotation",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "wrong"
+   },
+   "ms": 2318
+  },
+  {
+   "id": "amlodipine-olmesartan",
+   "variant": "cylinder",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "empty",
+    "ndc": "right"
+   },
+   "ms": 2076
+  },
+  {
+   "id": "evexithroid",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "wrong",
+    "strength": "right",
+    "form": "right",
+    "route": "empty",
+    "ndc": "right"
+   },
+   "ms": 3352
+  },
+  {
+   "id": "ciprofloxacin-eye",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "ms": 2179
+  },
+  {
+   "id": "gabapentin-100",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "empty",
+    "ndc": "right"
+   },
+   "ms": 2276
+  },
+  {
+   "id": "zegerid",
+   "variant": "rotation",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "wrong"
+   },
+   "ms": 1930
+  },
+  {
+   "id": "acetaminophen-ibuprofen",
+   "variant": "cylinder",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "right",
+    "route": "empty",
+    "ndc": "right"
+   },
+   "ms": 1988
+  },
+  {
+   "id": "loratadine-30",
+   "variant": "glare",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "empty",
+    "ndc": "right"
+   },
+   "ms": 2874
+  },
+  {
+   "id": "sleep-aid",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "empty",
+    "ndc": "right"
+   },
+   "ms": 2640
+  },
+  {
+   "id": "famotidine-cvs",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "ms": 2791
+  },
+  {
+   "id": "naproxen-220",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "empty",
+    "ndc": "right"
+   },
+   "ms": 1983
+  },
+  {
+   "id": "carprofen-zyvet",
+   "variant": "cylinder",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "ms": 1939
+  },
+  {
+   "id": "apoquel-chewable",
+   "variant": "glare",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "ms": 2787
+  },
+  {
+   "id": "heartgard-plus",
+   "variant": "rotation",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "right",
+    "route": "empty",
+    "directions": "wrong"
+   },
+   "ms": 3859
+  },
+  {
+   "id": "simparica-trio",
+   "variant": "blur",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "form": "right",
+    "route": "empty"
+   },
+   "ms": 3069
+  },
+  {
+   "id": "revolution-plus",
+   "variant": "lowlight",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "right",
+    "route": "empty"
+   },
+   "ms": 3518
+  },
+  {
+   "id": "clavamox-chewable",
+   "variant": "perspective",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "ms": 2752
+  },
+  {
+   "id": "galliprant",
+   "variant": "glare",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "wrong",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "ms": 1907
+  },
+  {
+   "id": "vetmedin-chewable",
+   "variant": "rotation",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "wrong"
+   },
+   "ms": 2850
+  },
+  {
+   "id": "felanorm",
+   "variant": "cylinder",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right"
+   },
+   "ms": 2937
+  },
+  {
+   "id": "credelio-cat",
+   "variant": "lowlight",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "empty"
+   },
+   "ms": 3612
+  },
+  {
+   "id": "proin-75",
+   "variant": "perspective",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right"
+   },
+   "ms": 1979
+  },
+  {
+   "id": "syn-lisinopril",
+   "variant": "vial",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right",
+    "directions": "right"
+   },
+   "ms": 3236
+  },
+  {
+   "id": "syn-prednisone",
+   "variant": "vial",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "right",
+    "directions": "right"
+   },
+   "ms": 2251
+  },
+  {
+   "id": "syn-ofloxacin",
+   "variant": "vial",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "wrong",
+    "route": "right",
+    "ndc": "wrong",
+    "directions": "right"
+   },
+   "ms": 1979
+  },
+  {
+   "id": "syn-vet-prednisolone",
+   "variant": "vial",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "right"
+   },
+   "ms": 2543
+  },
+  {
+   "id": "syn-vet-amoxicillin",
+   "variant": "vial",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "right"
+   },
+   "ms": 3778
+  },
+  {
+   "id": "syn-vet-metronidazole",
+   "variant": "vial",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "right"
+   },
+   "ms": 2672
+  }
+ ]
+}

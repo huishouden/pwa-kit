@@ -10,6 +10,8 @@ export default {
   'dose.assumeTwoDoses': 'La etiqueta indica dos dosis distintas; se mantuvo {dose}',
   'dose.assumeNoName': 'No se encontró el nombre del medicamento en la etiqueta',
   'dose.assumeTaper': 'La etiqueta cambia la dosis a mitad del tratamiento; solo se leyó el primer paso',
+  'dose.ndcDisagrees': 'el NDC {ndc} figura como {name}, que no es lo que se leyó; revisa la foto',
+  'dose.strengthUnlisted': '{name} no se vende en {strength}; revisa la concentración',
   'dose.assumeDisagree': '"{first}" y "{other}" no coinciden; se mantuvo "{first}"',
   'dose.assumeTimesOfDay': '{times} veces al día, pero se nombran {count} momentos del día ({names}); revisa los horarios',
   'dose.asNeededFor': 'Según sea necesario para {reason}',
@@ -35,4 +37,7 @@ export default {
   'dose.leftOut': '{n, plural, one {Se omitió una línea de la farmacia (número de receta, cantidad, dirección y similares).} other {Se omitieron # líneas de la farmacia (número de receta, cantidad, dirección y similares).}}',
   'dose.everythingRead': 'Todo lo que se leyó en la foto',
   'dose.readFromPhoto': 'Leído en la foto',
+  'dose.fromListing': 'El nombre, la concentración y la forma vienen del registro de la FDA para el NDC {ndc}, el código de esta etiqueta.',
+  'dose.strengthChoices': 'Elige la concentración',
+  'dose.strengthChoicesHelp': 'No se pudo leer la concentración en la etiqueta. {name} viene en estas concentraciones; elige la de la etiqueta.',
 } satisfies CatalogueOf<typeof en>;

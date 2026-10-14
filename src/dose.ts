@@ -8,7 +8,7 @@
  * back in `assumptions`, so the app can show them next to the fields it filled in.
  */
 
-import { readImageText, type ReadTextOptions } from './ocr';
+import { readLabelLines, type ReadLabelLinesOptions } from './ocr';
 import { fitsRule, type EventRule } from './schedule';
 import { kt } from './i18n.js';
 
@@ -17,15 +17,16 @@ export { OCR_LANG_PATH, releaseOcr } from './ocr';
 // ---------------------------------------------------------------------------------------------
 // OCR
 
-export type ReadLabelOptions = Omit<ReadTextOptions, 'screenshot'>;
+export type ReadLabelOptions = ReadLabelLinesOptions;
 
 /**
- * The text on a label photo, read on the device with tesseract.js (English; see `./ocr`). The
- * engine is loaded on first use only, so apps that never call this don't download it. Accuracy
- * depends on the photo: flat, well lit and in focus.
+ * The text on a label photo, read on the device with tesseract.js (English; see `./ocr`
+ * `readLabelLines`, which also gives each line's confidence and print size for
+ * `./medicine-label` `parseLabel`). The engine is loaded on first use only, so apps that never
+ * call this don't download it.
  */
-export function readLabel(image: Blob, options: ReadLabelOptions = {}): Promise<string> {
-  return readImageText(image, options);
+export async function readLabel(image: Blob, options: ReadLabelOptions = {}): Promise<string> {
+  return (await readLabelLines(image, options)).text;
 }
 
 /**
@@ -303,7 +304,7 @@ const ADVICE = [
 const PATIENT = /^\s*(?:pet|patient|animal|for|name)\s*(?:name)?\s*[:\-]\s*([A-Za-z][A-Za-z' -]{0,40}?)(?:\s*\(.*\))?\s*(?:(?:owner|client|species|dob|age|sex|wt|weight)\b.*)?$/i;
 const DIRECTION_START = /^\s*(?:give|take|administer|apply|instill|inhale|place|insert|inject|use|chew|dissolve|mix|squirt|put|directions?|sig)\b/i;
 const FORMS = String.raw`(?:chewable tablets?|chew tabs?|tablets?|tabs|capsules?|caps|oral suspension|suspension|oral solution|solution|liquid|syrup|drops|eye drops|ear drops|ointment|cream|gel|chews?|injection|spray|powder|granules|transdermal|patch(?:es)?)`;
-const NAME_LINE = new RegExp(String.raw`^\s*([A-Za-z][A-Za-z\-/ ]{2,60}?)\s+(${STRENGTH})(?:\s+(${FORMS}))?\b`, 'i');
+const NAME_LINE = new RegExp(String.raw`^\s*([A-Za-z][A-Za-z\-/ ]{2,60}?)\s+(${STRENGTH})(?:\s+(${FORMS}))?(?![a-z])`, 'i');
 const SCHEDULE_WORDS = /\b(?:every|daily|times|hours|twice|once|give|take)\b/i;
 const NAME_FORM_LINE = new RegExp(String.raw`^\s*([A-Za-z][A-Za-z\-/ ]{2,40}?)\s+(${FORMS})\s*$`, 'i');
 

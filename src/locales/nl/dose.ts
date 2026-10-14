@@ -10,6 +10,8 @@ export default {
   'dose.assumeTwoDoses': 'Twee verschillende doses op het etiket; {dose} aangehouden',
   'dose.assumeNoName': 'Geen medicijnnaam gevonden op het etiket',
   'dose.assumeTaper': 'Het etiket verandert de dosis halverwege; alleen de eerste stap is gelezen',
+  'dose.ndcDisagrees': 'de NDC {ndc} staat geregistreerd als {name}, niet wat er gelezen is; controleer de foto',
+  'dose.strengthUnlisted': '{name} bestaat niet in {strength}; controleer de sterkte',
   'dose.assumeDisagree': '"{first}" en "{other}" spreken elkaar tegen; "{first}" aangehouden',
   'dose.assumeTimesOfDay': '{times} keer per dag, maar {count} momenten van de dag genoemd ({names}); controleer de tijden',
   'dose.asNeededFor': 'Zo nodig bij {reason}',
@@ -35,4 +37,7 @@ export default {
   'dose.leftOut': '{n, plural, one {Weggelaten: één apotheekregel (receptnummer, aantal, adres en dergelijke).} other {Weggelaten: # apotheekregels (receptnummer, aantal, adres en dergelijke).}}',
   'dose.everythingRead': 'Alles wat van de foto is gelezen',
   'dose.readFromPhoto': 'Gelezen van de foto',
+  'dose.fromListing': 'Naam, sterkte en vorm komen uit de FDA-registratie voor NDC {ndc}, de code op dit etiket.',
+  'dose.strengthChoices': 'Kies de sterkte',
+  'dose.strengthChoicesHelp': 'De sterkte op het etiket was niet te lezen. {name} bestaat in deze sterktes; kies die op het etiket.',
 } satisfies CatalogueOf<typeof en>;

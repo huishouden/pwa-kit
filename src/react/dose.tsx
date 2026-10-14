@@ -1,11 +1,15 @@
 /**
  * "Scan the label": medicine label photos (taken, chosen from the library, pasted or dropped, and
  * several at once for the front and back of a box: `./image-picker`) read on the device
- * (`../dose` `readLabel`, nothing uploaded or kept) and parsed (`parseDirections`); the app fills its own form from the result and
- * says what it filled. The card then shows, in this order, what was filled in (field by field),
- * what it should check (`assumptions`), the label lines it read but did not use (`unparsed`, never
- * hidden: a person must see what the form does not hold, such as a warning), the pharmacy lines it
- * left out on purpose, and the whole text it read, folded.
+ * (`../ocr` `readLabelLines`: several passes, unsure words dropped; nothing uploaded or kept) and
+ * parsed (`../medicine-label` `parseLabel`, with the medicine names kept on the device). When the
+ * label shows an NDC, the FDA's listing for that code (only the code is sent) supplies the exact
+ * name, strength and form, if it agrees with what was read (`../medicine-lookup`). The app fills
+ * its own form from the result and says what it filled. The card then shows, in this order, what
+ * was filled in (field by field) and where it came from, the strengths to pick from when the
+ * label's was unreadable, what to check (`assumptions`), the label lines it read but did not use
+ * (`unparsed`, never hidden: a person must see what the form does not hold, such as a warning),
+ * the pharmacy lines it left out on purpose, and the whole text it read, folded.
  *
  * ```tsx
  * <LabelScan onRead={(parsed) => {
@@ -17,9 +21,15 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { ScanText } from 'lucide-react';
-import { combineLabelTexts, parseDirections, readLabel, type ParsedCourse } from '../dose';
+import { combineLabelTexts } from '../dose';
+import type { LabelReading } from '../label-read';
+import { parseLabel, type LabelCourse } from '../medicine-label';
+import { withListing } from '../medicine-lookup';
+import { medicineNames, type MedicineNames } from '../medicine-names-match';
+import { readLabelLines } from '../ocr';
 import { useKitT } from './i18n';
 import { ImagePicker } from './image-picker';
+import { Chip } from './ui';
 
 declare global {
   interface Window {
@@ -37,49 +47,70 @@ export interface LabelFill {
 type Scan =
   | { status: 'idle' }
   | { status: 'reading'; progress: number; photo: number; photos: number }
-  | { status: 'done'; text: string; filled: LabelFill[]; parsed: ParsedCourse }
+  | { status: 'done'; text: string; filled: LabelFill[]; parsed: LabelCourse }
   | { status: 'error' };
 
 export interface LabelScanProps {
   /** Fills the app's form from what was read; returns what it filled, in the form's order. */
-  onRead: (parsed: ParsedCourse, text: string) => LabelFill[];
+  onRead: (parsed: LabelCourse, text: string) => LabelFill[];
+  /**
+   * The person picked one of the strengths the medicine comes in (`strengthChoices`, offered when
+   * the label's own strength was unreadable): put it in the form. Without it the choices are listed.
+   */
+  onStrength?: (strength: string) => void;
   /** The line under the title before a photo is picked. */
   intro?: string;
-  /** Reads the photo's text (tests); default `readLabel`, or `window.__mockLabelText` when set. */
-  read?: (photo: Blob, onProgress: (progress: number) => void) => Promise<string>;
+  /** Reads the photo (tests); default `readLabelLines`, or `window.__mockLabelText` when set. */
+  read?: (photo: Blob, onProgress: (progress: number) => void) => Promise<string | LabelReading>;
+  /** The FDA listing step (tests); default `withListing` (openFDA, the NDC only). `null`: never look up. */
+  listing?: ((course: LabelCourse, names?: MedicineNames) => Promise<LabelCourse>) | null;
   /** Photos to read as soon as this shows, such as ones shared in from the gallery (`../shared-images`). */
   images?: File[];
 }
 
 const defaultRead = (photo: Blob, onProgress: (progress: number) => void) =>
-  window.__mockLabelText !== undefined ? Promise.resolve(window.__mockLabelText) : readLabel(photo, { onProgress });
+  window.__mockLabelText !== undefined ? Promise.resolve(window.__mockLabelText) : readLabelLines(photo, { onProgress });
 
-export function LabelScan({ onRead, intro, read = defaultRead, images }: LabelScanProps) {
+/** A lookup that takes longer than this is skipped: the label as read is filled in. */
+const LISTING_TIMEOUT_MS = 6000;
+
+const defaultListing = (course: LabelCourse, names?: MedicineNames) =>
+  Promise.race([withListing(course, { names }), new Promise<LabelCourse>((resolve) => setTimeout(() => resolve(course), LISTING_TIMEOUT_MS))]);
+
+export function LabelScan({ onRead, onStrength, intro, read = defaultRead, listing = defaultListing, images }: LabelScanProps) {
   const kt = useKitT();
   intro ??= kt('dose.scanIntro');
   const [scan, setScan] = useState<Scan>({ status: 'idle' });
+  const [picked, setPicked] = useState<string | null>(null);
   const run = useRef(0);
 
   /** Reads each photo in turn (the engine is one worker), then fills the form once from all of them. */
   const readPhotos = async (photos: File[]) => {
     const id = ++run.current;
-    const texts: string[] = [];
+    const readings: LabelReading[] = [];
+    setPicked(null);
     setScan({ status: 'reading', progress: 0, photo: 1, photos: photos.length });
     for (const [n, photo] of photos.entries()) {
       try {
-        texts.push(await read(photo, (progress) => id === run.current && setScan({ status: 'reading', progress, photo: n + 1, photos: photos.length })));
+        const r = await read(photo, (progress) => id === run.current && setScan({ status: 'reading', progress, photo: n + 1, photos: photos.length }));
+        readings.push(typeof r === 'string' ? { text: r, lines: [], words: [], turns: 0, passes: 1 } : r);
       } catch {
         // One unreadable photo does not lose the others; all of them failing is the error.
       }
     }
     if (id !== run.current) return;
-    if (texts.length === 0) {
+    if (readings.length === 0) {
       setScan({ status: 'error' });
       return;
     }
     try {
-      const text = combineLabelTexts(texts);
-      const parsed = parseDirections(text);
+      const text = combineLabelTexts(readings.map((r) => r.text));
+      // Print sizes compare within one photo only.
+      const lines = readings.length === 1 && readings[0].lines.length ? readings[0].lines : undefined;
+      const names = await medicineNames().catch(() => undefined);
+      let parsed = parseLabel(text, { lines, isMedicineName: names?.match });
+      if (listing) parsed = await listing(parsed, names).catch(() => parsed);
+      if (id !== run.current) return;
       const filled = onRead(parsed, text).filter((f) => f.value.trim());
       setScan({ status: 'done', text, filled, parsed });
     } catch {
@@ -134,6 +165,33 @@ export function LabelScan({ onRead, intro, read = defaultRead, images }: LabelSc
                   </div>
                 ))}
               </dl>
+            </section>
+          )}
+          {scan.parsed.sources && Object.values(scan.parsed.sources).includes('fda') && scan.parsed.ndc && (
+            <p className="text-sm text-muted">{kt('dose.fromListing', { ndc: scan.parsed.ndc })}</p>
+          )}
+          {scan.parsed.strengthChoices && scan.parsed.strengthChoices.length > 0 && (
+            <section aria-label={kt('dose.strengthChoices')}>
+              <h3 className="text-sm font-medium text-ink">{kt('dose.strengthChoices')}</h3>
+              <p className="text-sm text-muted">{kt('dose.strengthChoicesHelp', { name: scan.parsed.name ?? '' })}</p>
+              {onStrength ? (
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {scan.parsed.strengthChoices.map((s) => (
+                    <Chip
+                      key={s}
+                      active={picked === s}
+                      onClick={() => {
+                        setPicked(s);
+                        onStrength(s);
+                      }}
+                    >
+                      {s}
+                    </Chip>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-ink">{scan.parsed.strengthChoices.join(', ')}</p>
+              )}
             </section>
           )}
           {scan.parsed.assumptions.length > 0 && (

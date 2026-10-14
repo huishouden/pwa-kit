@@ -7,6 +7,8 @@ export default {
   'dose.assumeTwoDoses': 'two different doses on the label; kept {dose}',
   'dose.assumeNoName': 'no medicine name found on the label',
   'dose.assumeTaper': 'the label changes the dose partway; only the first step was read',
+  'dose.ndcDisagrees': 'the NDC {ndc} is listed as {name}, which is not what was read; check the photo',
+  'dose.strengthUnlisted': '{name} does not come in {strength}; check the strength',
   'dose.assumeDisagree': '"{first}" and "{other}" disagree; kept "{first}"',
   'dose.assumeTimesOfDay': '{times} times a day, but {count} times of day named ({names}); check the times',
   'dose.asNeededFor': 'As needed for {reason}',
@@ -32,4 +34,7 @@ export default {
   'dose.leftOut': '{n, plural, one {Left out: one pharmacy line (prescription number, quantity, address and the like).} other {Left out: # pharmacy lines (prescription number, quantity, address and the like).}}',
   'dose.everythingRead': 'Everything read from the photo',
   'dose.readFromPhoto': 'Read from the photo',
+  'dose.fromListing': 'Name, strength and form are from the FDA listing for NDC {ndc}, the code on this label.',
+  'dose.strengthChoices': 'Pick the strength',
+  'dose.strengthChoicesHelp': 'The strength on the label could not be read. {name} comes in these strengths; pick the one on the label.',
 } as const;
