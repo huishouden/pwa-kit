@@ -6,8 +6,9 @@
  *   bun bench/labels/bench.ts [--read kit|baseline] [--parse fda|names|label|directions] [--reuse <run>] [--name <run>]
  *                             [--local <truth.json>] [--only <id,...>] [--variants flat,...] [--workers 6] [--verbose] [--save]
  *
- * `--local` adds photos that must never leave the machine (a JSON list of `{ id, set, file, truth }`
- * kept outside the repository): for those only scores are printed, never the text or the fields.
+ * `--local` adds photos that must never leave the machine (a JSON list of `{ set, file, truth }`
+ * kept outside the repository), known as local-1, local-2… by their place in it: for those only
+ * scores are printed, never the text or the fields, and `--save` leaves them out entirely.
  * Results go to `.cache/results/<read>-<parse>.json` (or `--name`); `--save` also writes the summary to `results/`.
  */
 import { createWorker } from 'tesseract.js';
@@ -40,7 +41,6 @@ const only = opt('only')?.split(',');
 const variantsOnly = opt('variants')?.split(',');
 
 interface LocalPhoto {
-  id: string;
   set: 'human' | 'pet';
   file: string;
   truth: Label['truth'];
@@ -51,9 +51,11 @@ for (const l of [...(await corpus()), ...(await Bun.file(`${CACHE}synthetic.json
 let items: SetItem[] = await Bun.file(`${CACHE}set.json`).json();
 const localFile = opt('local');
 if (localFile) {
-  for (const p of (await Bun.file(localFile).json()) as LocalPhoto[]) {
-    labels.set(p.id, { id: p.id, set: p.set, kind: 'local-photo', source: 'local', truth: p.truth, local: true });
-    items.push({ file: p.file, id: p.id, variant: 'flat' });
+  // Known by their place in the file only ("local-1"): whatever the file calls them stays in it.
+  for (const [n, p] of ((await Bun.file(localFile).json()) as LocalPhoto[]).entries()) {
+    const id = `local-${n + 1}`;
+    labels.set(id, { id, set: p.set, kind: 'local-photo', source: 'local', truth: p.truth, local: true });
+    items.push({ file: p.file, id, variant: 'flat' });
   }
 }
 if (only) items = items.filter((i) => only.some((o) => i.id === o || i.id.startsWith(o)));
@@ -155,11 +157,13 @@ await mkdir(`${CACHE}results`, { recursive: true });
 await Bun.write(`${CACHE}results/${pipelineName}.json`, JSON.stringify({ reader: readerName, parser: parserName, options: process.env.BENCH_OPTS ?? null, summary, results }, null, 1));
 if (args.includes('--save')) {
   await mkdir(new URL('results/', import.meta.url).pathname, { recursive: true });
-  // Scores only: no text, no fields, nothing from the local photos but their scores.
+  // Scores only: no text, no fields, and nothing at all of the local photos (their rows and groups
+  // stay in the console and in .cache): which labels a household has is private too.
   const round = (n: number | undefined, places = 3) => (n === undefined ? undefined : Math.round(n * 10 ** places) / 10 ** places);
-  const slim = results.map(({ text: _t, reading: _r, read: _read, ...rest }) => ({
+  const slim = results.filter((r) => !r.local).map(({ text: _t, reading: _r, read: _read, local: _l, ...rest }) => ({
     ...rest, ms: Math.round(rest.ms), keyRecall: round(rest.keyRecall), cer: round(rest.cer), precision: round(rest.precision), recall: round(rest.recall),
   }));
-  await Bun.write(new URL(`results/${pipelineName}.json`, import.meta.url).pathname, JSON.stringify({ summary, results: slim }, null, 1) + '\n');
+  const shared = Object.fromEntries(Object.entries(summary).filter(([k]) => !k.startsWith('local photo')));
+  await Bun.write(new URL(`results/${pipelineName}.json`, import.meta.url).pathname, JSON.stringify({ summary: shared, results: slim }, null, 1) + '\n');
 }
 process.exit(0);

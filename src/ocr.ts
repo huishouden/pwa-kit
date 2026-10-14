@@ -82,6 +82,11 @@ export interface ReadLabelLinesOptions extends Pick<ReadTextOptions, 'paths' | '
  */
 export async function readLabelLines(image: Blob, options: ReadLabelLinesOptions = {}): Promise<LabelReading> {
   const { paths, onProgress, ...passOptions } = options;
+  if (!canDraw()) {
+    // No OffscreenCanvas (Safari before 16.4): the photo as it is, read once, as before this reader.
+    const text = await readImageText(image, { paths, onProgress, maxSide: passOptions.maxSide });
+    return { text, lines: [], words: [], turns: 0, passes: 1 };
+  }
   let pass = 1;
   let total = 2;
   const ocr = await engine({ paths, onProgress: (p, status) => onProgress?.(Math.min(1, (pass - 1 + (status === 'recognizing text' ? p : 0)) / total), status) });
@@ -97,7 +102,6 @@ export async function readLabelLines(image: Blob, options: ReadLabelLinesOptions
 
 /** The photo's pixels in grey, scaled to at most `maxSide` on its longer side while decoding (orientation as shot). */
 async function grayPixels(image: Blob, maxSide: number): Promise<Gray> {
-  if (!canDraw()) throw new Error('Reading a photo needs createImageBitmap and OffscreenCanvas');
   const bitmap = await createImageBitmap(image);
   const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
   const canvas = new OffscreenCanvas(Math.max(1, Math.round(bitmap.width * scale)), Math.max(1, Math.round(bitmap.height * scale)));

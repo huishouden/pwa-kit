@@ -78,8 +78,11 @@ export interface ParsedCourse {
   withFood?: boolean;
   /** "As needed" / PRN: no schedule. */
   asNeeded?: boolean;
-  /** "by mouth", "in each eye", "in the left ear", "to the affected area". */
-  route?: string;
+  /**
+   * How it is taken: one of `ROUTES` when the parser names it ("by mouth", "in the eye"), else the
+   * label's own words ("in the left ear", "to the affected area"). `routeWords` says it for people.
+   */
+  route?: Route | (string & {});
   /** Who it is for, from a "Pet:" or "Patient:" line. */
   patient?: string;
   /** Advice lines the app can keep as notes ("Shake well", "Refrigerate"). */
@@ -92,6 +95,17 @@ export interface ParsedCourse {
   assumptions: string[];
   /** Label lines recognised as pharmacy boilerplate (Rx number, quantity, refills, prescriber, address). */
   ignored: string[];
+}
+
+/** The routes the parsers name themselves; anything else in `route` is a label's own wording. */
+export const ROUTES = ['by mouth', 'under the skin', 'by injection', 'in the eye', 'in the ear', 'in the nose', 'inhaled', 'on the skin'] as const;
+export type Route = (typeof ROUTES)[number];
+
+export const isRoute = (route: string | undefined): route is Route => (ROUTES as readonly string[]).includes(route ?? '');
+
+/** A route as a note, in the active language: the parser's own routes translated, a label's wording as it was. */
+export function routeWords(route: string): string {
+  return isRoute(route) ? kt('dose.route', { route: route.replace(/ /g, '_') }) : route.replace(/^./, (c) => c.toUpperCase());
 }
 
 const NUMBER_WORDS: Record<string, number> = {
@@ -328,6 +342,18 @@ function emptyCourse(): ParsedCourse {
  * more. Anything else is returned in `unparsed`.
  */
 export function parseDirections(text: string): ParsedCourse {
+  const { course, nameMissing } = parseDirectionsCore(text);
+  if (nameMissing) course.assumptions.push(kt('dose.assumeNoName'));
+  course.confidence = confidenceOf(course);
+  return course;
+}
+
+/**
+ * `parseDirections` without its last word on the name: `nameMissing` says the text has several
+ * lines and none named the medicine, for a caller that looks further (`./medicine-label`) and adds
+ * the assumption itself only if it finds none. `confidence` is left to the caller.
+ */
+export function parseDirectionsCore(text: string): { course: ParsedCourse; nameMissing: boolean } {
   const course = emptyCourse();
   const lines = text
     .replace(/\r/g, '')
@@ -388,11 +414,7 @@ export function parseDirections(text: string): ParsedCourse {
   const sig = directionLines.join(' ');
   if (sig) parseSig(sig, course);
   course.unparsed.push(...otherLines);
-  if (!course.name && !singleLine) {
-    course.assumptions.push(kt('dose.assumeNoName'));
-  }
-  course.confidence = confidenceOf(course);
-  return course;
+  return { course, nameMissing: !course.name && !singleLine };
 }
 
 /** Whether a label line carries schedule wording, so a wrapped line joins the directions. */
@@ -624,9 +646,8 @@ export function toMedCourse(parsed: ParsedCourse, options: DoseTimesOptions & { 
   const asNeeded = kt('dose.asNeeded').toLowerCase();
   if (parsed.asNeeded && !parsed.notes.some((n) => /^as needed/i.test(n) || n.toLowerCase().startsWith(asNeeded))) notes.push(kt('dose.asNeeded'));
   if (parsed.untilGone) notes.push(kt('dose.untilGone'));
-  // The route is the label's own wording (English), except the one the parser names itself.
-  if (parsed.route === 'under the skin') notes.push(kt('dose.underTheSkin'));
-  else if (parsed.route && parsed.route !== 'by mouth') notes.push(parsed.route.replace(/^./, (c) => c.toUpperCase()));
+  // The parser's own routes in the active language; a label's own wording as it was.
+  if (parsed.route && parsed.route !== 'by mouth') notes.push(routeWords(parsed.route));
   notes.push(...parsed.notes);
   return {
     name: [parsed.name, parsed.strength].filter(Boolean).join(' '),

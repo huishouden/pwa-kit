@@ -37,7 +37,7 @@ const CLINICS = [
 
 const h = (drug: string, maker: string, ndc: string, directions: string, qty: string, patient: string, prescriber: string, truth: Omit<Label['truth'], 'private'>, n = 0): Rx => ({
   id: `syn-${truth.names[0].split(' ')[0].toLowerCase()}`,
-  set: 'human', layout: 'pharmacy', drug, maker, ndc, directions, qty, refills: `${(n % 3) + 1} by 0${(n % 8) + 1}/1${n % 9}/27`,
+  set: 'human', layout: 'pharmacy', drug, maker, ndc, directions, qty, refills: `${(n % 3) + 1} by 0${(n % 8) + 1}/1${n % 9}/32`,
   people: { patient, prescriber, ...PHARMACIES[n % 2] }, truth,
 });
 const v = (drug: string, directions: string, qty: string, pet: string, owner: string, prescriber: string, truth: Omit<Label['truth'], 'private'>, n = 0, visible?: number): Rx => ({
@@ -95,13 +95,13 @@ function html(rx: Rx): string {
   const p = rx.people;
   if (rx.layout === 'pharmacy') {
     return `<div class="label"><div class="band"><span>NDC ${rx.ndc}</span><span>${rx.maker}</span></div><div class="box">
-<div class="hdr"><div><b>${p.place}</b><br>${p.street}<br>${p.town}<br>${p.phone}</div><div style="text-align:right">RX# 0${rx.id.length}48217-0${rx.id.length + 2}911<br>DATE: 0${rx.refills.length % 9 + 1}/0${rx.qty.length}/26</div></div>
+<div class="hdr"><div><b>${p.place}</b><br>${p.street}<br>${p.town}<br>${p.phone}</div><div style="text-align:right">RX# 0${rx.id.length}48217-0${rx.id.length + 2}911<br>DATE: 0${rx.refills.length % 9 + 1}/0${rx.qty.length}/31</div></div>
 <div class="row" style="font-size:22px;font-weight:700;margin-top:10px"><span>${p.patient}</span></div>
 <div class="big">${rx.directions}</div>
 <div class="drug">${rx.drug}</div>
 <div class="row"><span>MFR: ${rx.maker}</span><span>QTY: ${rx.qty}</span></div>
 <div class="row"><span>REFILLS: ${rx.refills}</span><span>${p.prescriber}</span></div>
-<div class="small" style="margin-top:6px">USE BEFORE: 09/30/27 &nbsp; CAUTION: FEDERAL LAW PROHIBITS TRANSFER OF THIS DRUG</div>
+<div class="small" style="margin-top:6px">USE BEFORE: 09/30/32 &nbsp; CAUTION: FEDERAL LAW PROHIBITS TRANSFER OF THIS DRUG</div>
 </div><div class="bar"></div></div>`;
   }
   return `<div class="label"><div class="vband"><b>${p.place}</b> &nbsp; ${p.phone}</div><div class="box">
@@ -109,7 +109,7 @@ function html(rx: Rx): string {
 <div class="row"><span>Pet: <b>${p.patient}</b></span><span>Client: ${p.owner}</span></div>
 <div class="drug">${rx.drug}</div>
 <div class="big" style="font-weight:600">${rx.directions}</div>
-<div class="row"><span>Qty: ${rx.qty}</span><span>Refills: ${rx.refills}</span><span>Date: 6/1${rx.qty.length}/2026</span></div>
+<div class="row"><span>Qty: ${rx.qty}</span><span>Refills: ${rx.refills}</span><span>Date: 6/1${rx.qty.length}/2031</span></div>
 <div class="row"><span>${p.prescriber}</span></div>
 <div class="small" style="margin-top:6px">For veterinary use only. Keep out of reach of children.</div></div></div>`;
 }

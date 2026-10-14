@@ -8,13 +8,13 @@
    "form": "2% (0% wrong, n=124)",
    "route": "6% (3% wrong, n=124)",
    "ndc": "0% (0% wrong, n=116)",
-   "directions": "\u2013",
+   "directions": "–",
    "keyRecall": "0.49",
-   "cer": "\u2013",
-   "wordPrecision": "\u2013",
-   "wordRecall": "\u2013",
+   "cer": "–",
+   "wordPrecision": "–",
+   "wordRecall": "–",
    "leaks": 0,
-   "secondsPerImage": "1.5"
+   "secondsPerImage": "1.4"
   },
   "human, pharmacy labels (synthetic)": {
    "images": 32,
@@ -24,13 +24,13 @@
    "form": "59% (0% wrong, n=32)",
    "route": "75% (13% wrong, n=32)",
    "ndc": "0% (0% wrong, n=32)",
-   "directions": "81% (9% wrong, n=32)",
-   "keyRecall": "0.54",
+   "directions": "84% (6% wrong, n=32)",
+   "keyRecall": "0.56",
    "cer": "0.36",
-   "wordPrecision": "0.73",
+   "wordPrecision": "0.72",
    "wordRecall": "0.72",
    "leaks": 0,
-   "secondsPerImage": "0.8"
+   "secondsPerImage": "0.6"
   },
   "pet, package labels": {
    "images": 96,
@@ -42,27 +42,27 @@
    "ndc": "0% (0% wrong, n=28)",
    "directions": "69% (0% wrong, n=16)",
    "keyRecall": "0.50",
-   "cer": "\u2013",
-   "wordPrecision": "\u2013",
-   "wordRecall": "\u2013",
+   "cer": "–",
+   "wordPrecision": "–",
+   "wordRecall": "–",
    "leaks": 0,
-   "secondsPerImage": "1.3"
+   "secondsPerImage": "1.2"
   },
   "pet, vet labels (synthetic)": {
    "images": 28,
-   "name": "68% (18% wrong, n=28)",
-   "strength": "86% (7% wrong, n=28)",
+   "name": "64% (18% wrong, n=28)",
+   "strength": "82% (11% wrong, n=28)",
    "strengthOffered": "0% (0% wrong, n=2)",
-   "form": "79% (0% wrong, n=28)",
-   "route": "89% (0% wrong, n=28)",
-   "ndc": "\u2013",
-   "directions": "71% (18% wrong, n=28)",
+   "form": "75% (0% wrong, n=28)",
+   "route": "86% (0% wrong, n=28)",
+   "ndc": "–",
+   "directions": "68% (21% wrong, n=28)",
    "keyRecall": "0.45",
    "cer": "0.28",
-   "wordPrecision": "0.75",
+   "wordPrecision": "0.74",
    "wordRecall": "0.81",
    "leaks": 0,
-   "secondsPerImage": "0.7"
+   "secondsPerImage": "0.6"
   },
   "human, all": {
    "images": 156,
@@ -72,77 +72,29 @@
    "form": "14% (0% wrong, n=156)",
    "route": "20% (5% wrong, n=156)",
    "ndc": "0% (0% wrong, n=148)",
-   "directions": "81% (9% wrong, n=32)",
+   "directions": "84% (6% wrong, n=32)",
    "keyRecall": "0.50",
    "cer": "0.36",
-   "wordPrecision": "0.73",
+   "wordPrecision": "0.72",
    "wordRecall": "0.72",
    "leaks": 0,
-   "secondsPerImage": "1.3"
+   "secondsPerImage": "1.2"
   },
   "pet, all": {
    "images": 124,
    "name": "15% (29% wrong, n=124)",
-   "strength": "50% (20% wrong, n=112)",
+   "strength": "49% (21% wrong, n=112)",
    "strengthOffered": "0% (0% wrong, n=34)",
-   "form": "26% (2% wrong, n=124)",
+   "form": "25% (2% wrong, n=124)",
    "route": "23% (2% wrong, n=124)",
    "ndc": "0% (0% wrong, n=28)",
-   "directions": "70% (11% wrong, n=44)",
+   "directions": "68% (14% wrong, n=44)",
    "keyRecall": "0.49",
    "cer": "0.28",
-   "wordPrecision": "0.75",
+   "wordPrecision": "0.74",
    "wordRecall": "0.81",
    "leaks": 0,
    "secondsPerImage": "1.1"
-  },
-  "local photo user-2": {
-   "images": 1,
-   "name": "0% (0% wrong, n=1)",
-   "strength": "0% (100% wrong, n=1)",
-   "strengthOffered": "\u2013",
-   "form": "0% (0% wrong, n=1)",
-   "route": "100% (0% wrong, n=1)",
-   "ndc": "0% (0% wrong, n=1)",
-   "directions": "100% (0% wrong, n=1)",
-   "keyRecall": "0.50",
-   "cer": "\u2013",
-   "wordPrecision": "\u2013",
-   "wordRecall": "\u2013",
-   "leaks": 0,
-   "secondsPerImage": "0.6"
-  },
-  "local photo user-1": {
-   "images": 1,
-   "name": "0% (0% wrong, n=1)",
-   "strength": "0% (100% wrong, n=1)",
-   "strengthOffered": "\u2013",
-   "form": "0% (0% wrong, n=1)",
-   "route": "0% (0% wrong, n=1)",
-   "ndc": "0% (0% wrong, n=1)",
-   "directions": "\u2013",
-   "keyRecall": "0.50",
-   "cer": "1.21",
-   "wordPrecision": "0.04",
-   "wordRecall": "0.10",
-   "leaks": 0,
-   "secondsPerImage": "0.7"
-  },
-  "local photo user-3": {
-   "images": 1,
-   "name": "0% (0% wrong, n=1)",
-   "strength": "0% (0% wrong, n=1)",
-   "strengthOffered": "0% (0% wrong, n=1)",
-   "form": "0% (0% wrong, n=1)",
-   "route": "0% (0% wrong, n=1)",
-   "ndc": "\u2013",
-   "directions": "100% (0% wrong, n=1)",
-   "keyRecall": "0.50",
-   "cer": "\u2013",
-   "wordPrecision": "\u2013",
-   "wordRecall": "\u2013",
-   "leaks": 0,
-   "secondsPerImage": "0.5"
   },
   "variant: flat": {
    "images": 70,
@@ -162,19 +114,19 @@
   },
   "variant: vial": {
    "images": 15,
-   "name": "13% (67% wrong, n=15)",
-   "strength": "80% (13% wrong, n=15)",
+   "name": "7% (67% wrong, n=15)",
+   "strength": "73% (20% wrong, n=15)",
    "strengthOffered": "0% (0% wrong, n=1)",
-   "form": "53% (0% wrong, n=15)",
-   "route": "93% (7% wrong, n=15)",
+   "form": "47% (0% wrong, n=15)",
+   "route": "87% (7% wrong, n=15)",
    "ndc": "0% (0% wrong, n=8)",
    "directions": "67% (33% wrong, n=15)",
-   "keyRecall": "0.31",
+   "keyRecall": "0.36",
    "cer": "0.49",
-   "wordPrecision": "0.53",
-   "wordRecall": "0.64",
+   "wordPrecision": "0.51",
+   "wordRecall": "0.62",
    "leaks": 0,
-   "secondsPerImage": "0.8"
+   "secondsPerImage": "0.7"
   },
   "variant: perspective": {
    "images": 33,
@@ -186,11 +138,11 @@
    "ndc": "0% (0% wrong, n=21)",
    "directions": "100% (0% wrong, n=8)",
    "keyRecall": "0.57",
-   "cer": "0.13",
+   "cer": "0.12",
    "wordPrecision": "0.96",
    "wordRecall": "0.94",
    "leaks": 0,
-   "secondsPerImage": "1.2"
+   "secondsPerImage": "1.1"
   },
   "variant: cylinder": {
    "images": 33,
@@ -222,7 +174,7 @@
    "wordPrecision": "0.74",
    "wordRecall": "0.85",
    "leaks": 0,
-   "secondsPerImage": "1.1"
+   "secondsPerImage": "1.0"
   },
   "variant: glare": {
    "images": 33,
@@ -238,7 +190,7 @@
    "wordPrecision": "0.93",
    "wordRecall": "0.88",
    "leaks": 0,
-   "secondsPerImage": "1.7"
+   "secondsPerImage": "1.5"
   },
   "variant: lowlight": {
    "images": 32,
@@ -254,7 +206,7 @@
    "wordPrecision": "0.91",
    "wordRecall": "0.95",
    "leaks": 0,
-   "secondsPerImage": "2.6"
+   "secondsPerImage": "2.3"
   },
   "variant: rotation": {
    "images": 33,
@@ -270,7 +222,7 @@
    "wordPrecision": "0.01",
    "wordRecall": "0.01",
    "leaks": 0,
-   "secondsPerImage": "1.2"
+   "secondsPerImage": "1.1"
   }
  },
  "results": [
@@ -279,7 +231,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -289,7 +240,7 @@
    },
    "keyRecall": 0.6,
    "leaks": 0,
-   "ms": 1633,
+   "ms": 1502,
    "passes": 1
   },
   {
@@ -297,7 +248,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -307,15 +257,14 @@
    },
    "keyRecall": 0.2,
    "leaks": 0,
-   "ms": 1658,
+   "ms": 1556,
    "passes": 1
   },
   {
    "id": "amox-clav-875",
-   "variant": "cylinder",
+   "variant": "glare",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -325,7 +274,7 @@
    },
    "keyRecall": 0.4,
    "leaks": 0,
-   "ms": 1737,
+   "ms": 1739,
    "passes": 1
   },
   {
@@ -333,7 +282,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -344,7 +292,7 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 2062,
+   "ms": 1895,
    "passes": 1
   },
   {
@@ -352,7 +300,6 @@
    "variant": "cylinder",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -363,15 +310,14 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 2292,
+   "ms": 2076,
    "passes": 1
   },
   {
    "id": "amox-clav-875",
-   "variant": "glare",
+   "variant": "cylinder",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -381,7 +327,7 @@
    },
    "keyRecall": 0.4,
    "leaks": 0,
-   "ms": 2502,
+   "ms": 2279,
    "passes": 1
   },
   {
@@ -389,7 +335,6 @@
    "variant": "blur",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -400,7 +345,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 494,
+   "ms": 543,
    "passes": 1
   },
   {
@@ -408,7 +353,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -418,7 +362,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 906,
+   "ms": 883,
    "passes": 1
   },
   {
@@ -426,7 +370,6 @@
    "variant": "blur",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -437,7 +380,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1500,
+   "ms": 1435,
    "passes": 1
   },
   {
@@ -445,7 +388,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -455,7 +397,7 @@
    },
    "keyRecall": 0.6,
    "leaks": 0,
-   "ms": 835,
+   "ms": 703,
    "passes": 1
   },
   {
@@ -463,7 +405,6 @@
    "variant": "glare",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -473,7 +414,7 @@
    },
    "keyRecall": 0.6,
    "leaks": 0,
-   "ms": 816,
+   "ms": 887,
    "passes": 1
   },
   {
@@ -481,7 +422,6 @@
    "variant": "rotation",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -491,25 +431,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1377,
-   "passes": 1
-  },
-  {
-   "id": "atorvastatin-10",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "local": false,
-   "fields": {
-    "name": "wrong",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 770,
+   "ms": 1314,
    "passes": 1
   },
   {
@@ -517,7 +439,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -527,15 +448,14 @@
    },
    "keyRecall": 0.4,
    "leaks": 0,
-   "ms": 865,
+   "ms": 785,
    "passes": 1
   },
   {
    "id": "atorvastatin-10",
-   "variant": "lowlight",
+   "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -545,7 +465,24 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1052,
+   "ms": 663,
+   "passes": 1
+  },
+  {
+   "id": "atorvastatin-10",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "wrong",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 1064,
    "passes": 1
   },
   {
@@ -553,7 +490,6 @@
    "variant": "rotation",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -564,7 +500,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 960,
+   "ms": 887,
    "passes": 1
   },
   {
@@ -572,7 +508,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "wrong",
@@ -582,7 +517,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 821,
+   "ms": 774,
    "passes": 1
   },
   {
@@ -590,7 +525,6 @@
    "variant": "rotation",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -600,7 +534,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 851,
+   "ms": 728,
    "passes": 1
   },
   {
@@ -608,7 +542,6 @@
    "variant": "blur",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "wrong",
@@ -618,7 +551,7 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 569,
+   "ms": 550,
    "passes": 1
   },
   {
@@ -626,7 +559,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "wrong",
@@ -636,7 +568,7 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 916,
+   "ms": 847,
    "passes": 1
   },
   {
@@ -644,7 +576,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -654,7 +585,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 620,
+   "ms": 577,
    "passes": 1
   },
   {
@@ -662,7 +593,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -673,7 +603,7 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 775,
+   "ms": 693,
    "passes": 1
   },
   {
@@ -681,7 +611,6 @@
    "variant": "cylinder",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -692,7 +621,7 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 635,
+   "ms": 517,
    "passes": 1
   },
   {
@@ -700,7 +629,6 @@
    "variant": "glare",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -711,7 +639,7 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 734,
+   "ms": 691,
    "passes": 1
   },
   {
@@ -719,7 +647,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -729,25 +656,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 705,
-   "passes": 1
-  },
-  {
-   "id": "amlodipine-olmesartan",
-   "variant": "cylinder",
-   "set": "human",
-   "kind": "human-rx",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.333,
-   "leaks": 0,
-   "ms": 914,
+   "ms": 572,
    "passes": 1
   },
   {
@@ -755,7 +664,6 @@
    "variant": "glare",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -765,15 +673,14 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 6874,
+   "ms": 6169,
    "passes": 1
   },
   {
-   "id": "amoxicillin-500-caps",
-   "variant": "lowlight",
+   "id": "amlodipine-olmesartan",
+   "variant": "cylinder",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -783,7 +690,41 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 7979,
+   "ms": 842,
+   "passes": 1
+  },
+  {
+   "id": "amoxicillin-500-caps",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.333,
+   "leaks": 0,
+   "ms": 7267,
+   "passes": 1
+  },
+  {
+   "id": "amlodipine-olmesartan",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 796,
    "passes": 1
   },
   {
@@ -791,7 +732,6 @@
    "variant": "cylinder",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -801,25 +741,7 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 5642,
-   "passes": 1
-  },
-  {
-   "id": "amlodipine-olmesartan",
-   "variant": "lowlight",
-   "set": "human",
-   "kind": "human-rx",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 891,
+   "ms": 5003,
    "passes": 1
   },
   {
@@ -827,7 +749,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -837,25 +758,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1087,
-   "passes": 1
-  },
-  {
-   "id": "prednisone-10",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "local": false,
-   "fields": {
-    "name": "wrong",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 575,
+   "ms": 1110,
    "passes": 1
   },
   {
@@ -863,7 +766,6 @@
    "variant": "glare",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -873,7 +775,41 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1308,
+   "ms": 1164,
+   "passes": 1
+  },
+  {
+   "id": "prednisone-10",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "wrong",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 605,
+   "passes": 1
+  },
+  {
+   "id": "lisinopril-hctz",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.6,
+   "leaks": 0,
+   "ms": 7891,
    "passes": 1
   },
   {
@@ -881,7 +817,6 @@
    "variant": "blur",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -892,7 +827,7 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 1955,
+   "ms": 2040,
    "passes": 1
   },
   {
@@ -900,7 +835,6 @@
    "variant": "rotation",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -910,25 +844,7 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 1720,
-   "passes": 1
-  },
-  {
-   "id": "lisinopril-hctz",
-   "variant": "lowlight",
-   "set": "human",
-   "kind": "human-rx",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.6,
-   "leaks": 0,
-   "ms": 8723,
+   "ms": 1770,
    "passes": 1
   },
   {
@@ -936,7 +852,6 @@
    "variant": "lowlight",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -946,7 +861,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 838,
+   "ms": 968,
    "passes": 1
   },
   {
@@ -954,7 +869,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -964,7 +878,7 @@
    },
    "keyRecall": 0.2,
    "leaks": 0,
-   "ms": 558,
+   "ms": 673,
    "passes": 1
   },
   {
@@ -972,7 +886,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -982,7 +895,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 810,
+   "ms": 884,
    "passes": 1
   },
   {
@@ -990,7 +903,6 @@
    "variant": "rotation",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -1000,7 +912,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 897,
+   "ms": 994,
    "passes": 1
   },
   {
@@ -1008,7 +920,6 @@
    "variant": "cylinder",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -1018,7 +929,7 @@
    },
    "keyRecall": 0.2,
    "leaks": 0,
-   "ms": 868,
+   "ms": 896,
    "passes": 1
   },
   {
@@ -1026,7 +937,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -1036,7 +946,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1098,
+   "ms": 1313,
    "passes": 1
   },
   {
@@ -1044,7 +954,6 @@
    "variant": "blur",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "wrong",
@@ -1054,7 +963,24 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 5297,
+   "ms": 5544,
+   "passes": 1
+  },
+  {
+   "id": "azithromycin-250",
+   "variant": "rotation",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "right",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 1302,
    "passes": 1
   },
   {
@@ -1062,7 +988,6 @@
    "variant": "blur",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -1073,7 +998,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 483,
+   "ms": 507,
    "passes": 1
   },
   {
@@ -1081,7 +1006,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -1091,25 +1015,24 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 237,
+   "ms": 242,
    "passes": 1
   },
   {
    "id": "azithromycin-250",
-   "variant": "rotation",
+   "variant": "perspective",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
-    "strength": "wrong",
+    "strength": "right",
     "form": "empty",
-    "route": "right",
+    "route": "empty",
     "ndc": "empty"
    },
-   "keyRecall": 0,
+   "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1287,
+   "ms": 1283,
    "passes": 1
   },
   {
@@ -1117,7 +1040,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -1127,25 +1049,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 462,
-   "passes": 1
-  },
-  {
-   "id": "azithromycin-250",
-   "variant": "perspective",
-   "set": "human",
-   "kind": "human-rx",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 1377,
+   "ms": 484,
    "passes": 1
   },
   {
@@ -1153,7 +1057,6 @@
    "variant": "cylinder",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -1163,7 +1066,7 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 552,
+   "ms": 494,
    "passes": 1
   },
   {
@@ -1171,7 +1074,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -1181,43 +1083,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 475,
-   "passes": 1
-  },
-  {
-   "id": "albuterol-inhalation",
-   "variant": "blur",
-   "set": "human",
-   "kind": "human-rx",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 505,
-   "passes": 1
-  },
-  {
-   "id": "albuterol-inhalation",
-   "variant": "cylinder",
-   "set": "human",
-   "kind": "human-rx",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 805,
+   "ms": 452,
    "passes": 1
   },
   {
@@ -1225,7 +1091,6 @@
    "variant": "lowlight",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -1235,7 +1100,41 @@
    },
    "keyRecall": 0.4,
    "leaks": 0,
-   "ms": 3465,
+   "ms": 3510,
+   "passes": 1
+  },
+  {
+   "id": "albuterol-inhalation",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 537,
+   "passes": 1
+  },
+  {
+   "id": "albuterol-inhalation",
+   "variant": "cylinder",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 780,
    "passes": 1
   },
   {
@@ -1243,7 +1142,6 @@
    "variant": "lowlight",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -1253,25 +1151,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 686,
-   "passes": 1
-  },
-  {
-   "id": "gabapentin-100",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-rx",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 635,
+   "ms": 636,
    "passes": 1
   },
   {
@@ -1279,7 +1159,6 @@
    "variant": "blur",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -1289,71 +1168,14 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 570,
-   "passes": 1
-  },
-  {
-   "id": "ciprofloxacin-eye",
-   "variant": "glare",
-   "set": "human",
-   "kind": "human-rx",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 2232,
+   "ms": 516,
    "passes": 1
   },
   {
    "id": "gabapentin-100",
-   "variant": "glare",
+   "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 1222,
-   "passes": 1
-  },
-  {
-   "id": "gabapentin-100",
-   "variant": "rotation",
-   "set": "human",
-   "kind": "human-rx",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 997,
-   "passes": 1
-  },
-  {
-   "id": "prednisone-10",
-   "variant": "glare",
-   "set": "human",
-   "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -1363,7 +1185,60 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 6228,
+   "ms": 669,
+   "passes": 1
+  },
+  {
+   "id": "ciprofloxacin-eye",
+   "variant": "glare",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 1987,
+   "passes": 1
+  },
+  {
+   "id": "gabapentin-100",
+   "variant": "rotation",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 944,
+   "passes": 1
+  },
+  {
+   "id": "gabapentin-100",
+   "variant": "glare",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 1156,
    "passes": 1
   },
   {
@@ -1371,7 +1246,6 @@
    "variant": "glare",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -1381,7 +1255,25 @@
    },
    "keyRecall": 0.25,
    "leaks": 0,
-   "ms": 1190,
+   "ms": 1121,
+   "passes": 1
+  },
+  {
+   "id": "cephalexin-suspension",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.25,
+   "leaks": 0,
+   "ms": 968,
    "passes": 1
   },
   {
@@ -1389,7 +1281,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -1399,7 +1290,24 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1509,
+   "ms": 1433,
+   "passes": 1
+  },
+  {
+   "id": "prednisone-10",
+   "variant": "glare",
+   "set": "human",
+   "kind": "human-rx",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 6658,
    "passes": 1
   },
   {
@@ -1407,7 +1315,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -1417,26 +1324,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 987,
-   "passes": 1
-  },
-  {
-   "id": "cephalexin-suspension",
-   "variant": "lowlight",
-   "set": "human",
-   "kind": "human-rx",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.25,
-   "leaks": 0,
-   "ms": 1187,
+   "ms": 989,
    "passes": 1
   },
   {
@@ -1444,7 +1332,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -1454,7 +1341,7 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 1240,
+   "ms": 1201,
    "passes": 1
   },
   {
@@ -1462,7 +1349,6 @@
    "variant": "rotation",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -1472,7 +1358,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1079,
+   "ms": 1029,
    "passes": 1
   },
   {
@@ -1480,7 +1366,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "wrong",
@@ -1490,7 +1375,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 896,
+   "ms": 869,
    "passes": 1
   },
   {
@@ -1498,7 +1383,6 @@
    "variant": "cylinder",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -1508,7 +1392,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1280,
+   "ms": 1241,
    "passes": 1
   },
   {
@@ -1516,7 +1400,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -1526,7 +1409,24 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 1000,
+   "ms": 1027,
+   "passes": 1
+  },
+  {
+   "id": "ibuwin",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 370,
    "passes": 1
   },
   {
@@ -1534,7 +1434,6 @@
    "variant": "rotation",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -1544,25 +1443,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1201,
-   "passes": 1
-  },
-  {
-   "id": "ibuwin",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 365,
+   "ms": 1240,
    "passes": 1
   },
   {
@@ -1570,7 +1451,6 @@
    "variant": "blur",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -1580,7 +1460,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 745,
+   "ms": 758,
    "passes": 1
   },
   {
@@ -1588,7 +1468,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -1598,7 +1477,7 @@
    },
    "keyRecall": 0.25,
    "leaks": 0,
-   "ms": 729,
+   "ms": 653,
    "passes": 1
   },
   {
@@ -1606,7 +1485,6 @@
    "variant": "glare",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -1617,7 +1495,7 @@
    },
    "keyRecall": 0.25,
    "leaks": 0,
-   "ms": 507,
+   "ms": 465,
    "passes": 1
   },
   {
@@ -1625,7 +1503,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -1636,7 +1513,7 @@
    },
    "keyRecall": 0.6,
    "leaks": 0,
-   "ms": 607,
+   "ms": 581,
    "passes": 1
   },
   {
@@ -1644,7 +1521,6 @@
    "variant": "cylinder",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -1654,26 +1530,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 994,
-   "passes": 1
-  },
-  {
-   "id": "acetaminophen-ibuprofen",
-   "variant": "cylinder",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 1188,
+   "ms": 841,
    "passes": 1
   },
   {
@@ -1681,7 +1538,6 @@
    "variant": "blur",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -1691,291 +1547,14 @@
    },
    "keyRecall": 0.8,
    "leaks": 0,
-   "ms": 836,
-   "passes": 1
-  },
-  {
-   "id": "loratadine-bulk",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 718,
-   "passes": 1
-  },
-  {
-   "id": "loratadine-bulk",
-   "variant": "blur",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 788,
+   "ms": 725,
    "passes": 1
   },
   {
    "id": "acetaminophen-ibuprofen",
-   "variant": "lowlight",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.6,
-   "leaks": 0,
-   "ms": 1536,
-   "passes": 1
-  },
-  {
-   "id": "loratadine-bulk",
-   "variant": "glare",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 920,
-   "passes": 1
-  },
-  {
-   "id": "loratadine-bulk",
-   "variant": "rotation",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 1279,
-   "passes": 1
-  },
-  {
-   "id": "cetirizine-amazon",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 236,
-   "passes": 1
-  },
-  {
-   "id": "loratadine-30",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 1643,
-   "passes": 1
-  },
-  {
-   "id": "loratadine-30",
-   "variant": "glare",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 1649,
-   "passes": 1
-  },
-  {
-   "id": "loratadine-30",
-   "variant": "lowlight",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 1337,
-   "passes": 1
-  },
-  {
-   "id": "cetirizine-amazon",
-   "variant": "rotation",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 860,
-   "passes": 1
-  },
-  {
-   "id": "loratadine-30",
-   "variant": "perspective",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 1801,
-   "passes": 1
-  },
-  {
-   "id": "cetirizine-500",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 638,
-   "passes": 1
-  },
-  {
-   "id": "cetirizine-amazon",
    "variant": "cylinder",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 774,
-   "passes": 1
-  },
-  {
-   "id": "sleep-aid",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 118,
-   "passes": 1
-  },
-  {
-   "id": "cetirizine-500",
-   "variant": "blur",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 630,
-   "passes": 1
-  },
-  {
-   "id": "cetirizine-500",
-   "variant": "rotation",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -1990,11 +1569,10 @@
    "passes": 1
   },
   {
-   "id": "sleep-aid",
-   "variant": "perspective",
+   "id": "loratadine-bulk",
+   "variant": "flat",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -2004,15 +1582,82 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 737,
+   "ms": 617,
    "passes": 1
   },
   {
-   "id": "sleep-aid",
-   "variant": "cylinder",
+   "id": "loratadine-bulk",
+   "variant": "blur",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 543,
+   "passes": 1
+  },
+  {
+   "id": "acetaminophen-ibuprofen",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.6,
+   "leaks": 0,
+   "ms": 1326,
+   "passes": 1
+  },
+  {
+   "id": "loratadine-bulk",
+   "variant": "glare",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 857,
+   "passes": 1
+  },
+  {
+   "id": "loratadine-bulk",
+   "variant": "rotation",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 1180,
+   "passes": 1
+  },
+  {
+   "id": "cetirizine-amazon",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-otc",
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2023,15 +1668,136 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 384,
+   "ms": 196,
+   "passes": 1
+  },
+  {
+   "id": "loratadine-30",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 1380,
+   "passes": 1
+  },
+  {
+   "id": "loratadine-30",
+   "variant": "glare",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 1481,
+   "passes": 1
+  },
+  {
+   "id": "loratadine-30",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 1135,
+   "passes": 1
+  },
+  {
+   "id": "cetirizine-amazon",
+   "variant": "cylinder",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 611,
+   "passes": 1
+  },
+  {
+   "id": "cetirizine-amazon",
+   "variant": "rotation",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 792,
+   "passes": 1
+  },
+  {
+   "id": "loratadine-30",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 1555,
    "passes": 1
   },
   {
    "id": "cetirizine-500",
-   "variant": "perspective",
+   "variant": "flat",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 547,
+   "passes": 1
+  },
+  {
+   "id": "sleep-aid",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-otc",
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2042,7 +1808,60 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1584,
+   "ms": 95,
+   "passes": 1
+  },
+  {
+   "id": "cetirizine-500",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 564,
+   "passes": 1
+  },
+  {
+   "id": "cetirizine-500",
+   "variant": "rotation",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 831,
+   "passes": 1
+  },
+  {
+   "id": "sleep-aid",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 696,
    "passes": 1
   },
   {
@@ -2050,7 +1869,6 @@
    "variant": "lowlight",
    "set": "human",
    "kind": "human-rx",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -2060,7 +1878,43 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 7364,
+   "ms": 6170,
+   "passes": 1
+  },
+  {
+   "id": "sleep-aid",
+   "variant": "cylinder",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 353,
+   "passes": 1
+  },
+  {
+   "id": "cetirizine-500",
+   "variant": "perspective",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 1437,
    "passes": 1
   },
   {
@@ -2068,7 +1922,6 @@
    "variant": "glare",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2079,24 +1932,7 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 741,
-   "passes": 1
-  },
-  {
-   "id": "famotidine-cvs",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 530,
+   "ms": 700,
    "passes": 1
   },
   {
@@ -2104,7 +1940,6 @@
    "variant": "blur",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -2114,7 +1949,23 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 813,
+   "ms": 744,
+   "passes": 1
+  },
+  {
+   "id": "famotidine-cvs",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 462,
    "passes": 1
   },
   {
@@ -2122,7 +1973,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "wrong",
@@ -2132,24 +1982,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1536,
-   "passes": 1
-  },
-  {
-   "id": "famotidine-cvs",
-   "variant": "blur",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 716,
+   "ms": 1364,
    "passes": 1
   },
   {
@@ -2157,7 +1990,6 @@
    "variant": "glare",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2167,7 +1999,57 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 493,
+   "ms": 442,
+   "passes": 1
+  },
+  {
+   "id": "famotidine-cvs",
+   "variant": "blur",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 677,
+   "passes": 1
+  },
+  {
+   "id": "diphenhydramine-solution",
+   "variant": "cylinder",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.75,
+   "leaks": 0,
+   "ms": 1923,
+   "passes": 1
+  },
+  {
+   "id": "famotidine-amazon",
+   "variant": "flat",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.75,
+   "leaks": 0,
+   "ms": 442,
    "passes": 1
   },
   {
@@ -2175,7 +2057,6 @@
    "variant": "lowlight",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -2185,43 +2066,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1630,
-   "passes": 1
-  },
-  {
-   "id": "diphenhydramine-solution",
-   "variant": "cylinder",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.75,
-   "leaks": 0,
-   "ms": 2235,
-   "passes": 1
-  },
-  {
-   "id": "famotidine-amazon",
-   "variant": "flat",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.75,
-   "leaks": 0,
-   "ms": 525,
+   "ms": 1414,
    "passes": 1
   },
   {
@@ -2229,7 +2074,6 @@
    "variant": "glare",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2240,26 +2084,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 539,
-   "passes": 1
-  },
-  {
-   "id": "famotidine-amazon",
-   "variant": "lowlight",
-   "set": "human",
-   "kind": "human-otc",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 412,
+   "ms": 499,
    "passes": 1
   },
   {
@@ -2267,7 +2092,6 @@
    "variant": "rotation",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2277,7 +2101,25 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1123,
+   "ms": 913,
+   "passes": 1
+  },
+  {
+   "id": "famotidine-amazon",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "human-otc",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 344,
    "passes": 1
   },
   {
@@ -2285,7 +2127,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -2295,7 +2136,7 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 833,
+   "ms": 721,
    "passes": 1
   },
   {
@@ -2303,7 +2144,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -2313,7 +2153,7 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 484,
+   "ms": 421,
    "passes": 1
   },
   {
@@ -2321,7 +2161,6 @@
    "variant": "lowlight",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -2331,7 +2170,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1833,
+   "ms": 1668,
    "passes": 1
   },
   {
@@ -2339,7 +2178,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -2349,7 +2187,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1857,
+   "ms": 1723,
    "passes": 1
   },
   {
@@ -2357,7 +2195,6 @@
    "variant": "cylinder",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -2367,7 +2204,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1835,
+   "ms": 1733,
    "passes": 1
   },
   {
@@ -2375,7 +2212,6 @@
    "variant": "rotation",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -2385,7 +2221,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 2173,
+   "ms": 2058,
    "passes": 1
   },
   {
@@ -2393,7 +2229,6 @@
    "variant": "blur",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -2403,7 +2238,7 @@
    },
    "keyRecall": 0.75,
    "leaks": 0,
-   "ms": 787,
+   "ms": 805,
    "passes": 1
   },
   {
@@ -2411,7 +2246,6 @@
    "variant": "rotation",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -2421,7 +2255,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1571,
+   "ms": 1478,
    "passes": 1
   },
   {
@@ -2429,7 +2263,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -2438,7 +2271,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 715,
+   "ms": 662,
    "passes": 1
   },
   {
@@ -2446,7 +2279,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2457,7 +2289,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1141,
+   "ms": 1024,
    "passes": 1
   },
   {
@@ -2465,7 +2297,6 @@
    "variant": "glare",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2475,7 +2306,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 623,
+   "ms": 590,
    "passes": 1
   },
   {
@@ -2483,7 +2314,6 @@
    "variant": "cylinder",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -2492,7 +2322,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 990,
+   "ms": 879,
    "passes": 1
   },
   {
@@ -2500,7 +2330,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -2509,7 +2338,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1019,
+   "ms": 844,
    "passes": 1
   },
   {
@@ -2517,7 +2346,6 @@
    "variant": "cylinder",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -2526,7 +2354,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1225,
+   "ms": 1128,
    "passes": 1
   },
   {
@@ -2534,7 +2362,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -2544,7 +2371,7 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 438,
+   "ms": 433,
    "passes": 1
   },
   {
@@ -2552,7 +2379,6 @@
    "variant": "blur",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "empty",
@@ -2563,7 +2389,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 662,
+   "ms": 627,
    "passes": 1
   },
   {
@@ -2571,7 +2397,6 @@
    "variant": "glare",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -2581,7 +2406,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 874,
+   "ms": 836,
    "passes": 1
   },
   {
@@ -2589,7 +2414,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2599,7 +2423,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 3110,
+   "ms": 2796,
    "passes": 1
   },
   {
@@ -2607,7 +2431,6 @@
    "variant": "rotation",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2618,7 +2441,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 676,
+   "ms": 693,
    "passes": 1
   },
   {
@@ -2626,7 +2449,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2636,7 +2458,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 1243,
+   "ms": 1189,
    "passes": 1
   },
   {
@@ -2644,7 +2466,6 @@
    "variant": "blur",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -2653,7 +2474,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 3256,
+   "ms": 3033,
    "passes": 1
   },
   {
@@ -2661,7 +2482,6 @@
    "variant": "glare",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2671,7 +2491,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 1552,
+   "ms": 1548,
    "passes": 1
   },
   {
@@ -2679,7 +2499,6 @@
    "variant": "lowlight",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2689,7 +2508,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 4096,
+   "ms": 4032,
    "passes": 1
   },
   {
@@ -2697,7 +2516,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2707,7 +2525,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1221,
+   "ms": 1252,
    "passes": 1
   },
   {
@@ -2715,7 +2533,6 @@
    "variant": "lowlight",
    "set": "human",
    "kind": "human-otc",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2726,7 +2543,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 12653,
+   "ms": 11224,
    "passes": 1
   },
   {
@@ -2734,7 +2551,6 @@
    "variant": "lowlight",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -2743,7 +2559,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 1357,
+   "ms": 1342,
    "passes": 1
   },
   {
@@ -2751,7 +2567,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "wrong",
@@ -2761,7 +2576,24 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 981,
+   "ms": 1060,
+   "passes": 1
+  },
+  {
+   "id": "apoquel-chewable",
+   "variant": "lowlight",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 3524,
    "passes": 1
   },
   {
@@ -2769,7 +2601,6 @@
    "variant": "rotation",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2780,7 +2611,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 726,
+   "ms": 748,
    "passes": 1
   },
   {
@@ -2788,7 +2619,6 @@
    "variant": "cylinder",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -2797,25 +2627,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 1336,
-   "passes": 1
-  },
-  {
-   "id": "apoquel-chewable",
-   "variant": "lowlight",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 3704,
+   "ms": 1326,
    "passes": 1
   },
   {
@@ -2823,7 +2635,6 @@
    "variant": "blur",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2834,7 +2645,7 @@
    },
    "keyRecall": 0.25,
    "leaks": 0,
-   "ms": 324,
+   "ms": 307,
    "passes": 1
   },
   {
@@ -2842,7 +2653,6 @@
    "variant": "perspective",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -2853,7 +2663,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 746,
+   "ms": 761,
    "passes": 1
   },
   {
@@ -2861,7 +2671,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "form": "empty",
@@ -2870,7 +2679,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 791,
+   "ms": 806,
    "passes": 1
   },
   {
@@ -2878,7 +2687,6 @@
    "variant": "perspective",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "form": "empty",
@@ -2895,7 +2703,6 @@
    "variant": "cylinder",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "form": "empty",
@@ -2904,7 +2711,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 1176,
+   "ms": 1031,
    "passes": 1
   },
   {
@@ -2912,7 +2719,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -2922,7 +2728,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 833,
+   "ms": 741,
    "passes": 1
   },
   {
@@ -2930,7 +2736,6 @@
    "variant": "glare",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "form": "empty",
@@ -2939,7 +2744,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1199,
+   "ms": 1124,
    "passes": 1
   },
   {
@@ -2947,7 +2752,6 @@
    "variant": "cylinder",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -2957,7 +2761,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 944,
+   "ms": 845,
    "passes": 1
   },
   {
@@ -2965,7 +2769,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "form": "empty",
@@ -2973,7 +2776,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 357,
+   "ms": 333,
    "passes": 1
   },
   {
@@ -2981,7 +2784,6 @@
    "variant": "blur",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -2991,7 +2793,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 966,
+   "ms": 919,
    "passes": 1
   },
   {
@@ -2999,7 +2801,6 @@
    "variant": "blur",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "form": "empty",
@@ -3007,7 +2808,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 508,
+   "ms": 464,
    "passes": 1
   },
   {
@@ -3015,7 +2816,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3025,7 +2825,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 294,
+   "ms": 258,
    "passes": 1
   },
   {
@@ -3033,7 +2833,6 @@
    "variant": "rotation",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "form": "empty",
@@ -3041,7 +2840,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 689,
+   "ms": 641,
    "passes": 1
   },
   {
@@ -3049,7 +2848,6 @@
    "variant": "glare",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "form": "empty",
@@ -3057,7 +2855,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1006,
+   "ms": 971,
    "passes": 1
   },
   {
@@ -3065,7 +2863,6 @@
    "variant": "perspective",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3075,7 +2872,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 6131,
+   "ms": 5851,
    "passes": 1
   },
   {
@@ -3083,7 +2880,6 @@
    "variant": "rotation",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3093,24 +2889,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 5276,
-   "passes": 1
-  },
-  {
-   "id": "simparica",
-   "variant": "perspective",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 898,
+   "ms": 4930,
    "passes": 1
   },
   {
@@ -3118,7 +2897,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "wrong",
@@ -3127,7 +2905,23 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 732,
+   "ms": 651,
+   "passes": 1
+  },
+  {
+   "id": "simparica",
+   "variant": "perspective",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 780,
    "passes": 1
   },
   {
@@ -3135,7 +2929,6 @@
    "variant": "cylinder",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "wrong",
@@ -3144,7 +2937,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1013,
+   "ms": 971,
    "passes": 1
   },
   {
@@ -3152,7 +2945,6 @@
    "variant": "rotation",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -3161,7 +2953,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1115,
+   "ms": 1064,
    "passes": 1
   },
   {
@@ -3169,7 +2961,6 @@
    "variant": "lowlight",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3180,7 +2971,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 3881,
+   "ms": 3402,
    "passes": 1
   },
   {
@@ -3188,7 +2979,6 @@
    "variant": "lowlight",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -3197,7 +2987,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 2800,
+   "ms": 2492,
    "passes": 1
   },
   {
@@ -3205,7 +2995,6 @@
    "variant": "rotation",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3216,7 +3005,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 731,
+   "ms": 664,
    "passes": 1
   },
   {
@@ -3224,7 +3013,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3235,7 +3023,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 987,
+   "ms": 898,
    "passes": 1
   },
   {
@@ -3243,7 +3031,6 @@
    "variant": "lowlight",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "wrong",
@@ -3252,7 +3039,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 2642,
+   "ms": 2536,
    "passes": 1
   },
   {
@@ -3260,7 +3047,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "wrong",
@@ -3269,7 +3055,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 742,
+   "ms": 703,
    "passes": 1
   },
   {
@@ -3277,7 +3063,6 @@
    "variant": "perspective",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3288,7 +3073,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1400,
+   "ms": 1299,
    "passes": 1
   },
   {
@@ -3296,7 +3081,6 @@
    "variant": "blur",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3307,24 +3091,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1082,
-   "passes": 1
-  },
-  {
-   "id": "clavamox-chewable",
-   "variant": "perspective",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "wrong",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 1005,
+   "ms": 987,
    "passes": 1
   },
   {
@@ -3332,7 +3099,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -3342,7 +3108,23 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 337,
+   "ms": 322,
+   "passes": 1
+  },
+  {
+   "id": "clavamox-chewable",
+   "variant": "perspective",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "wrong",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 961,
    "passes": 1
   },
   {
@@ -3350,7 +3132,6 @@
    "variant": "cylinder",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3361,7 +3142,24 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 494,
+   "ms": 490,
+   "passes": 1
+  },
+  {
+   "id": "meloxicam-suspension",
+   "variant": "lowlight",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "wrong",
+    "strength": "right",
+    "form": "right",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 516,
    "passes": 1
   },
   {
@@ -3369,7 +3167,6 @@
    "variant": "cylinder",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -3378,25 +3175,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1247,
-   "passes": 1
-  },
-  {
-   "id": "meloxicam-suspension",
-   "variant": "lowlight",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "wrong",
-    "strength": "right",
-    "form": "right",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 514,
+   "ms": 1185,
    "passes": 1
   },
   {
@@ -3404,7 +3183,6 @@
    "variant": "glare",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "wrong",
@@ -3413,7 +3191,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 1181,
+   "ms": 1177,
    "passes": 1
   },
   {
@@ -3421,7 +3199,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -3431,7 +3208,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1003,
+   "ms": 967,
    "passes": 1
   },
   {
@@ -3439,7 +3216,6 @@
    "variant": "blur",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -3449,7 +3225,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1445,
+   "ms": 1273,
    "passes": 1
   },
   {
@@ -3457,7 +3233,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3467,7 +3242,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 156,
+   "ms": 172,
    "passes": 1
   },
   {
@@ -3475,7 +3250,6 @@
    "variant": "blur",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -3485,42 +3259,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1192,
-   "passes": 1
-  },
-  {
-   "id": "enroflox",
-   "variant": "rotation",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 1314,
-   "passes": 1
-  },
-  {
-   "id": "galliprant",
-   "variant": "lowlight",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "wrong",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 600,
+   "ms": 1046,
    "passes": 1
   },
   {
@@ -3528,7 +3267,6 @@
    "variant": "glare",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3538,25 +3276,40 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 703,
+   "ms": 686,
    "passes": 1
   },
   {
-   "id": "vetmedin-solution",
-   "variant": "flat",
+   "id": "galliprant",
+   "variant": "lowlight",
    "set": "pet",
    "kind": "pet",
-   "local": false,
+   "fields": {
+    "name": "wrong",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 608,
+   "passes": 1
+  },
+  {
+   "id": "enroflox",
+   "variant": "rotation",
+   "set": "pet",
+   "kind": "pet",
    "fields": {
     "name": "empty",
-    "strength": "right",
+    "strength": "wrong",
     "form": "empty",
     "route": "empty",
     "ndc": "empty"
    },
-   "keyRecall": 0.667,
+   "keyRecall": 0,
    "leaks": 0,
-   "ms": 320,
+   "ms": 1212,
    "passes": 1
   },
   {
@@ -3564,7 +3317,6 @@
    "variant": "perspective",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -3573,15 +3325,14 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 630,
+   "ms": 540,
    "passes": 1
   },
   {
    "id": "vetmedin-solution",
-   "variant": "lowlight",
+   "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -3591,7 +3342,41 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 334,
+   "ms": 293,
+   "passes": 1
+  },
+  {
+   "id": "vetmedin-solution",
+   "variant": "lowlight",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 312,
+   "passes": 1
+  },
+  {
+   "id": "vetmedin-chewable",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 433,
    "passes": 1
   },
   {
@@ -3599,7 +3384,6 @@
    "variant": "glare",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -3609,25 +3393,7 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 2154,
-   "passes": 1
-  },
-  {
-   "id": "vetmedin-chewable",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 460,
+   "ms": 1941,
    "passes": 1
   },
   {
@@ -3635,7 +3401,6 @@
    "variant": "cylinder",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3646,7 +3411,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 595,
+   "ms": 538,
    "passes": 1
   },
   {
@@ -3654,7 +3419,6 @@
    "variant": "rotation",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -3664,44 +3428,7 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 904,
-   "passes": 1
-  },
-  {
-   "id": "vetmedin-chewable",
-   "variant": "rotation",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 723,
-   "passes": 1
-  },
-  {
-   "id": "vetmedin-chewable",
-   "variant": "blur",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 369,
+   "ms": 780,
    "passes": 1
   },
   {
@@ -3709,7 +3436,6 @@
    "variant": "glare",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3719,15 +3445,32 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 7516,
+   "ms": 6803,
    "passes": 1
   },
   {
    "id": "vetmedin-chewable",
-   "variant": "perspective",
+   "variant": "rotation",
    "set": "pet",
    "kind": "pet",
-   "local": false,
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 651,
+   "passes": 1
+  },
+  {
+   "id": "vetmedin-chewable",
+   "variant": "blur",
+   "set": "pet",
+   "kind": "pet",
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -3737,7 +3480,24 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 647,
+   "ms": 324,
+   "passes": 1
+  },
+  {
+   "id": "vetmedin-chewable",
+   "variant": "perspective",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 565,
    "passes": 1
   },
   {
@@ -3745,7 +3505,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -3754,7 +3513,25 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 328,
+   "ms": 321,
+   "passes": 1
+  },
+  {
+   "id": "methimazole-solution",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 873,
    "passes": 1
   },
   {
@@ -3762,7 +3539,6 @@
    "variant": "cylinder",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "empty",
@@ -3772,26 +3548,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 468,
-   "passes": 1
-  },
-  {
-   "id": "methimazole-solution",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 1038,
+   "ms": 420,
    "passes": 1
   },
   {
@@ -3799,7 +3556,6 @@
    "variant": "blur",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -3808,7 +3564,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 373,
+   "ms": 321,
    "passes": 1
   },
   {
@@ -3816,7 +3572,6 @@
    "variant": "cylinder",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -3826,7 +3581,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1059,
+   "ms": 971,
    "passes": 1
   },
   {
@@ -3834,7 +3589,6 @@
    "variant": "perspective",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -3844,7 +3598,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1370,
+   "ms": 1203,
    "passes": 1
   },
   {
@@ -3852,7 +3606,6 @@
    "variant": "lowlight",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -3861,7 +3614,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 468,
+   "ms": 427,
    "passes": 1
   },
   {
@@ -3869,7 +3622,6 @@
    "variant": "glare",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3880,7 +3632,7 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 1401,
+   "ms": 1302,
    "passes": 1
   },
   {
@@ -3888,7 +3640,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -3897,7 +3648,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 803,
+   "ms": 765,
    "passes": 1
   },
   {
@@ -3905,7 +3656,6 @@
    "variant": "blur",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -3915,7 +3665,7 @@
    },
    "keyRecall": 0.5,
    "leaks": 0,
-   "ms": 884,
+   "ms": 860,
    "passes": 1
   },
   {
@@ -3923,7 +3673,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -3932,24 +3681,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 672,
-   "passes": 1
-  },
-  {
-   "id": "cerenia-injection",
-   "variant": "glare",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 1129,
+   "ms": 636,
    "passes": 1
   },
   {
@@ -3957,7 +3689,6 @@
    "variant": "rotation",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -3966,7 +3697,40 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1091,
+   "ms": 982,
+   "passes": 1
+  },
+  {
+   "id": "cerenia-injection",
+   "variant": "glare",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 1104,
+   "passes": 1
+  },
+  {
+   "id": "credelio-cat",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 653,
    "passes": 1
   },
   {
@@ -3974,11 +3738,120 @@
    "variant": "perspective",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
     "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 897,
+   "passes": 1
+  },
+  {
+   "id": "cerenia-tablets",
+   "variant": "glare",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 0.5,
+   "leaks": 0,
+   "ms": 1199,
+   "passes": 1
+  },
+  {
+   "id": "credelio-cat",
+   "variant": "lowlight",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 719,
+   "passes": 1
+  },
+  {
+   "id": "credelio-cat",
+   "variant": "rotation",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 822,
+   "passes": 1
+  },
+  {
+   "id": "credelio-cat",
+   "variant": "cylinder",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 667,
+   "passes": 1
+  },
+  {
+   "id": "clavacillin-drops",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "wrong",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 641,
+   "passes": 1
+  },
+  {
+   "id": "clavacillin-drops",
+   "variant": "rotation",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "empty",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 0,
+   "leaks": 0,
+   "ms": 1053,
+   "passes": 1
+  },
+  {
+   "id": "clavacillin-drops",
+   "variant": "perspective",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "wrong",
+    "form": "right",
     "route": "empty"
    },
    "keyRecall": 1,
@@ -3987,146 +3860,10 @@
    "passes": 1
   },
   {
-   "id": "credelio-cat",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 727,
-   "passes": 1
-  },
-  {
-   "id": "cerenia-tablets",
-   "variant": "glare",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 1238,
-   "passes": 1
-  },
-  {
-   "id": "credelio-cat",
-   "variant": "lowlight",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 695,
-   "passes": 1
-  },
-  {
-   "id": "credelio-cat",
-   "variant": "rotation",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 914,
-   "passes": 1
-  },
-  {
-   "id": "clavacillin-drops",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "wrong",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 618,
-   "passes": 1
-  },
-  {
-   "id": "credelio-cat",
-   "variant": "cylinder",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 672,
-   "passes": 1
-  },
-  {
-   "id": "clavacillin-drops",
-   "variant": "perspective",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "wrong",
-    "form": "right",
-    "route": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 920,
-   "passes": 1
-  },
-  {
-   "id": "clavacillin-drops",
-   "variant": "rotation",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 0,
-   "leaks": 0,
-   "ms": 1116,
-   "passes": 1
-  },
-  {
    "id": "proin-75",
    "variant": "flat",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -4136,7 +3873,7 @@
    },
    "keyRecall": 0.667,
    "leaks": 0,
-   "ms": 1402,
+   "ms": 1315,
    "passes": 1
   },
   {
@@ -4144,7 +3881,6 @@
    "variant": "blur",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "form": "empty",
@@ -4152,25 +3888,7 @@
    },
    "keyRecall": 1,
    "leaks": 0,
-   "ms": 1724,
-   "passes": 1
-  },
-  {
-   "id": "proin-75",
-   "variant": "perspective",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "wrong",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.667,
-   "leaks": 0,
-   "ms": 1865,
+   "ms": 1594,
    "passes": 1
   },
   {
@@ -4178,7 +3896,6 @@
    "variant": "cylinder",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -4189,7 +3906,24 @@
    },
    "keyRecall": 0,
    "leaks": 0,
-   "ms": 1323,
+   "ms": 1188,
+   "passes": 1
+  },
+  {
+   "id": "proin-75",
+   "variant": "perspective",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "wrong",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty",
+    "ndc": "empty"
+   },
+   "keyRecall": 0.667,
+   "leaks": 0,
+   "ms": 1735,
    "passes": 1
   },
   {
@@ -4197,7 +3931,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4211,7 +3944,7 @@
    "precision": 0.985,
    "recall": 0.97,
    "leaks": 0,
-   "ms": 676,
+   "ms": 529,
    "passes": 1
   },
   {
@@ -4219,21 +3952,20 @@
    "variant": "vial",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
     "form": "right",
     "route": "right",
     "ndc": "empty",
-    "directions": "wrong"
+    "directions": "right"
    },
-   "keyRecall": 0,
-   "cer": 0.484,
-   "precision": 0.514,
-   "recall": 0.545,
+   "keyRecall": 0.333,
+   "cer": 0.551,
+   "precision": 0.455,
+   "recall": 0.53,
    "leaks": 0,
-   "ms": 882,
+   "ms": 623,
    "passes": 1
   },
   {
@@ -4241,7 +3973,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4255,7 +3986,7 @@
    "precision": 0.984,
    "recall": 0.952,
    "leaks": 0,
-   "ms": 616,
+   "ms": 378,
    "passes": 1
   },
   {
@@ -4263,7 +3994,6 @@
    "variant": "glare",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4277,7 +4007,7 @@
    "precision": 0.939,
    "recall": 0.939,
    "leaks": 0,
-   "ms": 876,
+   "ms": 698,
    "passes": 1
   },
   {
@@ -4285,7 +4015,6 @@
    "variant": "rotation",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -4299,7 +4028,7 @@
    "precision": 0,
    "recall": 0,
    "leaks": 0,
-   "ms": 952,
+   "ms": 785,
    "passes": 1
   },
   {
@@ -4307,7 +4036,6 @@
    "variant": "glare",
    "set": "pet",
    "kind": "pet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -4318,7 +4046,65 @@
    },
    "keyRecall": 0.333,
    "leaks": 0,
-   "ms": 2387,
+   "ms": 2101,
+   "passes": 1
+  },
+  {
+   "id": "syn-lisinopril",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "empty",
+    "directions": "right"
+   },
+   "keyRecall": 0.667,
+   "cer": 0.195,
+   "precision": 0.984,
+   "recall": 0.952,
+   "leaks": 0,
+   "ms": 548,
+   "passes": 1
+  },
+  {
+   "id": "syn-lisinopril",
+   "variant": "vial",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "wrong",
+    "strength": "wrong",
+    "form": "empty",
+    "route": "right",
+    "ndc": "empty",
+    "directions": "right"
+   },
+   "keyRecall": 0.333,
+   "cer": 0.488,
+   "precision": 0.549,
+   "recall": 0.619,
+   "leaks": 0,
+   "ms": 717,
+   "passes": 1
+  },
+  {
+   "id": "cerenia-tablets",
+   "variant": "lowlight",
+   "set": "pet",
+   "kind": "pet",
+   "fields": {
+    "name": "wrong",
+    "strength": "right",
+    "form": "empty",
+    "route": "empty"
+   },
+   "keyRecall": 1,
+   "leaks": 0,
+   "ms": 4556,
    "passes": 1
   },
   {
@@ -4326,7 +4112,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4340,51 +4125,7 @@
    "precision": 0.984,
    "recall": 0.952,
    "leaks": 0,
-   "ms": 510,
-   "passes": 1
-  },
-  {
-   "id": "syn-lisinopril",
-   "variant": "vial",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "local": false,
-   "fields": {
-    "name": "wrong",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "right",
-    "ndc": "empty",
-    "directions": "right"
-   },
-   "keyRecall": 0,
-   "cer": 0.494,
-   "precision": 0.535,
-   "recall": 0.603,
-   "leaks": 0,
-   "ms": 752,
-   "passes": 1
-  },
-  {
-   "id": "syn-lisinopril",
-   "variant": "lowlight",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "local": false,
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty",
-    "directions": "right"
-   },
-   "keyRecall": 0.667,
-   "cer": 0.195,
-   "precision": 0.984,
-   "recall": 0.952,
-   "leaks": 0,
-   "ms": 655,
+   "ms": 469,
    "passes": 1
   },
   {
@@ -4392,7 +4133,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4406,69 +4146,7 @@
    "precision": 0.984,
    "recall": 0.952,
    "leaks": 0,
-   "ms": 667,
-   "passes": 1
-  },
-  {
-   "id": "cerenia-tablets",
-   "variant": "lowlight",
-   "set": "pet",
-   "kind": "pet",
-   "local": false,
-   "fields": {
-    "name": "wrong",
-    "strength": "right",
-    "form": "empty",
-    "route": "empty"
-   },
-   "keyRecall": 1,
-   "leaks": 0,
-   "ms": 5071,
-   "passes": 1
-  },
-  {
-   "id": "syn-amoxicillin",
-   "variant": "flat",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "local": false,
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "ndc": "empty",
-    "directions": "right"
-   },
-   "keyRecall": 0.667,
-   "cer": 0.179,
-   "precision": 0.984,
-   "recall": 0.969,
-   "leaks": 0,
-   "ms": 510,
-   "passes": 1
-  },
-  {
-   "id": "syn-metformin",
-   "variant": "vial",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "right",
-    "ndc": "empty",
-    "directions": "right"
-   },
-   "keyRecall": 0.333,
-   "cer": 0.598,
-   "precision": 0.466,
-   "recall": 0.54,
-   "leaks": 0,
-   "ms": 950,
+   "ms": 701,
    "passes": 1
   },
   {
@@ -4476,7 +4154,6 @@
    "variant": "cylinder",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4490,7 +4167,7 @@
    "precision": 0.833,
    "recall": 0.794,
    "leaks": 0,
-   "ms": 617,
+   "ms": 591,
    "passes": 1
   },
   {
@@ -4498,7 +4175,6 @@
    "variant": "rotation",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -4508,11 +4184,54 @@
     "directions": "empty"
    },
    "keyRecall": 0,
-   "cer": 0.83,
-   "precision": 0.017,
+   "cer": 0.827,
+   "precision": 0.018,
    "recall": 0.016,
    "leaks": 0,
-   "ms": 689,
+   "ms": 639,
+   "passes": 1
+  },
+  {
+   "id": "syn-amoxicillin",
+   "variant": "flat",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "ndc": "empty",
+    "directions": "right"
+   },
+   "keyRecall": 0.667,
+   "cer": 0.179,
+   "precision": 0.984,
+   "recall": 0.969,
+   "leaks": 0,
+   "ms": 439,
+   "passes": 1
+  },
+  {
+   "id": "syn-metformin",
+   "variant": "vial",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "empty",
+    "strength": "empty",
+    "strengthOffered": "empty",
+    "form": "empty",
+    "route": "right",
+    "ndc": "empty",
+    "directions": "right"
+   },
+   "keyRecall": 0.333,
+   "cer": 0.601,
+   "precision": 0.379,
+   "recall": 0.397,
+   "leaks": 0,
+   "ms": 802,
    "passes": 1
   },
   {
@@ -4520,7 +4239,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4534,7 +4252,7 @@
    "precision": 0.953,
    "recall": 0.938,
    "leaks": 0,
-   "ms": 633,
+   "ms": 595,
    "passes": 1
   },
   {
@@ -4542,7 +4260,6 @@
    "variant": "vial",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -4553,10 +4270,10 @@
    },
    "keyRecall": 0.333,
    "cer": 0.641,
-   "precision": 0.405,
-   "recall": 0.523,
+   "precision": 0.417,
+   "recall": 0.538,
    "leaks": 0,
-   "ms": 769,
+   "ms": 647,
    "passes": 1
   },
   {
@@ -4564,7 +4281,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4578,7 +4294,7 @@
    "precision": 0.967,
    "recall": 0.937,
    "leaks": 0,
-   "ms": 506,
+   "ms": 404,
    "passes": 1
   },
   {
@@ -4586,7 +4302,6 @@
    "variant": "blur",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4597,10 +4312,10 @@
    },
    "keyRecall": 0.333,
    "cer": 0.288,
-   "precision": 0.824,
-   "recall": 0.646,
+   "precision": 0.82,
+   "recall": 0.631,
    "leaks": 0,
-   "ms": 593,
+   "ms": 451,
    "passes": 1
   },
   {
@@ -4608,7 +4323,6 @@
    "variant": "cylinder",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4622,7 +4336,7 @@
    "precision": 0.839,
    "recall": 0.746,
    "leaks": 0,
-   "ms": 625,
+   "ms": 520,
    "passes": 1
   },
   {
@@ -4630,7 +4344,6 @@
    "variant": "vial",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -4640,11 +4353,53 @@
     "directions": "right"
    },
    "keyRecall": 0.667,
-   "cer": 0.493,
-   "precision": 0.552,
+   "cer": 0.487,
+   "precision": 0.542,
    "recall": 0.508,
    "leaks": 0,
-   "ms": 733,
+   "ms": 608,
+   "passes": 1
+  },
+  {
+   "id": "syn-ventolin",
+   "variant": "flat",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "empty",
+    "route": "wrong",
+    "ndc": "empty",
+    "directions": "right"
+   },
+   "keyRecall": 0.667,
+   "cer": 0.162,
+   "precision": 0.985,
+   "recall": 0.971,
+   "leaks": 0,
+   "ms": 550,
+   "passes": 1
+  },
+  {
+   "id": "syn-ventolin",
+   "variant": "blur",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "empty",
+    "route": "wrong",
+    "ndc": "empty",
+    "directions": "right"
+   },
+   "keyRecall": 0.333,
+   "cer": 0.242,
+   "precision": 0.911,
+   "recall": 0.75,
+   "leaks": 0,
+   "ms": 481,
    "passes": 1
   },
   {
@@ -4652,7 +4407,6 @@
    "variant": "glare",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -4667,73 +4421,7 @@
    "precision": 0.867,
    "recall": 0.825,
    "leaks": 0,
-   "ms": 684,
-   "passes": 1
-  },
-  {
-   "id": "syn-ventolin",
-   "variant": "flat",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "local": false,
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "empty",
-    "route": "wrong",
-    "ndc": "empty",
-    "directions": "right"
-   },
-   "keyRecall": 0.667,
-   "cer": 0.162,
-   "precision": 0.985,
-   "recall": 0.971,
-   "leaks": 0,
-   "ms": 608,
-   "passes": 1
-  },
-  {
-   "id": "syn-ventolin",
-   "variant": "blur",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "local": false,
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "empty",
-    "route": "wrong",
-    "ndc": "empty",
-    "directions": "right"
-   },
-   "keyRecall": 0.333,
-   "cer": 0.24,
-   "precision": 0.911,
-   "recall": 0.75,
-   "leaks": 0,
-   "ms": 587,
-   "passes": 1
-  },
-  {
-   "id": "syn-ventolin",
-   "variant": "vial",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "local": false,
-   "fields": {
-    "name": "wrong",
-    "strength": "right",
-    "form": "empty",
-    "route": "wrong",
-    "ndc": "empty",
-    "directions": "right"
-   },
-   "keyRecall": 0.333,
-   "cer": 0.41,
-   "precision": 0.519,
-   "recall": 0.588,
-   "leaks": 0,
-   "ms": 769,
+   "ms": 619,
    "passes": 1
   },
   {
@@ -4741,7 +4429,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "right",
@@ -4755,51 +4442,28 @@
    "precision": 0.953,
    "recall": 0.938,
    "leaks": 0,
-   "ms": 512,
+   "ms": 435,
    "passes": 1
   },
   {
-   "id": "syn-ofloxacin",
-   "variant": "glare",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "local": false,
-   "fields": {
-    "name": "empty",
-    "strength": "right",
-    "form": "empty",
-    "route": "right",
-    "ndc": "empty",
-    "directions": "right"
-   },
-   "keyRecall": 1,
-   "cer": 0.221,
-   "precision": 0.908,
-   "recall": 0.908,
-   "leaks": 0,
-   "ms": 894,
-   "passes": 1
-  },
-  {
-   "id": "syn-ofloxacin",
+   "id": "syn-ventolin",
    "variant": "vial",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
-    "name": "empty",
+    "name": "wrong",
     "strength": "right",
     "form": "empty",
-    "route": "right",
+    "route": "wrong",
     "ndc": "empty",
     "directions": "right"
    },
-   "keyRecall": 0.667,
-   "cer": 0.477,
-   "precision": 0.466,
-   "recall": 0.523,
+   "keyRecall": 0.333,
+   "cer": 0.41,
+   "precision": 0.519,
+   "recall": 0.588,
    "leaks": 0,
-   "ms": 930,
+   "ms": 685,
    "passes": 1
   },
   {
@@ -4807,7 +4471,6 @@
    "variant": "flat",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4821,7 +4484,49 @@
    "precision": 0.983,
    "recall": 0.951,
    "leaks": 0,
-   "ms": 606,
+   "ms": 411,
+   "passes": 1
+  },
+  {
+   "id": "syn-ofloxacin",
+   "variant": "vial",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "right",
+    "ndc": "empty",
+    "directions": "right"
+   },
+   "keyRecall": 0.667,
+   "cer": 0.48,
+   "precision": 0.458,
+   "recall": 0.508,
+   "leaks": 0,
+   "ms": 692,
+   "passes": 1
+  },
+  {
+   "id": "syn-ofloxacin",
+   "variant": "glare",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
+   "fields": {
+    "name": "empty",
+    "strength": "right",
+    "form": "empty",
+    "route": "right",
+    "ndc": "empty",
+    "directions": "right"
+   },
+   "keyRecall": 1,
+   "cer": 0.221,
+   "precision": 0.908,
+   "recall": 0.908,
+   "leaks": 0,
+   "ms": 672,
    "passes": 1
   },
   {
@@ -4829,7 +4534,6 @@
    "variant": "rotation",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -4843,7 +4547,7 @@
    "precision": 0,
    "recall": 0,
    "leaks": 0,
-   "ms": 875,
+   "ms": 679,
    "passes": 1
   },
   {
@@ -4851,7 +4555,6 @@
    "variant": "vial",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4862,10 +4565,10 @@
    },
    "keyRecall": 0.333,
    "cer": 0.645,
-   "precision": 0.432,
+   "precision": 0.427,
    "recall": 0.525,
    "leaks": 0,
-   "ms": 818,
+   "ms": 783,
    "passes": 1
   },
   {
@@ -4873,7 +4576,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4886,7 +4588,7 @@
    "precision": 1,
    "recall": 1,
    "leaks": 0,
-   "ms": 503,
+   "ms": 362,
    "passes": 1
   },
   {
@@ -4894,7 +4596,6 @@
    "variant": "lowlight",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4908,7 +4609,7 @@
    "precision": 0.966,
    "recall": 0.934,
    "leaks": 0,
-   "ms": 837,
+   "ms": 578,
    "passes": 1
   },
   {
@@ -4916,7 +4617,6 @@
    "variant": "perspective",
    "set": "human",
    "kind": "synthetic-pharmacy",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4926,11 +4626,11 @@
     "directions": "right"
    },
    "keyRecall": 0.667,
-   "cer": 0.203,
+   "cer": 0.2,
    "precision": 0.947,
    "recall": 0.885,
    "leaks": 0,
-   "ms": 836,
+   "ms": 625,
    "passes": 1
   },
   {
@@ -4938,7 +4638,6 @@
    "variant": "vial",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -4951,28 +4650,28 @@
    "precision": 0.667,
    "recall": 0.83,
    "leaks": 0,
-   "ms": 730,
+   "ms": 616,
    "passes": 1
   },
   {
-   "id": "syn-vet-prednisolone",
-   "variant": "cylinder",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "local": false,
+   "id": "syn-ventolin",
+   "variant": "lowlight",
+   "set": "human",
+   "kind": "synthetic-pharmacy",
    "fields": {
     "name": "right",
     "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "right"
+    "form": "empty",
+    "route": "wrong",
+    "ndc": "empty",
+    "directions": "wrong"
    },
-   "keyRecall": 1,
-   "cer": 0.022,
-   "precision": 0.981,
-   "recall": 0.962,
+   "keyRecall": 0.667,
+   "cer": 0.42,
+   "precision": 0.6,
+   "recall": 0.838,
    "leaks": 0,
-   "ms": 572,
+   "ms": 1858,
    "passes": 1
   },
   {
@@ -4980,7 +4679,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -4993,29 +4691,67 @@
    "precision": 1,
    "recall": 1,
    "leaks": 0,
-   "ms": 407,
+   "ms": 374,
    "passes": 1
   },
   {
-   "id": "syn-ventolin",
-   "variant": "lowlight",
-   "set": "human",
-   "kind": "synthetic-pharmacy",
-   "local": false,
+   "id": "syn-vet-prednisolone",
+   "variant": "cylinder",
+   "set": "pet",
+   "kind": "synthetic-vet",
    "fields": {
     "name": "right",
     "strength": "right",
-    "form": "empty",
-    "route": "wrong",
-    "ndc": "empty",
-    "directions": "wrong"
+    "form": "right",
+    "route": "right",
+    "directions": "right"
    },
-   "keyRecall": 0.667,
-   "cer": 0.423,
-   "precision": 0.6,
-   "recall": 0.838,
+   "keyRecall": 1,
+   "cer": 0.022,
+   "precision": 0.981,
+   "recall": 0.962,
    "leaks": 0,
-   "ms": 2459,
+   "ms": 531,
+   "passes": 1
+  },
+  {
+   "id": "syn-vet-carprofen",
+   "variant": "perspective",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "right"
+   },
+   "keyRecall": 0.5,
+   "cer": 0.025,
+   "precision": 0.925,
+   "recall": 0.925,
+   "leaks": 0,
+   "ms": 554,
+   "passes": 1
+  },
+  {
+   "id": "syn-vet-gabapentin",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "right"
+   },
+   "keyRecall": 0.5,
+   "cer": 0,
+   "precision": 1,
+   "recall": 1,
+   "leaks": 0,
+   "ms": 373,
    "passes": 1
   },
   {
@@ -5023,7 +4759,6 @@
    "variant": "rotation",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -5037,28 +4772,7 @@
    "precision": 0,
    "recall": 0,
    "leaks": 0,
-   "ms": 1180,
-   "passes": 1
-  },
-  {
-   "id": "syn-vet-carprofen",
-   "variant": "perspective",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "local": false,
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "right"
-   },
-   "keyRecall": 0.5,
-   "cer": 0.025,
-   "precision": 0.925,
-   "recall": 0.925,
-   "leaks": 0,
-   "ms": 653,
+   "ms": 954,
    "passes": 1
   },
   {
@@ -5066,62 +4780,19 @@
    "variant": "vial",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
+    "name": "empty",
+    "strength": "wrong",
+    "form": "empty",
     "route": "right",
     "directions": "right"
    },
    "keyRecall": 0.5,
-   "cer": 0.669,
-   "precision": 0.514,
-   "recall": 0.717,
+   "cer": 0.678,
+   "precision": 0.487,
+   "recall": 0.698,
    "leaks": 0,
-   "ms": 810,
-   "passes": 1
-  },
-  {
-   "id": "syn-vet-gabapentin",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "local": false,
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "right"
-   },
-   "keyRecall": 0.5,
-   "cer": 0,
-   "precision": 1,
-   "recall": 1,
-   "leaks": 0,
-   "ms": 435,
-   "passes": 1
-  },
-  {
-   "id": "syn-vet-gabapentin",
-   "variant": "cylinder",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "local": false,
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "right"
-   },
-   "keyRecall": 0.5,
-   "cer": 0.145,
-   "precision": 0.925,
-   "recall": 0.942,
-   "leaks": 0,
-   "ms": 512,
+   "ms": 688,
    "passes": 1
   },
   {
@@ -5129,7 +4800,6 @@
    "variant": "vial",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -5139,10 +4809,10 @@
    },
    "keyRecall": 0,
    "cer": 0.352,
-   "precision": 0.606,
+   "precision": 0.597,
    "recall": 0.769,
    "leaks": 0,
-   "ms": 612,
+   "ms": 570,
    "passes": 1
   },
   {
@@ -5150,7 +4820,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -5163,7 +4832,27 @@
    "precision": 0.98,
    "recall": 1,
    "leaks": 0,
-   "ms": 396,
+   "ms": 327,
+   "passes": 1
+  },
+  {
+   "id": "syn-vet-gabapentin",
+   "variant": "cylinder",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "right"
+   },
+   "keyRecall": 0.5,
+   "cer": 0.148,
+   "precision": 0.925,
+   "recall": 0.942,
+   "leaks": 0,
+   "ms": 554,
    "passes": 1
   },
   {
@@ -5171,7 +4860,6 @@
    "variant": "glare",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -5184,49 +4872,7 @@
    "precision": 0.979,
    "recall": 0.885,
    "leaks": 0,
-   "ms": 551,
-   "passes": 1
-  },
-  {
-   "id": "syn-vet-amoxicillin",
-   "variant": "vial",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "local": false,
-   "fields": {
-    "name": "wrong",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "wrong"
-   },
-   "keyRecall": 0,
-   "cer": 0.327,
-   "precision": 0.627,
-   "recall": 0.771,
-   "leaks": 0,
-   "ms": 667,
-   "passes": 1
-  },
-  {
-   "id": "syn-vet-cephalexin",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "local": false,
-   "fields": {
-    "name": "right",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "right"
-   },
-   "keyRecall": 0.5,
-   "cer": 0,
-   "precision": 1,
-   "recall": 1,
-   "leaks": 0,
-   "ms": 412,
+   "ms": 515,
    "passes": 1
   },
   {
@@ -5234,7 +4880,6 @@
    "variant": "blur",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -5247,7 +4892,47 @@
    "precision": 0.98,
    "recall": 1,
    "leaks": 0,
-   "ms": 541,
+   "ms": 461,
+   "passes": 1
+  },
+  {
+   "id": "syn-vet-amoxicillin",
+   "variant": "vial",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "wrong",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "wrong"
+   },
+   "keyRecall": 0,
+   "cer": 0.327,
+   "precision": 0.627,
+   "recall": 0.771,
+   "leaks": 0,
+   "ms": 637,
+   "passes": 1
+  },
+  {
+   "id": "syn-vet-cephalexin",
+   "variant": "flat",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "right",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "right"
+   },
+   "keyRecall": 0.5,
+   "cer": 0,
+   "precision": 1,
+   "recall": 1,
+   "leaks": 0,
+   "ms": 375,
    "passes": 1
   },
   {
@@ -5255,7 +4940,6 @@
    "variant": "lowlight",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -5268,7 +4952,7 @@
    "precision": 0.98,
    "recall": 1,
    "leaks": 0,
-   "ms": 657,
+   "ms": 536,
    "passes": 1
   },
   {
@@ -5276,20 +4960,19 @@
    "variant": "vial",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
     "form": "empty",
-    "route": "right",
-    "directions": "right"
+    "route": "empty",
+    "directions": "wrong"
    },
    "keyRecall": 0.5,
-   "cer": 0.638,
-   "precision": 0.571,
-   "recall": 0.784,
+   "cer": 0.651,
+   "precision": 0.472,
+   "recall": 0.667,
    "leaks": 0,
-   "ms": 773,
+   "ms": 661,
    "passes": 1
   },
   {
@@ -5297,7 +4980,6 @@
    "variant": "glare",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -5306,11 +4988,11 @@
     "directions": "wrong"
    },
    "keyRecall": 0.5,
-   "cer": 0.106,
+   "cer": 0.103,
    "precision": 0.936,
    "recall": 0.863,
    "leaks": 0,
-   "ms": 623,
+   "ms": 535,
    "passes": 1
   },
   {
@@ -5318,7 +5000,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -5331,7 +5012,7 @@
    "precision": 1,
    "recall": 1,
    "leaks": 0,
-   "ms": 403,
+   "ms": 347,
    "passes": 1
   },
   {
@@ -5339,7 +5020,6 @@
    "variant": "rotation",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "empty",
@@ -5349,11 +5029,31 @@
     "directions": "empty"
    },
    "keyRecall": 0,
-   "cer": 0.811,
+   "cer": 0.807,
    "precision": 0.02,
    "recall": 0.02,
    "leaks": 0,
-   "ms": 607,
+   "ms": 527,
+   "passes": 1
+  },
+  {
+   "id": "syn-vet-metronidazole",
+   "variant": "vial",
+   "set": "pet",
+   "kind": "synthetic-vet",
+   "fields": {
+    "name": "wrong",
+    "strength": "right",
+    "form": "right",
+    "route": "right",
+    "directions": "wrong"
+   },
+   "keyRecall": 0,
+   "cer": 0.366,
+   "precision": 0.563,
+   "recall": 0.692,
+   "leaks": 0,
+   "ms": 650,
    "passes": 1
   },
   {
@@ -5361,7 +5061,6 @@
    "variant": "flat",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -5374,28 +5073,7 @@
    "precision": 0.98,
    "recall": 1,
    "leaks": 0,
-   "ms": 349,
-   "passes": 1
-  },
-  {
-   "id": "syn-vet-metronidazole",
-   "variant": "vial",
-   "set": "pet",
-   "kind": "synthetic-vet",
-   "local": false,
-   "fields": {
-    "name": "wrong",
-    "strength": "right",
-    "form": "right",
-    "route": "right",
-    "directions": "wrong"
-   },
-   "keyRecall": 0,
-   "cer": 0.373,
-   "precision": 0.565,
-   "recall": 0.673,
-   "leaks": 0,
-   "ms": 710,
+   "ms": 348,
    "passes": 1
   },
   {
@@ -5403,7 +5081,6 @@
    "variant": "lowlight",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -5416,7 +5093,7 @@
    "precision": 1,
    "recall": 1,
    "leaks": 0,
-   "ms": 580,
+   "ms": 524,
    "passes": 1
   },
   {
@@ -5424,7 +5101,6 @@
    "variant": "perspective",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -5437,7 +5113,7 @@
    "precision": 1,
    "recall": 1,
    "leaks": 0,
-   "ms": 676,
+   "ms": 593,
    "passes": 1
   },
   {
@@ -5445,7 +5121,6 @@
    "variant": "vial",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "wrong",
     "strength": "right",
@@ -5454,11 +5129,11 @@
     "directions": "wrong"
    },
    "keyRecall": 0,
-   "cer": 0.462,
+   "cer": 0.459,
    "precision": 0.523,
    "recall": 0.708,
    "leaks": 0,
-   "ms": 713,
+   "ms": 654,
    "passes": 1
   },
   {
@@ -5466,7 +5141,6 @@
    "variant": "cylinder",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -5479,7 +5153,7 @@
    "precision": 0.958,
    "recall": 0.958,
    "leaks": 0,
-   "ms": 567,
+   "ms": 489,
    "passes": 1
   },
   {
@@ -5487,7 +5161,6 @@
    "variant": "blur",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "right",
     "strength": "right",
@@ -5500,7 +5173,7 @@
    "precision": 0.239,
    "recall": 1,
    "leaks": 0,
-   "ms": 2880,
+   "ms": 2563,
    "passes": 1
   },
   {
@@ -5508,7 +5181,6 @@
    "variant": "rotation",
    "set": "pet",
    "kind": "synthetic-vet",
-   "local": false,
    "fields": {
     "name": "empty",
     "strength": "wrong",
@@ -5521,66 +5193,7 @@
    "precision": 0,
    "recall": 0,
    "leaks": 0,
-   "ms": 858,
-   "passes": 1
-  },
-  {
-   "id": "user-2",
-   "variant": "flat",
-   "set": "human",
-   "kind": "local-photo",
-   "local": true,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "right",
-    "ndc": "empty",
-    "directions": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 563,
-   "passes": 1
-  },
-  {
-   "id": "user-1",
-   "variant": "flat",
-   "set": "human",
-   "kind": "local-photo",
-   "local": true,
-   "fields": {
-    "name": "empty",
-    "strength": "wrong",
-    "form": "empty",
-    "route": "empty",
-    "ndc": "empty"
-   },
-   "keyRecall": 0.5,
-   "cer": 1.208,
-   "precision": 0.043,
-   "recall": 0.1,
-   "leaks": 0,
-   "ms": 694,
-   "passes": 1
-  },
-  {
-   "id": "user-3",
-   "variant": "flat",
-   "set": "pet",
-   "kind": "local-photo",
-   "local": true,
-   "fields": {
-    "name": "empty",
-    "strength": "empty",
-    "strengthOffered": "empty",
-    "form": "empty",
-    "route": "empty",
-    "directions": "right"
-   },
-   "keyRecall": 0.5,
-   "leaks": 0,
-   "ms": 467,
+   "ms": 718,
    "passes": 1
   }
  ]

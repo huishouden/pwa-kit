@@ -9,8 +9,9 @@
  * gives the strengths a product comes in, offered when the label's own was unreadable.
  */
 
+import type { Route } from './dose';
 import type { LabelCourse } from './medicine-label';
-import type { MedicineNames } from './medicine-names-match';
+import { isLiquidForm, type MedicineNames } from './medicine-names-match';
 import { kt } from './i18n.js';
 
 export const OPENFDA_NDC = 'https://api.fda.gov/drug/ndc.json';
@@ -114,17 +115,18 @@ export function formOf(form: string): string {
 
 const FORM_KIND: [RegExp, string][] = [
   [/chew/, 'chewable'], [/tab|caplet/, 'tablet'], [/cap/, 'capsule'], [/inhal|aerosol/, 'inhaler'], [/spray/, 'spray'], [/inject/, 'injection'],
-  [/ointment|cream|gel/, 'ointment'], [/solution|suspension|syrup|liquid|drop|elixir|concentrate/, 'liquid'], [/powder|granule/, 'powder'], [/patch/, 'patch'],
+  [/ointment|cream|gel/, 'ointment'], [/powder|granule/, 'powder'], [/patch/, 'patch'],
 ];
 /** Whether two form words are the same kind of thing (tablets and "tablet, film coated"). */
 function sameForm(a: string, b: string): boolean {
-  const kind = (f: string) => FORM_KIND.find(([re]) => re.test(f.toLowerCase()))?.[1] ?? f.toLowerCase();
+  const kind = (f: string) => FORM_KIND.find(([re]) => re.test(f.toLowerCase()))?.[1] ?? (isLiquidForm(f) ? 'liquid' : f.toLowerCase());
   return kind(a) === kind(b);
 }
 
-const ROUTE_WORDS: Record<string, string> = {
+/** The NDC directory's routes as the parser's (`./dose` `ROUTES`). */
+const ROUTE_WORDS: Record<string, Route> = {
   oral: 'by mouth', ophthalmic: 'in the eye', otic: 'in the ear', nasal: 'in the nose', topical: 'on the skin', cutaneous: 'on the skin',
-  'respiratory (inhalation)': 'inhaled', subcutaneous: 'by injection', intramuscular: 'by injection', intravenous: 'by injection',
+  'respiratory (inhalation)': 'inhaled', subcutaneous: 'under the skin', intramuscular: 'by injection', intravenous: 'by injection',
 };
 
 function titleCase(s: string): string {
@@ -186,7 +188,7 @@ export async function withListing(course: LabelCourse, options: ListingOptions =
         out.sources!.form = 'names';
       }
       // Strengths of the same kind of product: per tablet for tablets, per mL for liquids.
-      const liquid = /solution|suspension|liquid|drops|injection|syrup/i.test(out.form ?? pet.form);
+      const liquid = isLiquidForm(out.form ?? pet.form);
       const choices = pet.strengths.filter((st) => /\/\s*m?l\b/i.test(st) === liquid);
       if (choices.length && (!out.strength || !choices.some((st) => sameStrength(out.strength!, st)))) {
         if (out.strength) out.assumptions.push(kt('dose.strengthUnlisted', { strength: out.strength, name: pet.name }));

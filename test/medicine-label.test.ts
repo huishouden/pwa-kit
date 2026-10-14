@@ -84,11 +84,21 @@ describe('findRoute and isDispensingLabel', () => {
     ['FOR TOPICAL OPHTHALMIC USE ONLY', 'in the eye'],
     ['Fluticasone propionate nasal spray', 'in the nose'],
     ['Albuterol inhalation aerosol', 'inhaled'],
-    ['For subcutaneous injection', 'by injection'],
-  ])('%s', (text, route) => expect(findRoute(text)).toBe(route));
+    ['For subcutaneous injection', 'under the skin'],
+    ['Injectable solution for intravenous use', 'by injection'],
+  ] as const)('%s', (text, route) => expect(findRoute(text)).toBe(route));
 
   test('a pharmacy label has people and numbers on it; a maker\'s box does not', () => {
     expect(isDispensingLabel(readFileSync(join(dir, 'pharmacy-vial.txt'), 'utf8'))).toBe(true);
     expect(isDispensingLabel(readFileSync(join(dir, 'ciprofloxacin-eye.txt'), 'utf8'))).toBe(false);
+  });
+});
+
+describe('routes', () => {
+  test('no "no name" warning beside a name the package layout found', () => {
+    const p = parseLabel(readFileSync(join(dir, 'ciprofloxacin-eye.txt'), 'utf8'));
+    expect(p.name).toBe('Ciprofloxacin');
+    expect(p.assumptions).toEqual([]);
+    expect(parseLabel('ei) psstR\nEeraple ha mi').assumptions).toEqual(['no medicine name found on the label']);
   });
 });

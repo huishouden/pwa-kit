@@ -32,8 +32,9 @@ const LABEL_WORDS = new Set(
 /** Salts, forms and the like: part of many names, the name of none. */
 const QUALIFIERS = /^(?:ophthalmic|ointment|capsules?|tablets?|solution|suspension|injection|injectable|chewables?|potassium|sodium|hydrochloride|calcium|magnesium|sulfate|acetate|citrate|phosphate|chloride|maleate|besylate|tartrate|succinate|bicarbonate|oxide|extended|release|delayed|topical|vaginal|rectal|transdermal|inhalation|aerosol|powder|cream|lotion|shampoo|spray|nasal|liquid|syrup|elixir|drops|patch|junior|infants?|adults?|womens?|mens|childrens?|vitamin|multi\w*|super|ultra|extra|maximum|original|advanced|complete|natural|instant|rapid|liquid|softgels?|gummies|gummy)$/i;
 
-/** Liquids (solutions, suspensions, injections) apart from tablets, chews and capsules. */
-const liquid = (form: string) => /solution|suspension|liquid|drops|inject|syrup|emulsion/i.test(form);
+/** Liquids (solutions, suspensions, drops, injections) apart from tablets, chews and capsules: the one test, used by the lookup too. */
+export const isLiquidForm = (form: string) => /solution|suspension|liquid|drops?\b|inject|syrup|emulsion|elixir|concentrate/i.test(form);
+const liquid = isLiquidForm;
 
 const key = (w: string) => w.toLowerCase().replace(/[^a-z]/g, '');
 

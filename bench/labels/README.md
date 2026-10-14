@@ -47,26 +47,26 @@ in a saved field. `--save` writes the scores (no text) to `results/`.
 | Field | Human before | Human now | Pet before | Pet now |
 | --- | --- | --- | --- | --- |
 | Name | 17 (13) | 81 (7) | 15 (29) | 71 (11) |
-| Strength | 42 (35) | 79 (7) | 50 (20) | 60 (13) |
+| Strength | 42 (35) | 79 (7) | 49 (21) | 60 (13) |
 | Strength unread, the right one offered to pick | – | 0% of 21 | – | 60% of 30 |
-| Form | 14 (0) | 94 (1) | 26 (2) | 88 (6) |
+| Form | 14 (0) | 94 (1) | 25 (2) | 88 (6) |
 | Route | 20 (5) | 90 (3) | 23 (2) | 82 (7) |
 | NDC | 0 (0) | 61 (4) | 0 (0) | 50 (7) |
-| Directions (pharmacy and vet labels) | 81 (9) | 94 (6) | 70 (11) | 80 (14) |
+| Directions (pharmacy and vet labels) | 84 (6) | 94 (6) | 68 (14) | 80 (14) |
 | Key-token recall | 0.50 | 0.64 | 0.49 | 0.51 |
-| Word precision, synthetic labels | 0.73 | 0.87 | 0.75 | 0.90 |
+| Word precision, synthetic labels | 0.72 | 0.87 | 0.74 | 0.89 |
 | Character error rate, synthetic labels | 0.36 | 0.25 | 0.28 | 0.11 |
 | Private strings in a medicine field | 0 | 0 | 0 | 0 |
-| Seconds per image (one engine, M-series core) | 1.3 | 4.7 | 1.1 | 4.6 |
+| Seconds per image (one engine, M-series core) | 1.2 | 4.3 | 1.1 | 4.2 |
 
 What each step adds (human name / strength, pet name / strength; same images):
 
 | Reader | Parser | Human | Pet |
 | --- | --- | --- | --- |
-| before | before | 17 / 42 | 15 / 50 |
-| before | label fields | 22 / 46 | 18 / 51 |
-| before | + medicine names | 55 / 46 | 62 / 51 |
-| before | + FDA listing | 64 / 60 | 62 / 51 |
+| before | before | 17 / 42 | 15 / 49 |
+| before | label fields | 22 / 46 | 17 / 50 |
+| before | + medicine names | 55 / 46 | 61 / 50 |
+| before | + FDA listing | 64 / 60 | 61 / 50 |
 | now | before | 24 / 58 | 16 / 60 |
 | now | label fields | 31 / 63 | 20 / 60 |
 | now | + medicine names | 69 / 63 | 71 / 60 |
@@ -85,6 +85,9 @@ Reader options tried (with the current parser; human name / strength / NDC, pet 
 | 11, and 11 again with CLAHE | 78 / 77 / 66 | 72 / 68 / 54 | 5.8 |
 | with Sauvola black and white | 70 / 63 / 47 | 63 / 54 / 29 | 7.8 |
 | with a zoomed second read of the text area | 81 / 80 / 66 | 70 / 60 / 50 | 6.2 |
+
+The reader options were compared on the set before the last change to the synthetic labels' dates;
+the main table is the final run.
 
 Dropped: CLAHE (pet strength up 7, human name down 4: a wash, and slower), Sauvola (worse
 everywhere), the zoomed read (no gain), PSM 3 alone. Kept: PSM 11 first, PSM 3 only when needed,

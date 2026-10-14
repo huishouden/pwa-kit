@@ -11,7 +11,7 @@
  * doctor or place, and never by print size alone on a pharmacy or vet label.
  */
 
-import { parseDirections, type ParsedCourse } from './dose';
+import { confidenceOf, parseDirectionsCore, type ParsedCourse, type Route } from './dose';
 import { kt } from './i18n.js';
 import type { Box } from './label-image';
 import type { LabelLine } from './label-read';
@@ -132,19 +132,20 @@ function titleCase(text: string): string {
     .replace(/(^|[\s\-/(])([a-z])/g, (_, sep, c) => sep + c.toUpperCase());
 }
 
-const ROUTES: [RegExp, string][] = [
+const ROUTE_WORDING: [RegExp, Route][] = [
   [/\bophthalm\w*|\bin(?:to)? (?:the |each |both )?eyes?\b|\beye drops\b/i, 'in the eye'],
   [/\botic\b|\bin(?:to)? (?:the |each |both )?ears?\b|\bear drops\b/i, 'in the ear'],
   [/\bnasal\b|\bnostrils?\b|\bin(?:to)? (?:the |each )?nose\b/i, 'in the nose'],
   [/\binhal(?:e|ation|er)\b/i, 'inhaled'],
-  [/\bsubcutaneous|\bintravenous|\bintramuscular|\binjectable\b|\binjection\b/i, 'by injection'],
+  [/\bsubcutaneous|\bunder the skin\b/i, 'under the skin'],
+  [/\bintravenous|\bintramuscular|\binjectable\b|\binjection\b/i, 'by injection'],
   [/\bfor oral use\b|\boral (?:use|solution|suspension)\b|\bby mouth\b|\borally\b|\bfor oral\b|\bchewable\b|\btablets?\b|\bcapsules?\b|\bcaplets?\b/i, 'by mouth'],
   [/\btopical\b|\bon the skin\b|\bexternal use\b|\bapply\b/i, 'on the skin'],
 ];
 
 /** How the medicine is taken, from the label's wording ("For oral use in dogs only", "Ophthalmic"). */
-export function findRoute(text: string): string | undefined {
-  for (const [re, route] of ROUTES) if (re.test(text)) return route;
+export function findRoute(text: string): Route | undefined {
+  for (const [re, route] of ROUTE_WORDING) if (re.test(text)) return route;
   return undefined;
 }
 
@@ -170,7 +171,8 @@ export interface ParseLabelOptions {
  * a field stays empty when the label doesn't show it clearly.
  */
 export function parseLabel(text: string, options: ParseLabelOptions = {}): LabelCourse {
-  const course: LabelCourse = parseDirections(text);
+  const { course: read, nameMissing } = parseDirectionsCore(text);
+  const course: LabelCourse = read;
   const ndc = findNdc(text);
   if (ndc) course.ndc = ndc;
   const dispensing = isDispensingLabel(text);
@@ -191,18 +193,14 @@ export function parseLabel(text: string, options: ParseLabelOptions = {}): Label
   if (!course.name || !nameLooksRight(course.name)) {
     const found = packageName(lines, dispensing, options.isMedicineName);
     if (found) {
-      const hadName = !!course.name;
       course.name = found.name;
       if (found.strength) course.strength = found.strength;
       if (found.form) course.form = found.form;
-      if (!hadName) course.assumptions = course.assumptions.filter((a) => a !== kt('dose.assumeNoName'));
     } else {
       // No name block: a medicine name spelled exactly anywhere ("Each tablet contains lisinopril").
       const exact = options.isMedicineName && exactName(lines, options.isMedicineName);
-      if (exact) {
-        if (!course.name) course.assumptions = course.assumptions.filter((a) => a !== kt('dose.assumeNoName'));
-        course.name = titleCase(exact);
-      } else delete course.name;
+      if (exact) course.name = titleCase(exact);
+      else delete course.name;
     }
   }
   if (!course.strength) {
@@ -236,6 +234,8 @@ export function parseLabel(text: string, options: ParseLabelOptions = {}): Label
     const r = findRoute(lines.filter((l) => !/\bkeep out|\bnot for\b|\bwarning|\bhuman\b/i.test(l.text)).map((l) => l.text).join('\n'));
     if (r) course.route = r;
   }
+  if (!course.name && nameMissing) course.assumptions.push(kt('dose.assumeNoName'));
+  course.confidence = confidenceOf(course);
   return course;
 }
 
