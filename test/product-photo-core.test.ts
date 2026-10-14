@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import answers from './fixtures/product-photo/model-answers.json';
-import { checkProductPhotoRequest, cleanProducts, nameWords, PRODUCT_PHOTO_LIMITS, productPrompt, sameProduct, tidyProductName } from '../src/product-photo-core';
+import { checkProductPhotoRequest, checkProductPhotoResponse, cleanProducts, nameWords, PRODUCT_PHOTO_LIMITS, productPrompt, sameProduct, tidyProductName } from '../src/product-photo-core';
 
 const SECTIONS = ['Dairy & Eggs', 'Pantry & Dry Goods', 'Other'];
 const photo = `data:image/jpeg;base64,${'A'.repeat(400)}`;
@@ -89,3 +89,17 @@ describe('cleanProducts', () => {
     expect(cleanProducts(many, SECTIONS)).toHaveLength(PRODUCT_PHOTO_LIMITS.productsPerPhoto);
   });
 });
+
+describe('checkProductPhotoResponse', () => {
+  test('keeps what is well formed, as many answers as photos sent; the rest failed', () => {
+    expect(checkProductPhotoResponse({ photos: [{ products: [{ name: 'HEINZ KETCHUP 32 OZ', category: 'Condiments' }] }, { capped: true }, 'x'], capped: 'household', left: 3 }, 3, SECTIONS)).toEqual({
+      photos: [{ products: [{ name: 'Heinz Ketchup' }] }, { capped: true }, { error: 'failed' }],
+      capped: 'household',
+      left: 3,
+    });
+    expect(checkProductPhotoResponse({ photos: [] }, 1, SECTIONS)).toEqual({ photos: [{ error: 'failed' }] });
+    expect(checkProductPhotoResponse({ photos: [{ products: [] }], capped: 'nobody', left: -1 }, 1, SECTIONS)).toEqual({ photos: [{ products: [] }] });
+    expect(checkProductPhotoResponse('nope', 1, SECTIONS)).toBeNull();
+  });
+});
+

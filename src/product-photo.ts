@@ -22,6 +22,7 @@ import {
   PRODUCT_PHOTO_EDGE,
   PRODUCT_PHOTO_LIMITS,
   PRODUCT_PHOTO_PATH,
+  checkProductPhotoResponse,
   nameWords,
   tidyProductName,
   type FoundProduct,
@@ -32,7 +33,7 @@ import {
 export type Fetch = (url: string, init?: RequestInit) => Promise<Response>;
 
 /** Barcode formats printed on retail packages. */
-export const RETAIL_BARCODES = ['ean_13', 'ean_8', 'upc_a', 'upc_e'] as const;
+const RETAIL_BARCODES = ['ean_13', 'ean_8', 'upc_a', 'upc_e'] as const;
 
 /** Whether a GTIN (EAN-8, UPC-A, EAN-13, GTIN-14) has a valid check digit. */
 export function validGtin(code: string): boolean {
@@ -60,8 +61,8 @@ export const canReadBarcodes = (): boolean => typeof (globalThis as { BarcodeDet
 
 /** A retail barcode in the image, read on the device; null when there is none, or the browser can't look. */
 export async function readBarcode(image: Blob): Promise<string | null> {
-  const Detector = (globalThis as { BarcodeDetector?: BarcodeDetectorClass }).BarcodeDetector;
-  if (typeof Detector !== 'function' || typeof createImageBitmap !== 'function') return null;
+  if (!canReadBarcodes() || typeof createImageBitmap !== 'function') return null;
+  const Detector = (globalThis as unknown as { BarcodeDetector: BarcodeDetectorClass }).BarcodeDetector;
   let bitmap: ImageBitmap | undefined;
   try {
     const supported = (await Detector.getSupportedFormats?.()) ?? [...RETAIL_BARCODES];
@@ -77,7 +78,10 @@ export async function readBarcode(image: Blob): Promise<string | null> {
   }
 }
 
-export const OPEN_FOOD_FACTS = 'https://world.openfoodfacts.org';
+const OPEN_FOOD_FACTS = 'https://world.openfoodfacts.org';
+
+/** How long an Open Food Facts lookup may take before the photo goes to the model instead. */
+const LOOKUP_TIMEOUT_MS = 8_000;
 
 interface OffProduct {
   product_name?: string;
@@ -113,6 +117,7 @@ export async function lookupBarcode(code: string, { fetch: fetchImpl, lang = 'en
     const res = await (fetchImpl ?? ((u, i) => fetch(u, i)))(`${OPEN_FOOD_FACTS}/api/v2/product/${code}.json?fields=${fields}`, {
       credentials: 'omit',
       referrerPolicy: 'no-referrer',
+      signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS),
     });
     if (!res.ok) return null;
     const body = (await res.json()) as { status?: number; product?: OffProduct };
@@ -168,6 +173,8 @@ export interface ProductReading {
   capped?: { photos: number; by: PhotoCap };
   /** Photos the household may still send today, when the Worker said. */
   left?: number;
+  /** Why the Worker refused or could not be reached, when it did for some photos and others were read (by barcode). */
+  refused?: ProductPhotoError['reason'];
 }
 
 /**
@@ -185,22 +192,28 @@ export async function readProductPhotos(files: readonly Blob[], options: ReadPro
     if (!reading.products.some((q) => nameWords(q.name).join(' ') === key)) reading.products.push(p);
   };
 
-  const toSend: { photo: number; dataUrl: string }[] = [];
-  for (const [photo, file] of batch.entries()) {
-    if (options.barcodes !== false) {
-      const code = await readBarcode(file);
-      const found = code ? await lookupBarcode(code, { fetch: fetchImpl, lang: options.lang }) : null;
-      if (found) {
-        add({ name: found.name, photo, via: 'barcode', hints: found.hints });
-        continue;
+  // Every photo at once: its barcode and Open Food Facts, else made small for the Worker.
+  type Prepared = { photo: number; barcode?: BarcodeProduct; dataUrl?: string; failed?: true };
+  const prepared: Prepared[] = await Promise.all(
+    batch.map(async (file, photo): Promise<Prepared> => {
+      if (options.barcodes !== false) {
+        const code = await readBarcode(file);
+        const barcode = code ? await lookupBarcode(code, { fetch: fetchImpl, lang: options.lang }) : null;
+        if (barcode) return { photo, barcode };
       }
-    }
-    try {
-      toSend.push({ photo, dataUrl: (await shrinkPhoto(file, { longEdge: PRODUCT_PHOTO_EDGE })).dataUrl });
-    } catch (e) {
-      if (!(e instanceof PhotoError)) throw e;
-      reading.failed++;
-    }
+      try {
+        return { photo, dataUrl: (await shrinkPhoto(file, { longEdge: PRODUCT_PHOTO_EDGE })).dataUrl };
+      } catch (e) {
+        if (!(e instanceof PhotoError)) throw e;
+        return { photo, failed: true };
+      }
+    }),
+  );
+  const toSend: { photo: number; dataUrl: string }[] = [];
+  for (const p of prepared) {
+    if (p.barcode) add({ name: p.barcode.name, photo: p.photo, via: 'barcode', hints: p.barcode.hints });
+    else if (p.dataUrl) toSend.push({ photo: p.photo, dataUrl: p.dataUrl });
+    else reading.failed++;
   }
 
   const base = options.endpoint.replace(/\/+$/, '');
@@ -220,12 +233,12 @@ export async function readProductPhotos(files: readonly Blob[], options: ReadPro
         body: JSON.stringify({ household: options.household, photos: part.map((p) => p.dataUrl), categories: options.categories }),
       });
       if (res.status === 401 || res.status === 403) refused ??= res.status === 401 ? 'sign-in' : 'not-member';
-      else if (res.ok) body = (await res.json().catch(() => null)) as ProductPhotoResponse | null;
+      else if (res.ok) body = checkProductPhotoResponse(await res.json().catch(() => null), part.length, options.categories);
     } catch {
       // Offline, or the Worker unreachable.
     }
-    if (!body || !Array.isArray(body.photos)) refused ??= 'unavailable';
-    answers.push({ part, body: body && Array.isArray(body.photos) ? body : null });
+    if (!body) refused ??= 'unavailable';
+    answers.push({ part, body });
   };
   // The first alone (the Worker then remembers the member for an hour: one household read), then
   // a few at a time, in order of the photos.
@@ -255,5 +268,6 @@ export async function readProductPhotos(files: readonly Blob[], options: ReadPro
   }
   // Nothing read and the Worker never answered: say why, rather than "no products".
   if (refused && !answered && reading.products.length === 0) throw new ProductPhotoError(refused);
+  if (refused && !answered) reading.refused = refused;
   return reading;
 }

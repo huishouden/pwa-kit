@@ -151,6 +151,14 @@ describe('AddByPhotoDialog', () => {
     expect(text()).toContain("1 photo wasn't read: today's photo reading ran out.");
   });
 
+  test('some read by barcode, the rest refused: the checklist, with why', async () => {
+    mount(async () => ({ products: READING.products.slice(2), failed: 1, refused: 'sign-in' }));
+    await choose([jpg('a.jpg'), jpg('b.jpg')]);
+    expect(text()).toContain('Found 1 item');
+    expect(text()).toContain('Sign in again to read photos');
+    expect(text()).not.toContain("couldn't be read");
+  });
+
   test('nothing found, or the service down: try again, or type', async () => {
     mount(async () => ({ products: [], failed: 0 }));
     await choose([jpg('a.jpg')]);

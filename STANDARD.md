@@ -486,8 +486,9 @@ person's photo to a model.
   `BarcodeDetector` and looked up by its number alone; only photos without one leave the device.
 - **Small, once, kept nowhere.** A photo is made small on the device (`shrinkPhoto`, 768 pixels on
   the long side, JPEG) and sent once. The server passes it to the model and forgets it: no storage,
-  no image bytes or names read in any log (counts only). The privacy page (the portal's) says who
-  receives photos and that they are not kept, in every language.
+  no image bytes or names read in any log (counts only). The dialog says so under the picker, and
+  the portal's privacy page must say who receives photos and that they are not kept, in every
+  language, by the release that first offers the feature.
 - **A model that doesn't learn from it.** Workers AI (Cloudflare does not train on what it is sent),
   on the free allocation; never the Gemini Developer API's free tier, which may keep and review
   inputs.

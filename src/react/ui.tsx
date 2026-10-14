@@ -312,10 +312,13 @@ export function CopyButton({ text, what, className = iconButton }: { text: strin
   );
 }
 
+/** A checkbox's own look, for a checkbox that isn't beside a text label (`Checkbox` is). */
+export const checkboxClass = 'h-5 w-5 shrink-0 accent-primary';
+
 export function Checkbox({ checked, onChange, children, describedBy }: { checked: boolean; onChange: (checked: boolean) => void; children: ReactNode; describedBy?: string }) {
   return (
     <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-1 text-base text-ink">
-      <input type="checkbox" className="h-5 w-5 shrink-0 accent-primary" checked={checked} aria-describedby={describedBy} onChange={(e) => onChange(e.target.checked)} />
+      <input type="checkbox" className={checkboxClass} checked={checked} aria-describedby={describedBy} onChange={(e) => onChange(e.target.checked)} />
       <span className="min-w-0">{children}</span>
     </label>
   );

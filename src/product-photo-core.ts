@@ -168,3 +168,22 @@ export function cleanProducts(raw: unknown, categories: readonly string[]): Foun
   }
   return found;
 }
+
+/**
+ * The Worker's answer made safe to use, whatever its version: `photos` kept to `sent` entries, each
+ * one well formed (products through `cleanProducts`, so names are tidied and limited) or else
+ * counted as failed. Null when it is not an answer at all.
+ */
+export function checkProductPhotoResponse(body: unknown, sent: number, categories: readonly string[]): ProductPhotoResponse | null {
+  const b = (body && typeof body === 'object' ? body : null) as Record<string, unknown> | null;
+  if (!b || !Array.isArray(b.photos)) return null;
+  const photos: PhotoAnswer[] = Array.from({ length: sent }, (_, i) => {
+    const a = b.photos instanceof Array ? (b.photos[i] as Record<string, unknown> | undefined) : undefined;
+    if (a && typeof a === 'object' && Array.isArray(a.products)) return { products: cleanProducts({ products: a.products }, categories) };
+    if (a && typeof a === 'object' && a.capped === true) return { capped: true };
+    return { error: 'failed' };
+  });
+  const capped = b.capped === 'household' || b.capped === 'everyone' ? b.capped : undefined;
+  const left = typeof b.left === 'number' && Number.isFinite(b.left) && b.left >= 0 ? Math.floor(b.left) : undefined;
+  return { photos, ...(capped ? { capped } : {}), ...(left !== undefined ? { left } : {}) };
+}

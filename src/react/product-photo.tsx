@@ -25,7 +25,7 @@ import { useId, useRef, useState } from 'react';
 import { Camera } from 'lucide-react';
 import { ImagePicker } from './image-picker';
 import { useKitT } from './i18n';
-import { Dialog, ghostButton, iconButton, inputClass, overline, primaryButton, secondaryButton, selectClass } from './ui';
+import { Dialog, checkboxClass, ghostButton, iconButton, inputClass, overline, primaryButton, secondaryButton, selectClass } from './ui';
 import { ProductPhotoError, type ProductReading, type ReadProduct } from '../product-photo';
 import { nameWords, PRODUCT_PHOTO_LIMITS } from '../product-photo-core';
 
@@ -75,14 +75,14 @@ export function ProductChecklist({ rows, categories, onChange }: ProductChecklis
   return (
     <ul className="grid gap-2" aria-label={kt('productPhoto.title')}>
       {rows.map((r, i) => (
-        <li key={r.key} className={`flex items-start gap-3 rounded-2xl border border-line p-3 ${r.checked ? '' : 'opacity-70'}`} data-product-row="">
+        <li key={r.key} className="flex items-start gap-3 rounded-2xl border border-line p-3" data-product-row="">
           <input
             type="checkbox"
             checked={r.checked}
             onChange={(e) => set(i, { checked: e.target.checked })}
             aria-label={kt('productPhoto.pick', { name: r.name })}
             aria-describedby={r.onList || r.barcode ? `${id}-${i}` : undefined}
-            className="mt-3 h-5 w-5 shrink-0 accent-primary"
+            className={`mt-3 ${checkboxClass}`}
           />
           <div className="min-w-0 flex-1 space-y-2">
             <input value={r.name} onChange={(e) => set(i, { name: e.target.value })} aria-label={kt('productPhoto.name')} className={inputClass} enterKeyHint="done" />
@@ -159,8 +159,9 @@ export function AddByPhotoDialog({ read, categories, sectionFor, onList, onAdd, 
       const reading = await read(files);
       const next = productRows(reading, { sectionFor, onList, existing: rows });
       const said: string[] = [];
-      if (reading.capped) said.push(kt('productPhoto.someCapped', { count: reading.capped.photos }));
-      if (reading.failed) said.push(kt('productPhoto.someFailed', { count: reading.failed }));
+      if (reading.refused) said.push(kt(reading.refused === 'sign-in' ? 'productPhoto.signIn' : reading.refused === 'not-member' ? 'productPhoto.notMember' : 'productPhoto.failed'));
+      else if (reading.capped) said.push(kt('productPhoto.someCapped', { count: reading.capped.photos }));
+      if (reading.failed && !reading.refused) said.push(kt('productPhoto.someFailed', { count: reading.failed }));
       if (next.length > 0) {
         setRows(next);
         setNotes(said);
@@ -239,14 +240,14 @@ export function AddByPhotoDialog({ read, categories, sectionFor, onList, onAdd, 
 
       {step.kind === 'confirm' && (
         <div className="space-y-3">
-          <p className="text-ink" role="status">
-            {kt('productPhoto.found', { count: rows.length })}
-          </p>
-          {notes.map((n) => (
-            <p key={n} className="text-sm text-attention">
-              {n}
-            </p>
-          ))}
+          <div role="status" className="space-y-1">
+            <p className="text-ink">{kt('productPhoto.found', { count: rows.length })}</p>
+            {notes.map((n) => (
+              <p key={n} className="text-sm text-attention">
+                {n}
+              </p>
+            ))}
+          </div>
           <ProductChecklist rows={rows} categories={categories} onChange={setRows} />
           <div className="space-y-2 pt-1">
             <p className={overline}>{kt('productPhoto.another')}</p>

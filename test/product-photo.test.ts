@@ -159,6 +159,17 @@ describe('readProductPhotos', () => {
     await expect(readProductPhotos([photo('a.jpg')], options(offline))).rejects.toEqual(new ProductPhotoError('unavailable'));
   });
 
+  test("a malformed answer from another version of the Worker: that photo failed, the barcode's product kept", async () => {
+    const w = worker([{ photos: ['nonsense', { products: 'no' }] } as unknown as ProductPhotoResponse]);
+    const reading = await readProductPhotos([photo('code-3017620422003.jpg'), photo('a.jpg')], options(w.fetch));
+    expect(reading).toMatchObject({ failed: 1, products: [{ name: 'Nutella', via: 'barcode' }] });
+  });
+
+  test('refused for the rest after a barcode was read: the reason is kept', async () => {
+    const reading = await readProductPhotos([photo('code-3017620422003.jpg'), photo('a.jpg')], options(worker([], 401).fetch));
+    expect(reading).toMatchObject({ refused: 'sign-in', products: [{ name: 'Nutella' }] });
+  });
+
   test('a barcode found while the Worker is down: what was read, with the rest counted', async () => {
     const reading = await readProductPhotos([photo('code-3017620422003.jpg'), photo('a.jpg')], options(worker([], 503).fetch));
     expect(reading).toMatchObject({ failed: 1, products: [{ name: 'Nutella', via: 'barcode' }] });
