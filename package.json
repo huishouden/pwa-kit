@@ -302,6 +302,10 @@
       "types": "./dist/schedule.d.ts",
       "default": "./dist/schedule.js"
     },
+    "./qr": {
+      "types": "./dist/qr.d.ts",
+      "default": "./dist/qr.js"
+    },
     "./security-headers": {
       "types": "./dist/security-headers.d.ts",
       "default": "./dist/security-headers.js"
@@ -309,6 +313,10 @@
     "./site": {
       "types": "./dist/site.d.ts",
       "default": "./dist/site.js"
+    },
+    "./share": {
+      "types": "./dist/share.d.ts",
+      "default": "./dist/share.js"
     },
     "./shared-images": {
       "types": "./dist/shared-images.d.ts",
@@ -487,6 +495,7 @@
     "firebase-tools": "15.32.1",
     "happy-dom": "^20.14.5",
     "ical.js": "2.2.1",
+    "jsqr": "1.4.0",
     "lucide-react": "^1.50.0",
     "node-ical": "0.27.3",
     "react": "^19.3.0",

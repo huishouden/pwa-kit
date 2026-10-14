@@ -21,6 +21,7 @@ import { useKitT } from './i18n';
 import { kt } from '../i18n';
 import { COMPLETE_OPEN, COMPLETE_UNDO } from '../complete';
 import { BAR_TABS_HEIGHT } from '../bar-size';
+import { TOAST_MS } from '../toast';
 
 export const inputClass =
   'w-full min-h-11 rounded-xl border border-line bg-white px-3 py-2.5 text-base text-ink outline-none focus:border-forest-500 focus:ring-2 focus:ring-forest-200 dark:bg-forest-900 dark:focus:ring-forest-700';
@@ -614,7 +615,7 @@ export function Toast({ toast, onDone }: { toast: ToastState | null; onDone: () 
   const kt = useKitT();
   useEffect(() => {
     if (!toast) return;
-    const id = setTimeout(onDone, toast.tone === 'error' ? 9000 : 6000);
+    const id = setTimeout(onDone, TOAST_MS[toast.tone]);
     return () => clearTimeout(id);
   }, [toast, onDone]);
   return (

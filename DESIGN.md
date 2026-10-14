@@ -84,8 +84,8 @@ forest-600. Only the glyph changes between apps: portal `home` (a door), Tasks `
   78px tall with or without tabs; section tabs move to the bottom bar on phones, below), app buttons in the `actions` slot, and on the right "Sign in with Google" or the
   signed-in profile photo (`.hh-avatar`) opening the account menu: name, email, Theme (Automatic,
   Light, Dark), Language (Automatic, English, Español, Nederlands; each language named in itself),
-  the app's own settings ("Tasks settings", `onSettings`), All apps, Privacy, Sign out, and the
-  running version; signed out, a sliders button beside Sign in opens the theme, language, the app's
+  the app's own settings ("Tasks settings", `onSettings`), All apps, Share Huishouden (with a QR
+  code button beside it), Privacy, Sign out, and the running version; signed out, a sliders button beside Sign in opens the theme, language, the app's
   settings and Privacy ("Settings" when the app has some, else "Theme, language and privacy"). An
   app's settings live in that menu, never in a gear of its own beside it. When its words would push
   it onto a second row (a narrow phone, a long name, Spanish), Sign in shows its icon alone (still
@@ -194,6 +194,15 @@ rather than copying the class strings; the shapes are:
   state that is then replaced. When the wait goes badly (a connection error), `note` puts one muted
   status line above the placeholder ("Still connecting. Retrying automatically."), in the caller's
   words and page language, announced politely; the frame stays the opening's.
+- **Share Huishouden:** in the account menu of every app. A tap opens the system share sheet with
+  the suite's name, a one-line pitch and the bare site address; where there is none the link is
+  copied and a toast says "Link copied"; with no clipboard either, the QR view opens instead, with
+  the address to read. The bar shows that toast itself (it serves vanilla and React apps alike),
+  with the apps' timings (`TOAST_MS`); it follows a tap in the bar's own menu, so no app toast is
+  raised at the same moment. The QR code button beside it opens a dialog with a large
+  code (up to 360px; dark modules on a white tile in light and dark, which cameras read best), the
+  address in words, and Copy link (and Share link where there is a share sheet). It shares the
+  suite, never the household or the person sharing.
 - **Update button:** when a new version is ready the app bar shows a small outlined "Update" pill
   before the account; it never interrupts and nothing reloads until it is tapped or the app is put
   away (STANDARD.md "Updates").
