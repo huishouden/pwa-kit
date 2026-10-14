@@ -86,15 +86,20 @@ export function ProductChecklist({ rows, categories, onChange }: ProductChecklis
           />
           <div className="min-w-0 flex-1 space-y-2">
             <input value={r.name} onChange={(e) => set(i, { name: e.target.value })} aria-label={kt('productPhoto.name')} className={inputClass} enterKeyHint="done" />
+            {/* The kit's field classes are full width: each sits in a box that sets its share. */}
             <div className="flex gap-2">
-              <select value={r.category} onChange={(e) => set(i, { category: e.target.value })} aria-label={kt('productPhoto.section')} className={`${selectClass} min-w-0 flex-1`}>
-                {categories.map((c) => (
-                  <option key={c.value} value={c.value}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
-              <input value={r.quantity} onChange={(e) => set(i, { quantity: e.target.value })} aria-label={kt('productPhoto.quantity')} className={`${inputClass} w-20 shrink-0 text-center`} />
+              <div className="min-w-0 flex-1" data-product-section="">
+                <select value={r.category} onChange={(e) => set(i, { category: e.target.value })} aria-label={kt('productPhoto.section')} className={selectClass}>
+                  {categories.map((c) => (
+                    <option key={c.value} value={c.value}>
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="w-20 shrink-0" data-product-quantity="">
+                <input value={r.quantity} onChange={(e) => set(i, { quantity: e.target.value })} aria-label={kt('productPhoto.quantity')} className={`${inputClass} text-center`} />
+              </div>
             </div>
             {(r.onList || r.barcode) && (
               <p id={`${id}-${i}`} className="text-sm text-muted">

@@ -124,6 +124,9 @@ describe('AddByPhotoDialog', () => {
     await act(async () => setValue(names[0], 'Coffee mate creamer, Zero Sugar'));
     const sections = Array.from(document.querySelectorAll('select[aria-label="Section"]')) as HTMLSelectElement[];
     expect(sections[2].value).toBe('Pantry & Dry Goods');
+    // The section takes the row; the quantity a fixed narrow box (the field classes are w-full).
+    expect(sections[0].parentElement!.className).toContain('flex-1');
+    expect(document.querySelector('input[aria-label="Quantity"]')!.parentElement!.className).toContain('w-20');
     await act(async () => boxes[2].click());
     await act(async () => button('Add 1 item')!.click());
     expect(calls.added).toEqual([[{ name: 'Coffee mate creamer, Zero Sugar', category: 'Dairy & Eggs', quantity: '1' }]]);
