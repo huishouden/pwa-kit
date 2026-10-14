@@ -171,7 +171,7 @@ export interface ParseLabelOptions {
  * a field stays empty when the label doesn't show it clearly.
  */
 export function parseLabel(text: string, options: ParseLabelOptions = {}): LabelCourse {
-  const { course: read, nameMissing } = parseDirectionsCore(text);
+  const { course: read, multiLine } = parseDirectionsCore(text);
   const course: LabelCourse = read;
   const ndc = findNdc(text);
   if (ndc) course.ndc = ndc;
@@ -234,7 +234,7 @@ export function parseLabel(text: string, options: ParseLabelOptions = {}): Label
     const r = findRoute(lines.filter((l) => !/\bkeep out|\bnot for\b|\bwarning|\bhuman\b/i.test(l.text)).map((l) => l.text).join('\n'));
     if (r) course.route = r;
   }
-  if (!course.name && nameMissing) course.assumptions.push(kt('dose.assumeNoName'));
+  if (!course.name && multiLine) course.assumptions.push(kt('dose.assumeNoName'));
   course.confidence = confidenceOf(course);
   return course;
 }

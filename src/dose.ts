@@ -342,18 +342,18 @@ function emptyCourse(): ParsedCourse {
  * more. Anything else is returned in `unparsed`.
  */
 export function parseDirections(text: string): ParsedCourse {
-  const { course, nameMissing } = parseDirectionsCore(text);
-  if (nameMissing) course.assumptions.push(kt('dose.assumeNoName'));
+  const { course, multiLine } = parseDirectionsCore(text);
+  if (!course.name && multiLine) course.assumptions.push(kt('dose.assumeNoName'));
   course.confidence = confidenceOf(course);
   return course;
 }
 
 /**
- * `parseDirections` without its last word on the name: `nameMissing` says the text has several
- * lines and none named the medicine, for a caller that looks further (`./medicine-label`) and adds
- * the assumption itself only if it finds none. `confidence` is left to the caller.
+ * `parseDirections` without its last word on the name, for a caller that decides the name itself
+ * (`./medicine-label`): no "no medicine name" assumption and no `confidence`. `multiLine`: the text
+ * has several lines, when a missing name is worth saying.
  */
-export function parseDirectionsCore(text: string): { course: ParsedCourse; nameMissing: boolean } {
+export function parseDirectionsCore(text: string): { course: ParsedCourse; multiLine: boolean } {
   const course = emptyCourse();
   const lines = text
     .replace(/\r/g, '')
@@ -414,7 +414,7 @@ export function parseDirectionsCore(text: string): { course: ParsedCourse; nameM
   const sig = directionLines.join(' ');
   if (sig) parseSig(sig, course);
   course.unparsed.push(...otherLines);
-  return { course, nameMissing: !course.name && !singleLine };
+  return { course, multiLine: !singleLine };
 }
 
 /** Whether a label line carries schedule wording, so a wrapped line joins the directions. */

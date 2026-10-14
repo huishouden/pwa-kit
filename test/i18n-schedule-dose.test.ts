@@ -27,7 +27,7 @@ describe('schedule and dose text in Spanish and Dutch', () => {
     expect(routeWords('in the eye')).toBe('In het oog');
     expect(toMedCourse(parseDirections('Give 1 tablet under the skin daily'), { startDate: '2031-01-06' }).notes).toBe('Onder de huid');
     await setLangForTests('es');
-    expect(routeWords('by injection')).toBe('Inyectado');
+    expect(routeWords('by injection')).toBe('Por inyección');
   });
 
   test('every schedule, dose and recurring message has the same variables in every language', () => {

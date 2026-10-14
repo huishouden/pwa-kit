@@ -100,5 +100,8 @@ describe('routes', () => {
     expect(p.name).toBe('Ciprofloxacin');
     expect(p.assumptions).toEqual([]);
     expect(parseLabel('ei) psstR\nEeraple ha mi').assumptions).toEqual(['no medicine name found on the label']);
+    // A drug line whose "name" is a person: taken back, and the missing name said.
+    expect(parseLabel('TOBIAS WRENFIELD 10MG\nTake 1 tablet by mouth daily')).toMatchObject({ assumptions: ['no medicine name found on the label'] });
+    expect(parseLabel('TOBIAS WRENFIELD 10MG\nTake 1 tablet by mouth daily').name).toBeUndefined();
   });
 });
