@@ -2,7 +2,8 @@ import { describe, expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { LabelCourse } from '../src/medicine-label';
-import { elevenDigits, matchCode, nameListings, ndcListing, sameStrength, withListing } from '../src/medicine-lookup';
+import { elevenDigits, matchCode, nameListings, ndcListing, sameStrength, withListing, type ListedProduct } from '../src/medicine-lookup';
+import { isNdcShape } from '../src/ndc';
 import { namesMatcher } from '../src/medicine-names-match';
 
 const CADUET = readFileSync(join(import.meta.dir, 'fixtures', 'openfda', 'name-caduet.json'), 'utf8');
@@ -89,32 +90,31 @@ describe('an NDC half read: the medicine named, its listed packages matched on t
   test('two digits off, the strength read decides between its products; only the name is sent', async () => {
     const calls: string[] = [];
     // "58151-064-93" read as "68151-06493" with a digit lost: 5 mg / 10 mg on the label.
-    const out = await withListing(read({ name: 'Caduet', strength: '5 mg/10 mg', codes: ['68151-0493', '0123456789'] }), { fetch: byName(calls), names });
+    const out = await withListing(read({ name: 'Caduet', strength: '5 mg/10 mg' }), { fetch: byName(calls), names, codes: ['68151-0493', '0123456789'] });
     expect(out.ndc).toBe('58151-064-93');
     expect(out.sources).toMatchObject({ ndc: 'fda', name: 'fda' });
-    expect(out.codes).toBeUndefined();
     expect(calls).toEqual(['https://api.fda.gov/drug/ndc.json?search=(brand_name:"Caduet" generic_name:"Caduet")&limit=100']);
   });
 
   test('a clear NDC a digit off that is not listed is put right; a code printed in full for the product stays as printed', async () => {
     const out = await withListing(read({ name: 'Caduet', strength: '5 mg/10 mg', ndc: '58161-064-93' }), { fetch: byName(), names });
     expect(out.ndc).toBe('58151-064-93');
-    const printed = await withListing(read({ name: 'Caduet', strength: '5 mg/10 mg', codes: ['58151-064-930', '58151-064-93'] }), { fetch: byName(), names });
+    const printed = await withListing(read({ name: 'Caduet', strength: '5 mg/10 mg' }), { fetch: byName(), names, codes: ['58151-064-930', '58151-064-93'] });
     expect(printed.ndc).toBe('58151-064-93');
   });
 
   test('nothing is looked up without a name read, or with a name not on the list (a person\'s)', async () => {
     const calls: string[] = [];
-    expect((await withListing(read({ codes: ['58151-064-93'] }), { fetch: byName(calls), names })).ndc).toBeUndefined();
-    expect((await withListing(read({ name: 'Marisol Quenby', codes: ['5815106493'] }), { fetch: byName(calls), names })).ndc).toBeUndefined();
+    expect((await withListing(read({}), { fetch: byName(calls), names, codes: ['58151-064-93'] })).ndc).toBeUndefined();
+    expect((await withListing(read({ name: 'Marisol Quenby' }), { fetch: byName(calls), names, codes: ['5815106493'] })).ndc).toBeUndefined();
     expect(calls).toEqual([]);
   });
 
   test('a code in full NDC shape is looked up only when a name was read, and kept only when it is that medicine', async () => {
     const calls: string[] = [];
-    const cipro = await withListing(read({ name: 'Ciprofloxacin', codes: ['59390-217-02'] }), { fetch: fda(calls) });
+    const cipro = await withListing(read({ name: 'Ciprofloxacin' }), { fetch: fda(calls), codes: ['59390-217-02'] });
     expect(cipro.ndc).toBe('59390-217-02');
-    const other = await withListing(read({ name: 'Lisinopril', codes: ['59390-217-02'] }), { fetch: fda() });
+    const other = await withListing(read({ name: 'Lisinopril' }), { fetch: fda(), codes: ['59390-217-02'] });
     expect(other.ndc).toBeUndefined();
   });
 
@@ -129,5 +129,42 @@ describe('an NDC half read: the medicine named, its listed packages matched on t
   test('labels print the 11-digit form', () => {
     expect(elevenDigits('70518-4742-0')).toBe('70518-4742-00');
     expect(elevenDigits('0069-6180-30')).toBe('00069-6180-30');
+  });
+});
+
+describe('matchCode and nameListings, more', () => {
+  const product = (packages: [string, string][]): ListedProduct => ({
+    brand: 'Example', generic: 'example', strength: '10 mg', form: 'tablet', productNdc: packages[0][0].split('-').slice(0, 2).join('-'),
+    packages: packages.map(([ndc, description]) => ({ ndc, description })),
+  });
+  const two = product([['0069-6180-30', '30 TABLET in 1 BOTTLE'], ['0069-6180-90', '90 TABLET in 1 BOTTLE']]);
+
+  test('two packages of one product equally near: the product\'s code', () => {
+    expect(matchCode(['006961800'], [two])?.ndc).toBe('0069-6180');
+  });
+
+  test('the package size on the label decides between them', () => {
+    expect(matchCode(['006961800'], [two], { text: 'Take 1 tablet daily\n90 Tablets' })?.ndc).toBe('0069-6180-90');
+    expect(matchCode(['006961800'], [two], { text: 'QTY: 30' })?.ndc).toBe('0069-6180-30');
+  });
+
+  test('a name with hundreds of listings: three pages at most, the name alone in every request', async () => {
+    const urls: string[] = [];
+    const page = (n: number) => JSON.stringify({ meta: { results: { total: 450 } }, results: Array.from({ length: 100 }, (_, i) => ({ product_ndc: `1${n}${String(i).padStart(3, '0')}-001`, brand_name: 'Lisinopril', packaging: [] })) });
+    const fetcher = async (url: string) => (urls.push(decodeURIComponent(url)), new Response(page(urls.length)));
+    expect((await nameListings('lisinopril', fetcher)).length).toBe(300);
+    expect(urls).toEqual([0, 100, 200].map((skip) => `https://api.fda.gov/drug/ndc.json?search=(brand_name:"lisinopril" generic_name:"lisinopril")&limit=100${skip ? `&skip=${skip}` : ''}`));
+  });
+
+  test('a fault that is not openFDA\'s is not swallowed', async () => {
+    const names = namesMatcher(['Caduet'], []);
+    const broken = async () => new Response('not json');
+    await expect(withListing(read({ name: 'Caduet' }), { fetch: broken, names, codes: ['5815106493'] })).rejects.toThrow();
+    await expect(withListing(read({ name: 'Caduet' }), { fetch: async () => new Response('', { status: 503 }), names, codes: ['5815106493'] })).resolves.toMatchObject({ name: 'Caduet' });
+  });
+
+  test('isNdcShape', () => {
+    expect(['0069-6180-30', '59390-217-02', '70518-4742-0', '70518-4742-00'].every(isNdcShape)).toBe(true);
+    expect(['555-014-2290', '5939-217-0', '59390-21702', 'Rx-0148217-01'].some(isNdcShape)).toBe(false);
   });
 });

@@ -25,8 +25,8 @@ import { ScanText } from 'lucide-react';
 import { combineLabelTexts } from '../dose';
 import type { LabelReading } from '../label-read';
 import { parseLabel, type LabelCourse } from '../medicine-label';
-import { withListing } from '../medicine-lookup';
-import { medicineNames, type MedicineNames } from '../medicine-names-match';
+import { withListing, type ListingOptions } from '../medicine-lookup';
+import { medicineNames } from '../medicine-names-match';
 import { readLabelLines } from '../ocr';
 import { useKitT } from './i18n';
 import { ImagePicker } from './image-picker';
@@ -64,7 +64,7 @@ export interface LabelScanProps {
   /** Reads the photo (tests); default `readLabelLines`, or `window.__mockLabelText` when set. */
   read?: (photo: Blob, onProgress: (progress: number) => void) => Promise<string | LabelReading>;
   /** The FDA listing step (tests); default `withListing` (openFDA, the NDC only). `null`: never look up. */
-  listing?: ((course: LabelCourse, names?: MedicineNames, text?: string) => Promise<LabelCourse>) | null;
+  listing?: ((course: LabelCourse, options: ListingOptions) => Promise<LabelCourse>) | null;
   /** Photos to read as soon as this shows, such as ones shared in from the gallery (`../shared-images`). */
   images?: File[];
 }
@@ -75,8 +75,8 @@ const defaultRead = (photo: Blob, onProgress: (progress: number) => void) =>
 /** A lookup that takes longer than this is skipped: the label as read is filled in. */
 const LISTING_TIMEOUT_MS = 6000;
 
-const defaultListing = (course: LabelCourse, names?: MedicineNames, text?: string) =>
-  Promise.race([withListing(course, { names, text }), new Promise<LabelCourse>((resolve) => setTimeout(() => resolve(course), LISTING_TIMEOUT_MS))]);
+const defaultListing = (course: LabelCourse, options: ListingOptions) =>
+  Promise.race([withListing(course, options), new Promise<LabelCourse>((resolve) => setTimeout(() => resolve(course), LISTING_TIMEOUT_MS))]);
 
 export function LabelScan({ onRead, onStrength, intro, read = defaultRead, listing = defaultListing, images }: LabelScanProps) {
   const kt = useKitT();
@@ -110,8 +110,8 @@ export function LabelScan({ onRead, onStrength, intro, read = defaultRead, listi
       const lines = readings.length === 1 && readings[0].lines.length ? readings[0].lines : undefined;
       const names = await medicineNames().catch(() => undefined);
       const codes = [...new Set(readings.flatMap((r) => r.codes))];
-      let parsed = parseLabel(text, { lines, codes, isMedicineName: names?.match });
-      if (listing) parsed = await listing(parsed, names, text).catch(() => parsed);
+      let parsed = parseLabel(text, { lines, isMedicineName: names?.match });
+      if (listing) parsed = await listing(parsed, { names, text, codes }).catch(() => parsed);
       if (id !== run.current) return;
       const filled = onRead(parsed, text).filter((f) => f.value.trim());
       setScan({ status: 'done', text, filled, parsed });

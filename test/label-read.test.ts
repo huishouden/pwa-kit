@@ -75,6 +75,29 @@ describe('readLabelImage', () => {
   });
 });
 
+describe('the code pass', () => {
+  test('no clear NDC but a long run of digits: one more pass reads them, its codes first', async () => {
+    const psms: Psm[] = [];
+    const first = [word('NDC', 0, 0, 40, 20, 90), word('24208-9102', 50, 0, 90, 20, 0), word('Ointment', 0, 60, 200, 40), word('Sterile', 0, 120, 200, 40)];
+    const recognize = async (_bmp: Uint8Array, psm: Psm) => {
+      psms.push(psm);
+      return { words: psms.length >= 2 ? [word('NDC', 0, 0, 40, 20, 90), word('24208-910-55', 50, 0, 90, 20, 70)] : first };
+    };
+    const r = await readLabelImage(gray(300, 300, () => 255), recognize, { turns: false, morePassesBelow: 0 });
+    expect(r.codes).toEqual(['24208-910-55', '24208-9102']);
+    expect(r.passes).toBe(2);
+    expect(psms).toEqual(['11', '11']);
+  });
+
+  test('a clear NDC read: no extra pass', async () => {
+    let passes = 0;
+    const recognize = async () => (passes++, { words: [word('NDC', 0, 0, 40, 20, 90), word('59390-217-02', 50, 0, 90, 20, 95)] });
+    const r = await readLabelImage(gray(300, 300, () => 255), recognize, { turns: false, morePassesBelow: 0 });
+    expect(passes).toBe(1);
+    expect(r.codes).toEqual(['59390-217-02']);
+  });
+});
+
 describe('label-image', () => {
   test('toGray, stretch and clahe keep the size and use the full range', () => {
     const rgba = { width: 2, height: 1, data: new Uint8ClampedArray([255, 0, 0, 255, 0, 0, 255, 255]) };

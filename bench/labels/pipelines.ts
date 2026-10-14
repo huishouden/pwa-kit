@@ -111,8 +111,8 @@ export const PARSERS: Record<string, Parser> = {
   async fda(r) {
     const { medicineNames } = await loadNames();
     const { withListing } = await import('../../src/medicine-lookup');
-    const course: LabelCourse = parseLabel(r.text, { lines: r.lines, codes: r.codes, isMedicineName: (await medicineNames()).match });
-    return withListing(course, { fetch: cachedFetch, names: await medicineNames(), text: r.text });
+    const course: LabelCourse = parseLabel(r.text, { lines: r.lines, isMedicineName: (await medicineNames()).match });
+    return withListing(course, { fetch: cachedFetch, names: await medicineNames(), text: r.text, codes: r.codes });
   },
 };
 

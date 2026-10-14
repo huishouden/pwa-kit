@@ -14,6 +14,7 @@
 import type { Route } from './dose';
 import type { LabelCourse } from './medicine-label';
 import { isLiquidForm, type MedicineNames } from './medicine-names-match';
+import { digitCount, isNdcShape, MIN_CODE_DIGITS } from './ndc';
 import { kt } from './i18n.js';
 
 export const OPENFDA_NDC = 'https://api.fda.gov/drug/ndc.json';
@@ -34,6 +35,21 @@ export interface Listing {
 
 type Fetch = (url: string) => Promise<Response>;
 
+/** openFDA could not be reached or refused: the label is used as read. Anything else is a bug and is thrown. */
+export class OpenFdaError extends Error {}
+
+async function ask(fetcher: Fetch, url: string): Promise<Response | null> {
+  let r: Response;
+  try {
+    r = await fetcher(url);
+  } catch (e) {
+    throw new OpenFdaError(String(e));
+  }
+  if (r.status === 404) return null;
+  if (!r.ok) throw new OpenFdaError(`openFDA ${r.status}`);
+  return r;
+}
+
 /** "500 mg/1" -> "500 mg", "5 mg/g" stays, "90 ug/1" -> "90 mcg". */
 function strengthOf(s: string): string {
   return s.replace(/\bug\b/g, 'mcg').replace(/\/1$/, '').replace(/\/(\d+)\s*([a-z]+)$/i, ' / $1 $2').replace(/\s+/g, ' ').trim();
@@ -45,9 +61,8 @@ export async function ndcListing(ndc: string, fetcher: Fetch = fetch): Promise<L
   if (parts.length !== 3) return null;
   const product = `${parts[0]}-${parts[1]}`;
   for (const q of [`product_ndc:"${product}"`, `packaging.package_ndc:"${ndc}"`]) {
-    const r = await fetcher(`${OPENFDA_NDC}?search=${encodeURIComponent(q)}&limit=1`);
-    if (r.status === 404) continue;
-    if (!r.ok) throw new Error(`openFDA ${r.status}`);
+    const r = await ask(fetcher, `${OPENFDA_NDC}?search=${encodeURIComponent(q)}&limit=1`);
+    if (!r) continue;
     const hit = ((await r.json()) as { results?: any[] }).results?.[0];
     if (hit) return toProduct(hit);
   }
@@ -76,28 +91,18 @@ function toListing(hit: any): Listing {
  * find which one a label's half-read code is. Only the name is sent; callers send only names
  * from the device's medicine list, never other text read off a label.
  */
-export async function nameListings(name: string, fetcher: Fetch = fetch, strength?: string): Promise<ListedProduct[]> {
+export async function nameListings(name: string, fetcher: Fetch = fetch): Promise<ListedProduct[]> {
   const n = name.replace(/["\\]/g, '').trim();
   if (!n) return [];
-  const byName = `(brand_name:"${n}" generic_name:"${n}")`;
-  const page = async (q: string, skip: number) => {
-    const r = await fetcher(`${OPENFDA_NDC}?search=${encodeURIComponent(q)}&limit=100${skip ? `&skip=${skip}` : ''}`);
-    if (r.status === 404) return { total: 0, products: [] as ListedProduct[] };
-    if (!r.ok) throw new Error(`openFDA ${r.status}`);
-    const body = (await r.json()) as { meta?: { results?: { total?: number } }; results?: any[] };
-    return { total: body.meta?.results?.total ?? 0, products: (body.results ?? []).map(toProduct) };
-  };
-  const first = await page(byName, 0);
-  if (first.total <= 100) return first.products;
-  // A common generic has hundreds of listings: narrowed by the strength in mg or mcg when one was
-  // read (only the amount is added to the name), then three pages at most.
-  const amount = strength?.match(/(\d+(?:\.\d+)?)\s*(mg|mcg)\b/i);
-  const q = amount ? `${byName} AND active_ingredients.strength:"${amount[1]} ${amount[2].toLowerCase()}"` : byName;
+  const q = encodeURIComponent(`(brand_name:"${n}" generic_name:"${n}")`);
+  // A common generic has hundreds of listings: three pages at most, narrowed on the device.
   const out: ListedProduct[] = [];
   for (let skip = 0; skip < 300; skip += 100) {
-    const p = amount || skip ? await page(q, skip) : first;
-    out.push(...p.products);
-    if (out.length >= p.total || !p.products.length) break;
+    const r = await ask(fetcher, `${OPENFDA_NDC}?search=${q}&limit=100${skip ? `&skip=${skip}` : ''}`);
+    if (!r) break;
+    const body = (await r.json()) as { meta?: { results?: { total?: number } }; results?: any[] };
+    out.push(...(body.results ?? []).map(toProduct));
+    if (out.length >= (body.meta?.results?.total ?? 0) || !body.results?.length) break;
   }
   return out;
 }
@@ -158,7 +163,7 @@ export function matchCode(codes: string[], products: ListedProduct[], label: { s
   const scored: { ndc: string; product: ListedProduct; distance: number; strength: boolean; size: boolean }[] = [];
   for (const product of products) {
     for (const pkg of product.packages) {
-      const distance = Math.min(...codes.filter((c) => (c.match(/\d/g) ?? []).length >= 8).map((c) => codeDistance(c, pkg.ndc)));
+      const distance = Math.min(...codes.filter((c) => digitCount(c) >= MIN_CODE_DIGITS).map((c) => codeDistance(c, pkg.ndc)));
       if (distance > maxDistance) continue;
       scored.push({ ndc: pkg.ndc, product, distance, strength: !!label.strength && sameStrength(label.strength, product.strength), size: !!label.text && sizeOnLabel(pkg.description, label.text) });
     }
@@ -250,6 +255,8 @@ export interface ListingOptions {
   names?: MedicineNames;
   /** The label's text as read, to tell a product's packages apart by the size the label shows. */
   text?: string;
+  /** The digit runs read on the label (`LabelReading.codes`), the NDC's candidates: matched on the device; only one in full NDC shape is ever looked up. */
+  codes?: string[];
 }
 
 /** The first word of a name that is a medicine on the device's list, spelled as listed: the only text ever sent to look a code up. */
@@ -262,8 +269,6 @@ function listedName(name: string | undefined, names: MedicineNames | undefined):
   return undefined;
 }
 
-/** NDC shapes a dashed code can have: 4-4-2, 5-3-2, 5-4-1, 5-4-2. */
-const NDC_DASHED = /^(?:\d{4}-\d{4}-\d{2}|\d{5}-\d{3}-\d{2}|\d{5}-\d{4}-\d{1,2})$/;
 
 /**
  * The label's NDC when none was read clearly, from the digits read and the name: the device's
@@ -272,20 +277,21 @@ const NDC_DASHED = /^(?:\d{4}-\d{4}-\d{2}|\d{5}-\d{3}-\d{2}|\d{5}-\d{4}-\d{1,2})
  * its product is the medicine named. Without a name read, nothing.
  */
 async function resolveNdc(course: LabelCourse, options: ListingOptions): Promise<{ ndc: string; listing: ListedProduct } | null> {
-  const codes = [...(course.ndc ? [course.ndc] : []), ...(course.codes ?? [])];
+  // Only the name (as listed on the device) or a code in full NDC shape is ever sent.
+  const codes = [...(course.ndc ? [course.ndc] : []), ...(options.codes ?? [])];
   if (!codes.length || !course.name) return null;
   const listed = listedName(course.name, options.names);
   if (listed) {
-    const products = await nameListings(listed, options.fetch, course.strength);
+    const products = await nameListings(listed, options.fetch);
     // An NDC read clearly but not listed as this medicine is corrected by one digit at most.
     const match = matchCode(codes, products, { strength: course.strength, text: options.text }, course.ndc ? 1 : 2);
     if (match) {
       // A code read in full for that product is kept as the label prints it.
-      const printed = codes.find((c) => NDC_DASHED.test(c) && c.startsWith(`${match.listing.productNdc}-`));
+      const printed = codes.find((c) => isNdcShape(c) && c.startsWith(`${match.listing.productNdc}-`));
       return printed ? { ...match, ndc: printed } : match;
     }
   }
-  for (const code of codes.filter((c) => NDC_DASHED.test(c) && c !== course.ndc).slice(0, 2)) {
+  for (const code of codes.filter((c) => isNdcShape(c) && c !== course.ndc).slice(0, 2)) {
     const listing = await ndcListing(code, options.fetch);
     if (listing && sameName(course.name, listing)) return { ndc: code, listing };
   }
@@ -300,7 +306,6 @@ async function resolveNdc(course: LabelCourse, options: ListingOptions): Promise
  */
 export async function withListing(course: LabelCourse, options: ListingOptions = {}): Promise<LabelCourse> {
   const out: LabelCourse = { ...course, sources: { ...course.sources }, assumptions: [...course.assumptions] };
-  delete out.codes;
   const agreesWith = (l: Listing) => !!((course.name && sameName(course.name, l)) || (course.strength && partOf(course.strength, l.strength)));
   let listing: ListedProduct | null = null;
   try {
@@ -317,8 +322,9 @@ export async function withListing(course: LabelCourse, options: ListingOptions =
         listing = found.listing;
       }
     }
-  } catch {
+  } catch (e) {
     // Offline or the service is down: the label as read.
+    if (!(e instanceof OpenFdaError)) throw e;
   }
   if (out.ndc) {
     if (listing) {

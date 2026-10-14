@@ -19,6 +19,7 @@
  * are options, off: they did not help overall.
  */
 
+import { digitCount, findNdc, MIN_CODE_DIGITS } from './ndc';
 import { clahe, crop, darkOnLight, rotate, sauvola, scale, stretch, toBmp, type Box, type Gray } from './label-image';
 
 export interface OcrWord {
@@ -327,7 +328,7 @@ export async function readLabelImage(gray: Gray, recognize: Recognize, options: 
 
   const read = linesOf(words, options);
   let codes = codesOf(words);
-  if (o.codePass && !NDC_SHAPE.test(read.text) && codes.some((c) => digitCount(c) >= 8)) {
+  if (o.codePass && !findNdc(read.text) && codes.length) {
     // An NDC is small print, often on a coloured band or round a curve: local contrast reads its
     // digits better (measured on the label benchmark), at no cost to the rest of the reading.
     codes = [...new Set([...codesOf(await run(clahe(turns ? rotate(base, turns) : base), '11')), ...codes])].slice(0, MAX_CODES);
@@ -335,9 +336,7 @@ export async function readLabelImage(gray: Gray, recognize: Recognize, options: 
   return { ...read, words, codes, turns, passes };
 }
 
-const NDC_SHAPE = /(?<![\d-])\d{4,5}-\d{3,4}-\d{1,2}(?![\d-])/;
 const MAX_CODES = 8;
-const digitCount = (s: string) => (s.match(/\d/g) ?? []).length;
 
 /**
  * Runs of digits on each line of every word read, sure or not (numbers fixed as in `fixNumberWord`,
@@ -350,7 +349,7 @@ export function codesOf(words: OcrWord[]): string[] {
     const text = line.map((w) => fixNumberWord(w.text)).join(' ');
     for (const m of text.matchAll(/\d[\d\s\-‐‑–—]*\d/g)) {
       const run = m[0].replace(/\s+/g, '').replace(/[‐‑–—]/g, '-').replace(/-{2,}/g, '-');
-      if (digitCount(run) >= 8 && digitCount(run) <= 14) out.add(run);
+      if (digitCount(run) >= MIN_CODE_DIGITS && digitCount(run) <= 14) out.add(run);
     }
   }
   return [...out].sort((a, b) => digitCount(b) - digitCount(a)).slice(0, MAX_CODES);
