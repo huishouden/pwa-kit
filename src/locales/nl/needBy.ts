@@ -6,5 +6,6 @@ export default {
   'needBy.tomorrow': 'Morgen nodig',
   'needBy.by': 'Uiterlijk {day} nodig',
   'needBy.overdueYesterday': 'Te laat, was gisteren nodig',
+  'needBy.style': 'short',
   'needBy.overdue': 'Te laat, was {day} nodig',
 } satisfies CatalogueOf<typeof en>;

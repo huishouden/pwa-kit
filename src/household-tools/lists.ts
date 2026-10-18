@@ -8,7 +8,7 @@ import { common, defineTool, idempotency, render, type ToolContext } from './reg
 import { alreadyThere, clip, pick, recordId } from './shared.js';
 import { appName } from './overview.js';
 import { can } from '../role-core.js';
-import { isNeedBy, NEED_TODAY, needByOf, needByUrgency, needByWords, pinNeedBy, STANDARD, WHENEVER, type NeedByOptions } from '../need-by.js';
+import { isNeedBy, NEED_TODAY, needByOf, needByPatch, needByWords, type NeedByCalendar } from '../need-by.js';
 import { midSentence, toYmd, type Ymd } from '../time.js';
 
 // ---- To-dos: Done and Cancel, exactly as the portal applies them ----
@@ -153,7 +153,7 @@ const itemsUrl = (ctx: ToolContext, app: 'groceries' | 'tasks', list: string, it
   ctx.session.link(app, `?list=${encodeURIComponent(list)}${item ? `&item=${encodeURIComponent(item)}` : ''}`);
 
 /** Today and the day of a moment on the person's calendar (the tools run in UTC; `../local-clock`). */
-function calendarOf(ctx: ToolContext): Required<NeedByOptions> {
+function calendarOf(ctx: ToolContext): NeedByCalendar {
   return { today: ctx.clock.today(), dayOf: (at: number) => toYmd(ctx.clock.local(at)) };
 }
 
@@ -241,13 +241,15 @@ export const groceriesAdd = defineTool({
     notes: z.string().max(500).optional(),
   },
   async run(ctx, args) {
-    const { today } = calendarOf(ctx);
-    const needBy = args.need_by !== undefined ? needByDay(args.need_by, today) : args.urgency === NEED_TODAY ? today : null;
+    const cal = calendarOf(ctx);
+    const { today } = cal;
+    const patch = needByPatch({}, { needBy: args.need_by !== undefined ? needByDay(args.need_by, today) : undefined, urgency: args.urgency }, cal);
+    const needBy = patch.needBy ?? null;
+    const urgency = patch.urgency ?? 'Standard';
     const list = chooseList(await lists(ctx), args.list, false);
     const name = clip(args.name, 200);
     const quantity = clip(args.quantity, 40) || '1';
     const category = args.category ?? 'Other';
-    const urgency = needByUrgency(needBy, today, args.urgency ?? STANDARD);
     const now = ctx.clock.now();
     const id = await recordId(ctx.session.props.connectionId, 'groceries_add', args.idempotency_key);
     const base = `households/${ctx.here.id}`;
@@ -326,8 +328,16 @@ export const groceriesCheck = defineTool({
   },
 });
 
+/** Firestore's generated document ids: 20 letters and digits. */
+const ITEM_ID = /^[A-Za-z0-9]{20}$/;
+
 /** The open shopping-list item a tool names: by id, else by name (one match), on the lists given. */
 async function findOpenItem(ctx: ToolContext, shopping: List[], wanted: string): Promise<Doc> {
+  // An id from `groceries_list` costs one read, found or not; a name searches the open items.
+  if (ITEM_ID.test(wanted)) {
+    const doc = await ctx.session.db.get(`households/${ctx.here.id}/items/${wanted}`);
+    if (doc && doc.data.completed === false && shopping.some((l) => l.id === doc.data.listId)) return doc;
+  }
   const candidates = await openItems(ctx, shopping.map((l) => l.id));
   const { found, ambiguous } = pick(candidates, wanted, (d) => d.id, (d) => String(d.data.name ?? ''));
   if (!found) throw new UserError(ambiguous ? 'groceries.ambiguous' : 'groceries.notFound', { name: wanted, options: (ambiguous ?? []).map((d) => String(d.data.name)).join(', ') });
@@ -362,12 +372,7 @@ export const groceriesUpdate = defineTool({
     const mine = !!found.data.by && found.data.by === ctx.session.email;
     if (!can(ctx.here.role, 'edit-others') && !mine) throw new UserError('groceries.notYours', { name });
 
-    const changes: Record<string, unknown> = {};
-    if (asked) Object.assign(changes, { needBy: asked, urgency: needByUrgency(asked, today) });
-    else if (clearing) Object.assign(changes, { needBy: null, urgency: needByUrgency(null, today, args.urgency ?? (found.data.urgency === WHENEVER ? WHENEVER : STANDARD)) });
-    else if (args.urgency === NEED_TODAY) Object.assign(changes, { needBy: today, urgency: NEED_TODAY });
-    else if (args.urgency) Object.assign(changes, { needBy: null, urgency: args.urgency });
-    else Object.assign(changes, pinNeedBy(found.data, cal));
+    const changes: Record<string, unknown> = { ...needByPatch(found.data, { needBy: clearing ? null : asked ?? undefined, urgency: args.urgency }, cal) };
     if (args.quantity !== undefined) changes.quantity = clip(args.quantity, 40) || '1';
     if (args.notes !== undefined) changes.notes = clip(args.notes, 500);
     const now = ctx.clock.now();

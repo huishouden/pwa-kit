@@ -19,7 +19,7 @@
  * Apps pin a guessed day when they next write the item (`pinNeedBy`), so the guess stops moving.
  */
 import { addDays, daysBetween, isYmd, shortDate, toYmd, weekday, weekdayName, type Ymd } from './time.js';
-import { capitalize, getLocale, kt } from './i18n.js';
+import { capitalize, kt } from './i18n.js';
 
 /** `urgency` as stored, in English. */
 export const NEED_TODAY = 'Need Today';
@@ -46,11 +46,17 @@ export interface NeedBy {
   guessed: boolean;
 }
 
-export interface NeedByOptions {
+/** The reader's calendar: today, and the day a moment falls on. One calendar, so both come together. */
+export interface NeedByCalendar {
   /** Today on the reader's calendar. */
   today: Ymd;
-  /** The calendar day of a moment (ms) on the reader's calendar. Default the runtime's local day. */
-  dayOf?: (t: number) => Ymd;
+  /** The calendar day of a moment (ms) on the reader's calendar. */
+  dayOf: (t: number) => Ymd;
+}
+
+/** The device's calendar, for apps in the browser. Servers build theirs from the person's time zone. */
+export function deviceCalendar(now: number = Date.now()): NeedByCalendar {
+  return { today: toYmd(now), dayOf: toYmd };
 }
 
 const moment = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null);
@@ -59,7 +65,7 @@ const moment = (v: unknown): number | null => (typeof v === 'number' && Number.i
 export const isNeedBy = (v: unknown): v is Ymd => isYmd(v);
 
 /** The day an item is needed by, or null when it has none. See the module comment for the rule. */
-export function needByOf(item: NeedByFields, { today, dayOf = toYmd }: NeedByOptions): NeedBy | null {
+export function needByOf(item: NeedByFields, { today, dayOf }: NeedByCalendar): NeedBy | null {
   const stored = isNeedBy(item.needBy) ? item.needBy : null;
   if (item.urgency !== NEED_TODAY) return stored ? { day: stored, guessed: false } : null;
   const at = moment(item.updatedAt) ?? moment(item.createdAt);
@@ -78,9 +84,39 @@ export function needByUrgency(day: Ymd | null | undefined, today: Ymd, undated: 
  * What to add to a write of an item whose day was guessed, so it keeps that day: `{ needBy }`, or
  * nothing. Writes that set `needBy` themselves don't need it.
  */
-export function pinNeedBy(item: NeedByFields, options: NeedByOptions): { needBy: Ymd } | Record<string, never> {
-  const n = needByOf(item, options);
+export function pinNeedBy(item: NeedByFields, calendar: NeedByCalendar): { needBy: Ymd } | Record<string, never> {
+  const n = needByOf(item, calendar);
   return n?.guessed ? { needBy: n.day } : {};
+}
+
+/** What a writer asks for: a day (or null for none), and/or an `urgency` as the older words say it. */
+export interface NeedByChange {
+  needBy?: Ymd | null;
+  urgency?: string;
+}
+
+/**
+ * The `needBy` and `urgency` to write for a change, the one rule every writer (the apps, the tools)
+ * applies, so `urgency` always agrees with `needBy`:
+ * - a day: that day, and 'Need Today' when it is today or past, else 'Standard';
+ * - null (no day): no day, and the asked 'Standard' or 'Whenever', else the item's 'Whenever', else
+ *   'Standard' (an asked 'Need Today' is a day, so it can't come with none);
+ * - only `urgency`: 'Need Today' is today; 'Standard' or 'Whenever' clear the day;
+ * - neither: a guessed day pinned (`pinNeedBy`), else nothing.
+ * For a new item pass `{}` as the item; nothing asked is then `{ urgency: 'Standard' }`.
+ */
+export function needByPatch(item: NeedByFields, change: NeedByChange, calendar: NeedByCalendar): { needBy?: Ymd | null; urgency?: string } {
+  const { today } = calendar;
+  const asked = change.urgency === STANDARD || change.urgency === WHENEVER || change.urgency === NEED_TODAY ? change.urgency : undefined;
+  if (change.needBy) return { needBy: change.needBy, urgency: needByUrgency(change.needBy, today) };
+  if (change.needBy === null) {
+    const undated = asked && asked !== NEED_TODAY ? asked : item.urgency === WHENEVER ? WHENEVER : STANDARD;
+    return { needBy: null, urgency: undated };
+  }
+  if (asked === NEED_TODAY) return { needBy: today, urgency: NEED_TODAY };
+  if (asked) return { needBy: null, urgency: asked };
+  const isNew = item.urgency === undefined && item.needBy === undefined && item.createdAt === undefined;
+  return isNew ? { urgency: STANDARD } : pinNeedBy(item, calendar);
 }
 
 export type NeedByState = 'overdue' | 'today' | 'soon' | 'later';
@@ -97,17 +133,15 @@ export function needByState(day: Ymd, today: Ymd, soonDays = NEED_BY_SOON_DAYS):
 export const needByUrgent = (day: Ymd, today: Ymd): boolean => day <= today;
 
 /**
- * A weekday as a need-by line writes it: short where the language's abbreviation reads clearly
- * ("Tue", "di"), the whole word in Spanish, whose "mar" (martes) reads as "sea".
+ * The day within the coming week by name, else the date: "Tue", "Oct 28" ("Dec 2, 2032" in another
+ * year). The catalogue's `needBy.style` says how long: 'short' where the abbreviations read clearly
+ * ("Tue", "di", "28 okt"), 'long' in Spanish, whose "mar" (martes) reads as "sea" and whose date
+ * needs its "de" ("28 de octubre").
  */
-function weekdayWord(day: Ymd): string {
-  return weekdayName(weekday(day), { short: !getLocale().startsWith('es') });
-}
-
-/** The day within the coming week by name, else the date: "Tue", "Oct 28" ("Dec 2, 2032" in another year). */
 function dayWord(day: Ymd, today: Ymd): string {
-  const n = Math.abs(daysBetween(today, day));
-  return n < 7 ? weekdayWord(day) : shortDate(day, today);
+  const long = kt('needBy.style') === 'long';
+  if (Math.abs(daysBetween(today, day)) < 7) return weekdayName(weekday(day), { short: !long });
+  return shortDate(day, today, { month: long ? 'long' : 'short' });
 }
 
 /**

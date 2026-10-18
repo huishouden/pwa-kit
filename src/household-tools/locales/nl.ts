@@ -70,7 +70,7 @@ const nl: Record<keyof typeof en, string> = {
   'groceries.addedNeedBy': '{name} op {list} gezet, {when}. [Openen]({url})',
   'groceries.updated': '{name} op {list} gewijzigd: {when}. [Openen]({url})',
   'groceries.noNeedBy': 'geen dag',
-  'groceries.badNeedBy': '„{value}” is geen dag die ik kan lezen. Gebruik JJJJ-MM-DD (de lokale datum van de persoon).',
+  'groceries.badNeedBy': '„{value}” is geen dag die ik kan lezen. Gebruik JJJJ-MM-DD, de lokale datum.',
   'groceries.pastNeedBy': '{value} is al voorbij (vandaag is {today}). Kies vandaag of een latere dag.',
   'groceries.nothingToChange': 'Zeg wat er moet veranderen: need_by, urgency, quantity of notes.',
   'groceries.notYours': 'Met jouw rol kun je alleen wijzigen wat je zelf hebt toegevoegd, en {name} is door iemand anders toegevoegd.',

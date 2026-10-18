@@ -286,10 +286,10 @@ export function dueHeadline(title: string, due: Ymd, today: Ymd, options?: SpanO
 // ---- Dates as words, in the active locale ----
 
 /** "Nov 4" ("4 nov"), with the year when it isn't today's year (or `today` isn't given): "Dec 2, 2030". */
-export function shortDate(s: Ymd, today?: Ymd): string {
+export function shortDate(s: Ymd, today?: Ymd, { month = 'short' }: { month?: 'short' | 'long' } = {}): string {
   const p = ymdParts(s)!;
   const sameYear = !!today && ymdParts(today)?.y === p.y;
-  return tidy(dateFormat(sameYear ? { month: 'short', day: 'numeric' } : { month: 'short', day: 'numeric', year: 'numeric' }).format(noonOf(s)));
+  return tidy(dateFormat(sameYear ? { month, day: 'numeric' } : { month, day: 'numeric', year: 'numeric' }).format(noonOf(s)));
 }
 
 /** "Tuesday, November 4" ("martes, 4 de noviembre"), with the year when it isn't today's year: "Sunday, February 1, 2032". */

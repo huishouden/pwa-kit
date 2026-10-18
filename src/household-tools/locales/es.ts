@@ -70,7 +70,7 @@ const es: Record<keyof typeof en, string> = {
   'groceries.addedNeedBy': 'Añadí {name} a {list}, {when}. [Abrir]({url})',
   'groceries.updated': 'Cambié {name} en {list}: {when}. [Abrir]({url})',
   'groceries.noNeedBy': 'sin día',
-  'groceries.badNeedBy': '«{value}» no es un día que entienda. Usa AAAA-MM-DD (la fecha local de la persona).',
+  'groceries.badNeedBy': '«{value}» no es un día que entienda. Usa AAAA-MM-DD, la fecha local.',
   'groceries.pastNeedBy': '{value} ya pasó (hoy es {today}). Elige hoy o un día posterior.',
   'groceries.nothingToChange': 'Di qué cambiar: need_by, urgency, quantity o notes.',
   'groceries.notYours': 'Tu rol solo puede cambiar lo que añadiste tú, y {name} lo añadió otra persona.',

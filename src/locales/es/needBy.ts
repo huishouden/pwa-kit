@@ -6,5 +6,6 @@ export default {
   'needBy.tomorrow': 'Para mañana',
   'needBy.by': 'Para el {day}',
   'needBy.overdueYesterday': 'Atrasado, era para ayer',
+  'needBy.style': 'long',
   'needBy.overdue': 'Atrasado, era para el {day}',
 } satisfies CatalogueOf<typeof en>;

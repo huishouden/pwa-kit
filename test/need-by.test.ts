@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import { setLangForTests } from '../src/i18n';
 import { LocalClock } from '../src/local-clock';
-import { NEED_TODAY, needByChoiceLabel, needByChoices, needByOf, needByState, needByUrgency, needByUrgent, needByWords, pinNeedBy, STANDARD, WHENEVER } from '../src/need-by';
+import { deviceCalendar, NEED_TODAY, needByChoiceLabel, needByChoices, needByOf, needByPatch, needByState, needByUrgency, needByUrgent, needByWords, pinNeedBy, STANDARD, WHENEVER } from '../src/need-by';
 import { toYmd } from '../src/time';
 
 process.env.TZ = 'UTC';
@@ -9,7 +9,7 @@ process.env.TZ = 'UTC';
 // 2031-01-04 is a Saturday.
 const SAT = '2031-01-04';
 const at = (ymd: string, hour = 12) => Date.parse(`${ymd}T${String(hour).padStart(2, '0')}:00:00Z`);
-const opts = { today: SAT };
+const opts = { today: SAT, dayOf: toYmd };
 
 afterEach(async () => {
   await setLangForTests('en');
@@ -57,7 +57,7 @@ describe('needByOf: the stored day, and the rule for older "Need Today" items', 
     // Set at 22:30 Saturday New York time, 03:30 Sunday UTC.
     const set = Date.parse('2031-01-05T03:30:00Z');
     expect(needByOf({ urgency: NEED_TODAY, updatedAt: set }, cal)).toEqual({ day: SAT, guessed: true });
-    expect(needByOf({ urgency: NEED_TODAY, updatedAt: set }, { today: '2031-01-05' })).toEqual({ day: '2031-01-05', guessed: true });
+    expect(needByOf({ urgency: NEED_TODAY, updatedAt: set }, { today: '2031-01-05', dayOf: toYmd })).toEqual({ day: '2031-01-05', guessed: true });
   });
 
   test('across a clock change: set the evening before Europe falls back, read the morning after', () => {
@@ -134,5 +134,32 @@ describe('state and words', () => {
   test('quick choices across the spring clock change stay one per day', () => {
     // 2031-03-09: US clocks go forward.
     expect(needByChoices('2031-03-08', 3)).toEqual(['2031-03-08', '2031-03-09', '2031-03-10']);
+  });
+});
+
+describe('needByPatch: the fields every writer writes', () => {
+  const cal = { today: SAT, dayOf: toYmd };
+  const dated = { needBy: '2031-01-09', urgency: STANDARD, updatedAt: at(SAT) };
+  test('a day: that day, with Need Today when it is today or past, else Standard', () => {
+    expect(needByPatch(dated, { needBy: '2031-01-07' }, cal)).toEqual({ needBy: '2031-01-07', urgency: STANDARD });
+    expect(needByPatch(dated, { needBy: SAT }, cal)).toEqual({ needBy: SAT, urgency: NEED_TODAY });
+  });
+  test('no day: the asked Standard or Whenever, else the item\'s Whenever, else Standard; Need Today cannot come with none', () => {
+    expect(needByPatch(dated, { needBy: null, urgency: WHENEVER }, cal)).toEqual({ needBy: null, urgency: WHENEVER });
+    expect(needByPatch({ urgency: WHENEVER, needBy: '2031-01-09' }, { needBy: null }, cal)).toEqual({ needBy: null, urgency: WHENEVER });
+    expect(needByPatch(dated, { needBy: null, urgency: NEED_TODAY }, cal)).toEqual({ needBy: null, urgency: STANDARD });
+  });
+  test('only an urgency: Need Today is today; Standard and Whenever clear the day', () => {
+    expect(needByPatch(dated, { urgency: NEED_TODAY }, cal)).toEqual({ needBy: SAT, urgency: NEED_TODAY });
+    expect(needByPatch(dated, { urgency: WHENEVER }, cal)).toEqual({ needBy: null, urgency: WHENEVER });
+  });
+  test('nothing asked: a guessed day is pinned, a stored one left alone, a new item is Standard', () => {
+    expect(needByPatch({ urgency: NEED_TODAY, updatedAt: at('2031-01-02') }, {}, cal)).toEqual({ needBy: '2031-01-02' });
+    expect(needByPatch(dated, {}, cal)).toEqual({});
+    expect(needByPatch({}, {}, cal)).toEqual({ urgency: STANDARD });
+  });
+  test('deviceCalendar: today and the day of a moment on this device', () => {
+    expect(deviceCalendar(at(SAT, 23))).toMatchObject({ today: SAT });
+    expect(deviceCalendar().dayOf(at(SAT))).toBe(SAT);
   });
 });
