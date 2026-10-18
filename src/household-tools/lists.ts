@@ -3,10 +3,13 @@ import { canDo, PERSONAL_TODOS, planTodo, resolveOps, todoOpsAllowed, todoWords,
 import type { Op } from '../store.js';
 import { t } from './i18n.js';
 import { UserError } from './context.js';
-import { Increment, type Doc, type Write } from '../firestore-rest.js';
+import { Increment, type Doc, type FieldFilter, type Write } from '../firestore-rest.js';
 import { common, defineTool, idempotency, render, type ToolContext } from './registry.js';
 import { alreadyThere, clip, pick, recordId } from './shared.js';
 import { appName } from './overview.js';
+import { can } from '../role-core.js';
+import { isNeedBy, NEED_TODAY, needByOf, needByPatch, needByWords, type NeedByCalendar } from '../need-by.js';
+import { midSentence, toYmd, type Ymd } from '../time.js';
 
 // ---- To-dos: Done and Cancel, exactly as the portal applies them ----
 
@@ -149,15 +152,71 @@ const stapleKey = (name: string) => name.trim().toLowerCase().replace(/\s+/g, ' 
 const itemsUrl = (ctx: ToolContext, app: 'groceries' | 'tasks', list: string, item?: string) =>
   ctx.session.link(app, `?list=${encodeURIComponent(list)}${item ? `&item=${encodeURIComponent(item)}` : ''}`);
 
+/** Today and the day of a moment on the person's calendar (the tools run in UTC; `../local-clock`). */
+function calendarOf(ctx: ToolContext): NeedByCalendar {
+  return { today: ctx.clock.today(), dayOf: (at: number) => toYmd(ctx.clock.local(at)) };
+}
+
+const needByArg = z
+  .string()
+  .max(10)
+  .describe('The day it is needed by, local "YYYY-MM-DD" on the person\'s calendar ("deodorant by Tuesday": that Tuesday\'s date). Today or later.');
+
+/** A `need_by` argument as a day, refused up front when it isn't one or has passed. */
+function needByDay(value: string, today: Ymd): Ymd {
+  const v = value.trim();
+  if (!isNeedBy(v)) throw new UserError('groceries.badNeedBy', { value });
+  if (v < today) throw new UserError('groceries.pastNeedBy', { value: v, today });
+  return v;
+}
+
+/**
+ * The open items on these lists. The lists are filtered by Firestore (`IN`, up to 30 values; equality
+ * filters need no composite index), so the open to-dos on Tasks' lists aren't read and billed.
+ */
 async function openItems(ctx: ToolContext, listIds: string[]): Promise<Doc[]> {
-  const docs = await ctx.session.db.query(`households/${ctx.here.id}`, 'items', { where: [{ field: 'completed', op: 'EQUAL', value: false }] });
+  if (!listIds.length) return [];
+  const where: FieldFilter[] = [{ field: 'completed', op: 'EQUAL', value: false }];
+  if (listIds.length <= IN_LIMIT) where.push({ field: 'listId', op: 'IN', value: listIds });
+  const docs = await ctx.session.db.query(`households/${ctx.here.id}`, 'items', { where });
   return docs.filter((d) => listIds.includes(String(d.data.listId)));
+}
+
+/** Firestore's most values in one `IN`. */
+const IN_LIMIT = 30;
+
+/** How far back "put it back on the list" looks for an item ticked off, and how many it reads at most. */
+const RECENTLY_BOUGHT_DAYS = 30;
+const RECENTLY_BOUGHT_MAX = 100;
+
+/**
+ * The bought shopping-list item a tool names: by id (one read), else by name among those ticked off
+ * in the last `RECENTLY_BOUGHT_DAYS` days, newest first, at most `RECENTLY_BOUGHT_MAX` read. Bought
+ * items only grow, so the search is bounded; one range and its own order use the single-field index.
+ */
+async function findBoughtItem(ctx: ToolContext, shopping: List[], wanted: string): Promise<Doc> {
+  const onShopping = (d: Doc) => d.data.completed === true && shopping.some((l) => l.id === d.data.listId);
+  if (ITEM_ID.test(wanted)) {
+    const doc = await ctx.session.db.get(`households/${ctx.here.id}/items/${wanted}`);
+    if (doc && onShopping(doc)) return doc;
+  }
+  const since = ctx.clock.now() - RECENTLY_BOUGHT_DAYS * 86_400_000;
+  const recent = await ctx.session.db.query(`households/${ctx.here.id}`, 'items', {
+    where: [{ field: 'completedAt', op: 'GREATER_THAN_OR_EQUAL', value: since }],
+    orderBy: [{ field: 'completedAt', direction: 'DESCENDING' }],
+    limit: RECENTLY_BOUGHT_MAX,
+  });
+  const { found, ambiguous } = pick(recent.filter(onShopping), wanted, (d) => d.id, (d) => String(d.data.name ?? ''));
+  if (ambiguous) throw new UserError('groceries.ambiguous', { name: wanted, options: ambiguous.map((d) => String(d.data.name)).join(', ') });
+  if (!found) throw new UserError('groceries.notRecentlyBought', { name: wanted, days: RECENTLY_BOUGHT_DAYS });
+  return found;
 }
 
 export const groceriesList = defineTool({
   name: 'groceries_list',
   title: 'Shopping lists',
-  description: "What's on the household's shopping lists (Groceries, Pantry, Costco & Bulk, Hardware… whatever lists it has), not yet bought, by list and category, with urgency and quantity.",
+  description:
+    "What's on the household's shopping lists (Groceries, Pantry, Costco & Bulk, Hardware… whatever lists it has), not yet bought, by list and category, with quantity and the day each is needed by (`need_by`, local YYYY-MM-DD; `need_by_guessed` when an older \"Need Today\" set no day, so it counts from the day it was last changed).",
   kind: 'read',
   input: { ...common, list: z.string().max(80).optional().describe('One list by name or id. Default every shopping list.') },
   async run(ctx, args) {
@@ -165,17 +224,36 @@ export const groceriesList = defineTool({
     const shopping = args.list ? [chooseList(all, args.list, false)] : all.filter((l) => !isTaskList(l));
     const items = await openItems(ctx, shopping.map((l) => l.id));
     ctx.touched('groceries');
+    const day = calendarOf(ctx);
     return render(ctx.lang, () => {
       const lines: string[] = [];
       const data = shopping.map((l) => {
         const mine = items.filter((d) => d.data.listId === l.id).sort((a, b) => String(a.data.category).localeCompare(String(b.data.category)) || Number(a.data.position ?? 0) - Number(b.data.position ?? 0));
         lines.push('', `**[${l.name}](${itemsUrl(ctx, 'groceries', l.id)})** (${mine.length})`);
+        const needs = new Map(mine.map((d) => [d.id, needByOf(d.data, day)]));
         for (const d of mine) {
-          const urgent = d.data.urgency === 'Need Today' ? ` · ${t('groceries.needToday')}` : '';
+          const need = needs.get(d.id);
+          const when = need ? ` · ${needByWords(need.day, day.today)}` : '';
           const qty = d.data.quantity && d.data.quantity !== '1' ? ` × ${d.data.quantity}` : '';
-          lines.push(`- ${d.data.name}${qty}${urgent} · ${d.data.category ?? ''} · id \`${d.id}\``);
+          lines.push(`- ${d.data.name}${qty}${when} · ${d.data.category ?? ''} · id \`${d.id}\``);
         }
-        return { id: l.id, name: l.name, items: mine.map((d) => ({ id: d.id, name: d.data.name, quantity: d.data.quantity, category: d.data.category, urgency: d.data.urgency, notes: d.data.notes || undefined, added_by: d.data.addedBy })) };
+        return {
+          id: l.id,
+          name: l.name,
+          items: mine.map((d) => {
+            const need = needs.get(d.id);
+            return {
+              id: d.id,
+              name: d.data.name,
+              quantity: d.data.quantity,
+              category: d.data.category,
+              urgency: d.data.urgency,
+              ...(need ? { need_by: need.day, ...(need.guessed ? { need_by_guessed: true } : {}) } : {}),
+              notes: d.data.notes || undefined,
+              added_by: d.data.addedBy,
+            };
+          }),
+        };
       });
       return { text: [`**${t('groceries.title')}** · ${ctx.here.name}`, ...lines].join('\n'), data: { household: ctx.here.id, lists: data } };
     });
@@ -195,15 +273,20 @@ export const groceriesAdd = defineTool({
     quantity: z.string().max(40).optional().describe('"2", "1 kg", "a dozen". Default "1".'),
     category: z.enum(GROCERY_CATEGORIES).optional().describe('Aisle category. Default Other.'),
     list: z.string().max(80).optional().describe('List name or id ("Costco & Bulk"). Default Groceries.'),
-    urgency: z.enum(['Standard', 'Need Today', 'Whenever']).optional().describe('Default Standard.'),
+    urgency: z.enum(['Standard', 'Need Today', 'Whenever']).optional().describe('Default Standard. "Need Today" is `need_by` today; with `need_by`, leave it out.'),
+    need_by: needByArg.optional(),
     notes: z.string().max(500).optional(),
   },
   async run(ctx, args) {
+    const cal = calendarOf(ctx);
+    const { today } = cal;
+    const patch = needByPatch({}, { needBy: args.need_by !== undefined ? needByDay(args.need_by, today) : undefined, urgency: args.urgency }, cal);
+    const needBy = patch.needBy ?? null;
+    const urgency = patch.urgency ?? 'Standard';
     const list = chooseList(await lists(ctx), args.list, false);
     const name = clip(args.name, 200);
     const quantity = clip(args.quantity, 40) || '1';
     const category = args.category ?? 'Other';
-    const urgency = args.urgency ?? 'Standard';
     const now = ctx.clock.now();
     const id = await recordId(ctx.session.props.connectionId, 'groceries_add', args.idempotency_key);
     const base = `households/${ctx.here.id}`;
@@ -217,7 +300,8 @@ export const groceriesAdd = defineTool({
       by: ctx.session.email,
       completed: false,
       urgency,
-      position: newItemPosition(urgency === 'Need Today', now),
+      ...(needBy ? { needBy } : {}),
+      position: newItemPosition(urgency === NEED_TODAY, now),
       createdAt: now,
       updatedAt: now,
       completedAt: null,
@@ -236,8 +320,8 @@ export const groceriesAdd = defineTool({
     ctx.touched('groceries', `items/${id}`);
     const url = itemsUrl(ctx, 'groceries', list.id, id);
     return render(ctx.lang, () => ({
-      text: t(repeated ? 'groceries.alreadyAdded' : 'groceries.added', { name, list: list.name, url }),
-      data: { id, list: list.id, name, quantity, category, urgency, url, repeated },
+      text: repeated || !needBy ? t(repeated ? 'groceries.alreadyAdded' : 'groceries.added', { name, list: list.name, url }) : t('groceries.addedNeedBy', { name, list: list.name, url, when: midSentence(needByWords(needBy, today)) }),
+      data: { id, list: list.id, name, quantity, category, urgency, ...(needBy ? { need_by: needBy } : {}), url, repeated },
     }));
   },
 });
@@ -245,7 +329,8 @@ export const groceriesAdd = defineTool({
 export const groceriesCheck = defineTool({
   name: 'groceries_check',
   title: 'Tick off a shopping item',
-  description: 'Marks a shopping-list item bought (or, with `bought: false`, back on the list), as the Groceries app does. Name it or use its `id` from `groceries_list`.',
+  description:
+    'Marks a shopping-list item bought, as the Groceries app does: name it or use its `id` from `groceries_list`. With `bought: false` it puts back on the list an item ticked off in the last 30 days, by name.',
   kind: 'write',
   input: {
     ...common,
@@ -258,14 +343,7 @@ export const groceriesCheck = defineTool({
     const shopping = args.list ? [chooseList(all, args.list, false)] : all.filter((l) => !isTaskList(l));
     const bought = args.bought ?? true;
     const base = `households/${ctx.here.id}`;
-    let candidates: Doc[];
-    if (bought) candidates = await openItems(ctx, shopping.map((l) => l.id));
-    else {
-      const done = await ctx.session.db.query(base, 'items', { where: [{ field: 'completed', op: 'EQUAL', value: true }] });
-      candidates = done.filter((d) => shopping.some((l) => l.id === d.data.listId));
-    }
-    const { found, ambiguous } = pick(candidates, args.item, (d) => d.id, (d) => String(d.data.name ?? ''));
-    if (!found) throw new UserError(ambiguous ? 'groceries.ambiguous' : 'groceries.notFound', { name: args.item, options: (ambiguous ?? []).map((d) => String(d.data.name)).join(', ') });
+    const found = bought ? await findOpenItem(ctx, shopping, args.item) : await findBoughtItem(ctx, shopping, args.item);
     const now = ctx.clock.now();
     const name = String(found.data.name);
     await ctx.session.db.commit([
@@ -277,6 +355,75 @@ export const groceriesCheck = defineTool({
     return render(ctx.lang, () => ({
       text: t(bought ? 'groceries.checked' : 'groceries.unchecked', { name, list: list.name }),
       data: { id: found.id, name, list: list.id, bought },
+    }));
+  },
+});
+
+/** Firestore's generated document ids: 20 letters and digits. */
+const ITEM_ID = /^[A-Za-z0-9]{20}$/;
+
+/** The open shopping-list item a tool names: by id, else by name (one match), on the lists given. */
+async function findOpenItem(ctx: ToolContext, shopping: List[], wanted: string): Promise<Doc> {
+  // An id from `groceries_list` costs one read, found or not; a name searches the open items.
+  if (ITEM_ID.test(wanted)) {
+    const doc = await ctx.session.db.get(`households/${ctx.here.id}/items/${wanted}`);
+    if (doc && doc.data.completed === false && shopping.some((l) => l.id === doc.data.listId)) return doc;
+  }
+  const candidates = await openItems(ctx, shopping.map((l) => l.id));
+  const { found, ambiguous } = pick(candidates, wanted, (d) => d.id, (d) => String(d.data.name ?? ''));
+  if (!found) throw new UserError(ambiguous ? 'groceries.ambiguous' : 'groceries.notFound', { name: wanted, options: (ambiguous ?? []).map((d) => String(d.data.name)).join(', ') });
+  return found;
+}
+
+export const groceriesUpdate = defineTool({
+  name: 'groceries_update',
+  title: 'Change a shopping item',
+  description:
+    'Changes an item still on a shopping list, as the Groceries app\'s edit does: the day it is needed by (`need_by`, or "none"), Standard or Whenever, the quantity or the notes. Name it or use its `id` from `groceries_list`. Admins and members change any item; helpers and kids the ones they added.',
+  kind: 'write',
+  input: {
+    ...common,
+    item: z.string().min(1).max(200).describe('Item id or name ("deodorant").'),
+    list: z.string().max(80).optional().describe('Only look on this list.'),
+    need_by: z.string().max(10).optional().describe('Local "YYYY-MM-DD", today or later, or "none" for no day.'),
+    urgency: z.enum(['Standard', 'Need Today', 'Whenever']).optional().describe('"Need Today" is `need_by` today; Standard or Whenever clear the day.'),
+    quantity: z.string().min(1).max(40).optional(),
+    notes: z.string().max(500).optional().describe('Replaces the notes; "" clears them.'),
+  },
+  async run(ctx, args) {
+    if (args.need_by === undefined && args.urgency === undefined && args.quantity === undefined && args.notes === undefined) throw new UserError('groceries.nothingToChange');
+    const cal = calendarOf(ctx);
+    const { today } = cal;
+    const clearing = args.need_by !== undefined && args.need_by.trim().toLowerCase() === 'none';
+    const asked = args.need_by !== undefined && !clearing ? needByDay(args.need_by, today) : null;
+    const all = await lists(ctx);
+    const shopping = args.list ? [chooseList(all, args.list, false)] : all.filter((l) => !isTaskList(l));
+    const found = await findOpenItem(ctx, shopping, args.item);
+    const name = String(found.data.name);
+    const mine = !!found.data.by && found.data.by === ctx.session.email;
+    if (!can(ctx.here.role, 'edit-others') && !mine) throw new UserError('groceries.notYours', { name });
+
+    const changes: Record<string, unknown> = { ...needByPatch(found.data, { needBy: clearing ? null : asked ?? undefined, urgency: args.urgency }, cal) };
+    if (args.quantity !== undefined) changes.quantity = clip(args.quantity, 40) || '1';
+    if (args.notes !== undefined) changes.notes = clip(args.notes, 500);
+    const now = ctx.clock.now();
+    await ctx.session.db.commit([{ path: found.path, merge: { ...changes, updatedAt: now } }]);
+    ctx.touched('groceries', `items/${found.id}`);
+    const after = needByOf({ ...found.data, ...changes, updatedAt: now }, cal);
+    const list = shopping.find((l) => l.id === found.data.listId)!;
+    const url = itemsUrl(ctx, 'groceries', list.id, found.id);
+    return render(ctx.lang, () => ({
+      text: t('groceries.updated', { name, list: list.name, url, when: after ? midSentence(needByWords(after.day, today)) : t('groceries.noNeedBy') }),
+      data: {
+        id: found.id,
+        name,
+        list: list.id,
+        urgency: (changes.urgency as string | undefined) ?? found.data.urgency,
+        need_by: after?.day ?? null,
+        ...(changes.quantity !== undefined ? { quantity: changes.quantity } : {}),
+        ...(changes.notes !== undefined ? { notes: changes.notes } : {}),
+        url,
+      },
     }));
   },
 });

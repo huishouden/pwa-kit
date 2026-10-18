@@ -20,6 +20,7 @@ import hours from './nl/hours.js';
 import household from './nl/household.js';
 import image from './nl/image.js';
 import invite from './nl/invite.js';
+import needBy from './nl/needBy.js';
 import people from './nl/people.js';
 import photo from './nl/photo.js';
 import places from './nl/places.js';
@@ -55,6 +56,7 @@ export default {
   ...household,
   ...image,
   ...invite,
+  ...needBy,
   ...people,
   ...photo,
   ...places,

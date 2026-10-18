@@ -19,7 +19,7 @@ export type Coverage = { tools: readonly string[]; partly?: string } | { interna
 export const COVERAGE: Readonly<Record<string, Coverage>> = {
   // Tasks and Groceries
   lists: { gap: 'Create, rename or remove a task or grocery list.' },
-  items: { tools: ['groceries_list', 'groceries_add', 'groceries_check', 'tasks_add', 'todos', 'todo_done', 'todo_cancel'], partly: 'Editing or deleting an item, and reading a task list as such.' },
+  items: { tools: ['groceries_list', 'groceries_add', 'groceries_check', 'groceries_update', 'tasks_add', 'todos', 'todo_done', 'todo_cancel'], partly: 'Renaming, moving or deleting a shopping item; editing or deleting a task, and reading a task list as such.' },
   staples: { gap: "Counts Groceries keeps as items are added and ticked (derived); a person sets a staple's category or stops it being suggested." },
   stores: { gap: 'Add or edit a store.' },
   'stores/aisles': { gap: 'Which aisle an item is in at a store.' },

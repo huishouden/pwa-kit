@@ -372,6 +372,10 @@
       "types": "./dist/todo-core.d.ts",
       "default": "./dist/todo-core.js"
     },
+    "./need-by": {
+      "types": "./dist/need-by.d.ts",
+      "default": "./dist/need-by.js"
+    },
     "./time": {
       "types": "./dist/time.d.ts",
       "default": "./dist/time.js"
