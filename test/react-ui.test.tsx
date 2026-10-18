@@ -598,7 +598,7 @@ describe('Chip', () => {
         <Chip active={false} expanded onClick={() => {}}>Pick a date</Chip>
       </div>,
     );
-    const [plain, disclosure] = [...el.querySelectorAll('button')];
+    const [plain, disclosure] = Array.from(el.querySelectorAll('button'));
     expect(plain.getAttribute('aria-pressed')).toBe('true');
     expect(plain.hasAttribute('aria-expanded')).toBe(false);
     expect(disclosure.getAttribute('aria-pressed')).toBe('false');
