@@ -52,12 +52,17 @@ export const overline = 'text-xs font-semibold uppercase tracking-wide text-mute
 export const linkClass =
   '-mx-2 inline-flex min-h-11 items-center gap-1.5 rounded-xl px-2 font-medium text-link underline-offset-4 transition-colors duration-150 hover:bg-tint hover:underline';
 
-export function Chip({ active, onClick, children, label }: { active?: boolean; onClick: () => void; children: ReactNode; label?: string }) {
+/**
+ * A rounded choice. `active` is its pressed state; `expanded`, for a chip that opens something
+ * below it (a date field, more options), says whether that is open (`aria-expanded`).
+ */
+export function Chip({ active, onClick, children, label, expanded }: { active?: boolean; onClick: () => void; children: ReactNode; label?: string; expanded?: boolean }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={active}
+      aria-expanded={expanded}
       aria-label={label}
       className={`inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-full border px-4 text-sm font-medium whitespace-nowrap transition-colors duration-150 ${
         active
