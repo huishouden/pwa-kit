@@ -166,7 +166,7 @@ rather than copying the class strings; the shapes are:
 - **Primary button:** forest-700 fill, white text, `rounded-xl px-4 py-2.5 font-medium`, min height
   44px. One per screen region.
 - **Ghost button:** stone-600 text, no border, stone-100 hover.
-- **Chip / filter:** pill, white with stone-200 border; selected = forest-700 fill, white text.
+- **Chip / filter:** pill, white with stone-200 border; selected = forest-700 fill, white text. A chip that opens something below it (Pick a date) passes `expanded`, so screen readers hear whether it is open.
 - **Suggestion chip** (`SuggestionChip`): something the app learned, offered back to add with a tap; forest-50 pill with a plus. Every learned suggestion can be removed: long press or right-click opens "Don't suggest …", and an Edit link by the shelf's heading shows an × on each (a long press is never the only way in). Removing offers Undo.
 - **Input:** white, stone-200 border, `rounded-xl px-3 py-2.5`, focus forest-500 border + forest-200 ring.
 - **Dialog:** white `rounded-3xl`, black/40 scrim; bottom sheet on phones, centred on tablets;

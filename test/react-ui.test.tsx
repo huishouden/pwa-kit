@@ -590,6 +590,22 @@ test('a suggestion can say what its add button does', () => {
   act(() => root.unmount());
 });
 
+describe('Chip', () => {
+  test('says whether it is pressed, and, when it opens something, whether that is open', () => {
+    const { el } = render(
+      <div>
+        <Chip active onClick={() => {}}>Today</Chip>
+        <Chip active={false} expanded onClick={() => {}}>Pick a date</Chip>
+      </div>,
+    );
+    const [plain, disclosure] = [...el.querySelectorAll('button')];
+    expect(plain.getAttribute('aria-pressed')).toBe('true');
+    expect(plain.hasAttribute('aria-expanded')).toBe(false);
+    expect(disclosure.getAttribute('aria-pressed')).toBe('false');
+    expect(disclosure.getAttribute('aria-expanded')).toBe('true');
+  });
+});
+
 describe('SuggestionChip', () => {
   const pointer = (type: string, init: PointerEventInit = {}) => new PointerEvent(type, { bubbles: true, button: 0, clientX: 10, clientY: 10, ...init });
   function setup(editing = false) {
