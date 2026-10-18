@@ -207,7 +207,8 @@ async function findBoughtItem(ctx: ToolContext, shopping: List[], wanted: string
     limit: RECENTLY_BOUGHT_MAX,
   });
   const { found, ambiguous } = pick(recent.filter(onShopping), wanted, (d) => d.id, (d) => String(d.data.name ?? ''));
-  if (!found) throw new UserError(ambiguous ? 'groceries.ambiguous' : 'groceries.notFound', { name: wanted, options: (ambiguous ?? []).map((d) => String(d.data.name)).join(', ') });
+  if (ambiguous) throw new UserError('groceries.ambiguous', { name: wanted, options: ambiguous.map((d) => String(d.data.name)).join(', ') });
+  if (!found) throw new UserError('groceries.notRecentlyBought', { name: wanted, days: RECENTLY_BOUGHT_DAYS });
   return found;
 }
 
@@ -328,7 +329,8 @@ export const groceriesAdd = defineTool({
 export const groceriesCheck = defineTool({
   name: 'groceries_check',
   title: 'Tick off a shopping item',
-  description: 'Marks a shopping-list item bought (or, with `bought: false`, back on the list), as the Groceries app does. Name it or use its `id` from `groceries_list`.',
+  description:
+    'Marks a shopping-list item bought, as the Groceries app does: name it or use its `id` from `groceries_list`. With `bought: false` it puts back on the list an item ticked off in the last 30 days, by name.',
   kind: 'write',
   input: {
     ...common,

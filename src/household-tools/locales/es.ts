@@ -79,6 +79,7 @@ const es: Record<keyof typeof en, string> = {
   'groceries.checked': 'Marqué {name} como comprado en {list}.',
   'groceries.unchecked': 'Volví a poner {name} en {list}.',
   'groceries.notFound': 'No hay nada llamado «{name}» en las listas de compras.',
+  'groceries.notRecentlyBought': 'No se marcó nada llamado «{name}» en los últimos {days} días. Añádelo de nuevo.',
   'groceries.ambiguous': '«{name}» coincide con más de un artículo: {options}. Di cuál (o usa su id).',
 
   'tasks.added': 'Añadí «{name}» a {list} (para {due}). [Abrir]({url})',

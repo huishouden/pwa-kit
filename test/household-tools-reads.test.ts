@@ -130,4 +130,10 @@ describe('read budgets of the shopping tools that find an item', () => {
       expect(call.result.error).toBeUndefined();
     }, { max: 8, min: 8, label: 'groceries_check bought: false, by name' });
   });
+
+  test('an item bought before the 30 days is not put back, and the answer says why', async () => {
+    const call = await runTool(session(firestore()), toolNamed('groceries_check')!, { item: 'Old 3', bought: false });
+    expect(call.result.error).toBeDefined();
+    expect(call.result.text).toContain('was ticked off in the last 30 days');
+  });
 });

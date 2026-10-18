@@ -79,6 +79,7 @@ const nl: Record<keyof typeof en, string> = {
   'groceries.checked': '{name} afgevinkt op {list}.',
   'groceries.unchecked': '{name} weer op {list} gezet.',
   'groceries.notFound': 'Niets dat „{name}” heet op de boodschappenlijsten.',
+  'groceries.notRecentlyBought': 'Niets dat „{name}” heet is de afgelopen {days} dagen afgevinkt. Voeg het opnieuw toe.',
   'groceries.ambiguous': '„{name}” past bij meer dan één artikel: {options}. Zeg welk (of gebruik het id).',
 
   'tasks.added': '„{name}” op {list} gezet (voor {due}). [Openen]({url})',

@@ -78,6 +78,7 @@ export default {
   'groceries.checked': 'Ticked off {name} on {list}.',
   'groceries.unchecked': 'Put {name} back on {list}.',
   'groceries.notFound': 'Nothing called "{name}" on the shopping lists.',
+  'groceries.notRecentlyBought': 'Nothing called "{name}" was ticked off in the last {days} days. Add it again instead.',
   'groceries.ambiguous': '"{name}" matches more than one item: {options}. Say which (or use its id).',
 
   'tasks.added': 'Added "{name}" to {list} (due {due}). [Open]({url})',
