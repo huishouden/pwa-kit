@@ -3,7 +3,7 @@ import { canDo, PERSONAL_TODOS, planTodo, resolveOps, todoOpsAllowed, todoWords,
 import type { Op } from '../store.js';
 import { t } from './i18n.js';
 import { UserError } from './context.js';
-import { Increment, type Doc, type Write } from '../firestore-rest.js';
+import { Increment, type Doc, type FieldFilter, type Write } from '../firestore-rest.js';
 import { common, defineTool, idempotency, render, type ToolContext } from './registry.js';
 import { alreadyThere, clip, pick, recordId } from './shared.js';
 import { appName } from './overview.js';
@@ -170,9 +170,45 @@ function needByDay(value: string, today: Ymd): Ymd {
   return v;
 }
 
+/**
+ * The open items on these lists. The lists are filtered by Firestore (`IN`, up to 30 values; equality
+ * filters need no composite index), so the open to-dos on Tasks' lists aren't read and billed.
+ */
 async function openItems(ctx: ToolContext, listIds: string[]): Promise<Doc[]> {
-  const docs = await ctx.session.db.query(`households/${ctx.here.id}`, 'items', { where: [{ field: 'completed', op: 'EQUAL', value: false }] });
+  if (!listIds.length) return [];
+  const where: FieldFilter[] = [{ field: 'completed', op: 'EQUAL', value: false }];
+  if (listIds.length <= IN_LIMIT) where.push({ field: 'listId', op: 'IN', value: listIds });
+  const docs = await ctx.session.db.query(`households/${ctx.here.id}`, 'items', { where });
   return docs.filter((d) => listIds.includes(String(d.data.listId)));
+}
+
+/** Firestore's most values in one `IN`. */
+const IN_LIMIT = 30;
+
+/** How far back "put it back on the list" looks for an item ticked off, and how many it reads at most. */
+const RECENTLY_BOUGHT_DAYS = 30;
+const RECENTLY_BOUGHT_MAX = 100;
+
+/**
+ * The bought shopping-list item a tool names: by id (one read), else by name among those ticked off
+ * in the last `RECENTLY_BOUGHT_DAYS` days, newest first, at most `RECENTLY_BOUGHT_MAX` read. Bought
+ * items only grow, so the search is bounded; one range and its own order use the single-field index.
+ */
+async function findBoughtItem(ctx: ToolContext, shopping: List[], wanted: string): Promise<Doc> {
+  const onShopping = (d: Doc) => d.data.completed === true && shopping.some((l) => l.id === d.data.listId);
+  if (ITEM_ID.test(wanted)) {
+    const doc = await ctx.session.db.get(`households/${ctx.here.id}/items/${wanted}`);
+    if (doc && onShopping(doc)) return doc;
+  }
+  const since = ctx.clock.now() - RECENTLY_BOUGHT_DAYS * 86_400_000;
+  const recent = await ctx.session.db.query(`households/${ctx.here.id}`, 'items', {
+    where: [{ field: 'completedAt', op: 'GREATER_THAN_OR_EQUAL', value: since }],
+    orderBy: [{ field: 'completedAt', direction: 'DESCENDING' }],
+    limit: RECENTLY_BOUGHT_MAX,
+  });
+  const { found, ambiguous } = pick(recent.filter(onShopping), wanted, (d) => d.id, (d) => String(d.data.name ?? ''));
+  if (!found) throw new UserError(ambiguous ? 'groceries.ambiguous' : 'groceries.notFound', { name: wanted, options: (ambiguous ?? []).map((d) => String(d.data.name)).join(', ') });
+  return found;
 }
 
 export const groceriesList = defineTool({
@@ -305,15 +341,7 @@ export const groceriesCheck = defineTool({
     const shopping = args.list ? [chooseList(all, args.list, false)] : all.filter((l) => !isTaskList(l));
     const bought = args.bought ?? true;
     const base = `households/${ctx.here.id}`;
-    let found: Doc;
-    if (bought) found = await findOpenItem(ctx, shopping, args.item);
-    else {
-      const done = await ctx.session.db.query(base, 'items', { where: [{ field: 'completed', op: 'EQUAL', value: true }] });
-      const candidates = done.filter((d) => shopping.some((l) => l.id === d.data.listId));
-      const { found: one, ambiguous } = pick(candidates, args.item, (d) => d.id, (d) => String(d.data.name ?? ''));
-      if (!one) throw new UserError(ambiguous ? 'groceries.ambiguous' : 'groceries.notFound', { name: args.item, options: (ambiguous ?? []).map((d) => String(d.data.name)).join(', ') });
-      found = one;
-    }
+    const found = bought ? await findOpenItem(ctx, shopping, args.item) : await findBoughtItem(ctx, shopping, args.item);
     const now = ctx.clock.now();
     const name = String(found.data.name);
     await ctx.session.db.commit([
