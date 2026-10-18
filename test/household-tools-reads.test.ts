@@ -55,6 +55,13 @@ describe('read budgets of the shopping tools that find an item', () => {
     expect(reads).toBe(10);
   });
 
+  test('groceries_check by the id groceries_list gave reads that one item', async () => {
+    await expectReads(async (meter) => {
+      const call = await runTool(session(meter(firestore())), toolNamed('groceries_check')!, { item: ID });
+      expect(call.result.error).toBeUndefined();
+    }, { max: 6, min: 6, label: 'groceries_check by id' });
+  });
+
   test('groceries_update by name reads what groceries_check reads', async () => {
     await expectReads(async (meter) => {
       const call = await runTool(session(meter(firestore())), toolNamed('groceries_update')!, { item: 'Milk', need_by: '2031-01-08' });

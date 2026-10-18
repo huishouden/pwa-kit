@@ -305,14 +305,15 @@ export const groceriesCheck = defineTool({
     const shopping = args.list ? [chooseList(all, args.list, false)] : all.filter((l) => !isTaskList(l));
     const bought = args.bought ?? true;
     const base = `households/${ctx.here.id}`;
-    let candidates: Doc[];
-    if (bought) candidates = await openItems(ctx, shopping.map((l) => l.id));
+    let found: Doc;
+    if (bought) found = await findOpenItem(ctx, shopping, args.item);
     else {
       const done = await ctx.session.db.query(base, 'items', { where: [{ field: 'completed', op: 'EQUAL', value: true }] });
-      candidates = done.filter((d) => shopping.some((l) => l.id === d.data.listId));
+      const candidates = done.filter((d) => shopping.some((l) => l.id === d.data.listId));
+      const { found: one, ambiguous } = pick(candidates, args.item, (d) => d.id, (d) => String(d.data.name ?? ''));
+      if (!one) throw new UserError(ambiguous ? 'groceries.ambiguous' : 'groceries.notFound', { name: args.item, options: (ambiguous ?? []).map((d) => String(d.data.name)).join(', ') });
+      found = one;
     }
-    const { found, ambiguous } = pick(candidates, args.item, (d) => d.id, (d) => String(d.data.name ?? ''));
-    if (!found) throw new UserError(ambiguous ? 'groceries.ambiguous' : 'groceries.notFound', { name: args.item, options: (ambiguous ?? []).map((d) => String(d.data.name)).join(', ') });
     const now = ctx.clock.now();
     const name = String(found.data.name);
     await ctx.session.db.commit([
