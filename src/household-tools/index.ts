@@ -21,7 +21,7 @@ import { UserError, type AuditEntry, type Session } from './context.js';
 import { failureText, render, withHealthNote, type ToolDef, type ToolResult } from './registry.js';
 import { t } from './i18n.js';
 import { calendar, householdHome, households, today, todos } from './overview.js';
-import { groceriesAdd, groceriesCheck, groceriesList, tasksAdd, todoCancel, todoDone } from './lists.js';
+import { groceriesAdd, groceriesCheck, groceriesList, groceriesUpdate, tasksAdd, todoCancel, todoDone } from './lists.js';
 import { billsDue } from './money.js';
 import { petLogDose, petLogFeeding, petLogOuting, petToday } from './pet.js';
 import { petRoutineDone, petRoutines } from './pet-routines.js';
@@ -48,6 +48,7 @@ export const TOOLS: readonly ToolDef[] = [
   groceriesList,
   groceriesAdd,
   groceriesCheck,
+  groceriesUpdate,
   tasksAdd,
   billsDue,
   petToday,
