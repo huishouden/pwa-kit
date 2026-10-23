@@ -129,9 +129,12 @@ async function until(ready: () => boolean) {
   expect(ready()).toBe(true);
 }
 
+// Each test's contacts in a household of its own: one test's contacts and pay details would be
+// read, or tidied away, by the other's lists.
 describe.skipIf(!emulator)('watchContacts', () => {
   test("an app's list reads only the contacts it shows, and no pay details; the whole list reads them all", async () => {
-    const contacts = `households/${household}/contacts`;
+    const home = `${run}-contacts`;
+    const contacts = `households/${home}/contacts`;
     const people = [
       ['vet', { name: 'Example Vet', apps: ['pet'], private: false }],
       ['groomer', { name: 'Example Groomer', apps: ['pet', 'home'], private: false }],
@@ -140,14 +143,14 @@ describe.skipIf(!emulator)('watchContacts', () => {
       ['doctor', { name: 'Example Doctor', apps: ['health'], private: true }],
     ] as const;
     for (const [id, data] of people) await setDoc(doc(otherDb, `${contacts}/${id}`), { ...data, createdAt: NOW, by: ME });
-    await setDoc(doc(otherDb, `households/${household}/contactPay/plumber`), { zelle: 'plumber@example.com', updatedAt: NOW, by: ME });
+    await setDoc(doc(otherDb, `households/${home}/contactPay/plumber`), { zelle: 'plumber@example.com', updatedAt: NOW, by: ME });
 
     const watch = async (options: Parameters<typeof watchContacts>[3], label: string, reads: number) => {
       let seen: { id: string; pay?: unknown }[] | undefined;
       let stop = () => {};
       await expectReads(
         async () => {
-          stop = watchContacts(db, household, (c) => (seen = c), options);
+          stop = watchContacts(db, home, (c) => (seen = c), options);
           await until(() => seen !== undefined);
         },
         { max: reads, min: reads, counter, label },
@@ -166,22 +169,23 @@ describe.skipIf(!emulator)('watchContacts', () => {
   });
 
   test("a contact deleted from an app's list keeps its pay details for Undo; the next whole list over a day later removes them", async () => {
-    const contacts = `households/${household}/contacts`;
-    const payPath = `households/${household}/contactPay/painter`;
+    const home = `${run}-contacts-undo`;
+    const contacts = `households/${home}/contacts`;
+    const payPath = `households/${home}/contactPay/painter`;
     await setDoc(doc(otherDb, `${contacts}/painter`), { name: 'Example Painter', apps: ['home'], private: false, createdAt: NOW, by: ME });
     await setDoc(doc(otherDb, payPath), { venmo: 'example-painter', updatedAt: NOW - 2 * DAY, by: ME });
     let homeList: Contact[] | undefined;
-    let stop = watchContacts(db, household, (c) => (homeList = c), { app: 'home' });
+    let stop = watchContacts(db, home, (c) => (homeList = c), { app: 'home' });
     await until(() => !!homeList?.some((c) => c.id === 'painter'));
     const painter = homeList!.find((c) => c.id === 'painter')!;
     expect(painter.pay).toBeUndefined();
-    await removeContactFromApp(db, household, painter, 'home', ME);
+    await removeContactFromApp(db, home, painter, 'home', ME);
     stop();
     expect((await getDoc(doc(otherDb, `${contacts}/painter`))).exists()).toBe(false);
     expect((await getDoc(doc(otherDb, payPath))).exists()).toBe(true);
     // The portal's list, loaded from the server, tidies the orphan.
     let whole: unknown[] | undefined;
-    stop = watchContacts(db, household, (c) => (whole = c), { by: ME });
+    stop = watchContacts(db, home, (c) => (whole = c), { by: ME });
     await until(() => whole !== undefined);
     for (let i = 0; i < 50 && (await getDoc(doc(otherDb, payPath))).exists(); i++) await new Promise((r) => setTimeout(r, 20));
     stop();
