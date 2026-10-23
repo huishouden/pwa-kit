@@ -31,7 +31,7 @@ export interface WatchContactsOptions {
   /**
    * Whether each contact carries its pay details (`contactPay`), read whole: by default only
    * without `app` (the portal, Bills), since an app's own list doesn't show them. Never with
-   * `restricted`.
+   * `restricted`. Only a whole-list watch removes the pay details of deleted contacts.
    */
   pay?: boolean;
   /**
@@ -248,8 +248,10 @@ export async function setContactPay(db: Firestore, householdId: string, id: stri
 }
 
 /**
- * Deletes a contact. With `pay` (an admin or member, whose contacts carry it) its pay details go
- * too; a helper's or kid's deletion leaves them for an admin's or member's app to remove a day later.
+ * Deletes a contact. With `pay` (an admin or member whose list carries them) its pay details go
+ * too. Without it (a helper or kid, or an app's own list, which doesn't read them) they stay, so
+ * Undo (`restoreContact`) finds them still there, until the next whole-list `watchContacts` (the
+ * portal's or Bills') removes them as orphans a day later (`tidyContactPay`).
  */
 export async function deleteContact(db: Firestore, householdId: string, id: string, { pay = false }: { pay?: boolean } = {}): Promise<void> {
   if (!pay) return deleteDoc(doc(contactsOf(db, householdId), id));
@@ -261,7 +263,8 @@ export async function deleteContact(db: Firestore, householdId: string, id: stri
 
 /**
  * What deleting a contact in one app means: it stops showing there, and is only deleted outright
- * when no other app shows it (the pediatrician stays in a health app after Baby drops it).
+ * when no other app shows it (the pediatrician stays in a health app after Baby drops it). Its pay
+ * details go with it only when the contact carries them (see `deleteContact`).
  */
 export async function removeContactFromApp(db: Firestore, householdId: string, contact: Contact, app: string, by: string): Promise<void> {
   const others = contact.apps.filter((a) => a !== app);

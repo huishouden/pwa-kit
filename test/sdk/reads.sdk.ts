@@ -5,6 +5,7 @@
 import { afterAll, beforeAll, describe, expect, mock, test } from 'bun:test';
 import { deleteApp, initializeApp, type FirebaseApp } from 'firebase/app';
 import { readCounter, expectReads, writeBeforeEachRead } from '../../src/read-test';
+import type { Contact } from '../../src/contact-core';
 
 const real = await import('firebase/firestore');
 const counter = readCounter();
@@ -15,7 +16,7 @@ const { syncReminders, syncPersonalReminders } = await import('../../src/reminde
 const { syncTodos } = await import('../../src/todos');
 const { syncAgenda } = await import('../../src/agenda');
 const { saveMyProfile, watchHousehold, watchProfiles } = await import('../../src/household');
-const { watchContacts } = await import('../../src/contacts');
+const { removeContactFromApp, watchContacts } = await import('../../src/contacts');
 
 const emulator = process.env.FIRESTORE_EMULATOR_HOST;
 const DAY = 24 * 3_600_000;
@@ -159,6 +160,29 @@ describe.skipIf(!emulator)('watchContacts', () => {
     expect((await watch({ app: 'home', pay: true }, 'watchContacts, one app with pay', 3)).find((c) => c.id === 'plumber')?.pay).toEqual({ zelle: 'plumber@example.com' });
     // The portal's whole list: all 5 and the pay document.
     expect(await watch({}, 'watchContacts, the whole list', 6)).toHaveLength(5);
+  });
+
+  test("a contact deleted from an app's list keeps its pay details for Undo; the next whole list over a day later removes them", async () => {
+    const contacts = `households/${household}/contacts`;
+    const payPath = `households/${household}/contactPay/painter`;
+    await setDoc(doc(otherDb, `${contacts}/painter`), { name: 'Example Painter', apps: ['home'], private: false, createdAt: NOW, by: ME });
+    await setDoc(doc(otherDb, payPath), { venmo: 'example-painter', updatedAt: NOW - 2 * DAY, by: ME });
+    let homeList: Contact[] | undefined;
+    let stop = watchContacts(db, household, (c) => (homeList = c), { app: 'home' });
+    await until(() => !!homeList?.some((c) => c.id === 'painter'));
+    const painter = homeList!.find((c) => c.id === 'painter')!;
+    expect(painter.pay).toBeUndefined();
+    await removeContactFromApp(db, household, painter, 'home', ME);
+    stop();
+    expect((await getDoc(doc(otherDb, `${contacts}/painter`))).exists()).toBe(false);
+    expect((await getDoc(doc(otherDb, payPath))).exists()).toBe(true);
+    // The portal's list, loaded from the server, tidies the orphan.
+    let whole: unknown[] | undefined;
+    stop = watchContacts(db, household, (c) => (whole = c), { by: ME });
+    await until(() => whole !== undefined);
+    for (let i = 0; i < 50 && (await getDoc(doc(otherDb, payPath))).exists(); i++) await new Promise((r) => setTimeout(r, 20));
+    stop();
+    expect((await getDoc(doc(otherDb, payPath))).exists()).toBe(false);
   });
 });
 
