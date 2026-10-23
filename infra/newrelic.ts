@@ -285,6 +285,11 @@ interface Condition {
   steady?: boolean;
 }
 
+/** A notify run that threw, other than one stopped by a read limit (`QuotaExhausted`); the alert and the dashboard share it. */
+const NOTIFY_CRASHED = `error IS NOT NULL AND error NOT LIKE 'QuotaExhausted:%'`;
+/** A notify run Firestore stopped for the project's quota (`NotifyRun.quota`). */
+const NOTIFY_QUOTA = `quota IS TRUE`;
+
 const CONDITIONS: Condition[] = [
   {
     name: 'App errors spike',
@@ -308,8 +313,14 @@ const CONDITIONS: Condition[] = [
   },
   {
     name: 'Notify run crashed',
-    description: 'A notify Worker run threw before finishing (the error is on the NotifyRun event). Check `bunx wrangler tail` in huishouden/notify.',
-    query: `SELECT filter(count(*), WHERE error IS NOT NULL) FROM NotifyRun`,
+    description: 'A notify Worker run threw before finishing (the error is on the NotifyRun event). Check `bunx wrangler tail` in huishouden/notify. A run stopped by a read limit (`QuotaExhausted`) is not a crash: see "Notify stopped by Firestore\'s quota".',
+    query: `SELECT filter(count(*), WHERE ${NOTIFY_CRASHED}) FROM NotifyRun`,
+    operator: 'ABOVE_OR_EQUALS', threshold: 1, window: 1800, duration: 1800,
+  },
+  {
+    name: "Notify stopped by Firestore's quota",
+    description: "A notify Worker run stopped because Firestore refused for the project's daily quota (`NotifyRun.quota`): on the free plan every app and Worker is refused reads until midnight Pacific, and due reminders go out late. Nothing in notify fixes it: find what read so much (the \"Firestore reads\" alerts, pwa-kit STANDARD.md \"Read budgets\").",
+    query: `SELECT filter(count(*), WHERE ${NOTIFY_QUOTA}) FROM NotifyRun`,
     operator: 'ABOVE_OR_EQUALS', threshold: 1, window: 1800, duration: 1800,
   },
   {
@@ -425,7 +436,7 @@ function dashboard() {
           W('Regions', 'viz.table', `SELECT count(*) AS 'Page views' FROM PageView WHERE ${APPS_WHERE} FACET countryCode, regionCode SINCE 1 month ago LIMIT 50`, 5, 7),
           W('Devices', 'viz.pie', `SELECT count(*) FROM PageView WHERE ${APPS_WHERE} FACET deviceType SINCE 1 month ago`, 9, 7),
           W('Uptime checks', 'viz.table', `SELECT percentage(count(*), WHERE result = 'SUCCESS') AS 'Up %', average(duration) AS 'ms', latest(result) AS 'Last' FROM SyntheticCheck WHERE monitorName LIKE '${FAMILY} %' FACET monitorName SINCE 1 day ago`, 1, 10, 6),
-          W('Notify sender runs', 'viz.line', `SELECT count(*) AS 'Runs', sum(pushed) AS 'Pushed', sum(failed) AS 'Failed', filter(count(*), WHERE error IS NOT NULL) AS 'Crashed' FROM NotifyRun TIMESERIES 1 hour SINCE 1 day ago`, 7, 10, 6),
+          W('Notify sender runs', 'viz.line', `SELECT count(*) AS 'Runs', sum(pushed) AS 'Pushed', sum(failed) AS 'Failed', filter(count(*), WHERE ${NOTIFY_CRASHED}) AS 'Crashed', filter(count(*), WHERE ${NOTIFY_QUOTA}) AS 'Quota stops' FROM NotifyRun TIMESERIES 1 hour SINCE 1 day ago`, 7, 10, 6),
         ],
       },
       {

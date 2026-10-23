@@ -107,7 +107,8 @@ Policy **Huishouden**, emailed through the workflow **Huishouden alerts** (desti
 | App errors spike | More than 10 errors in one app within 30 minutes (one incident per app) |
 | Site down | An app's uptime check (its path on the suite's site) failed twice within 30 minutes (ping every 30 min from 2 locations) |
 | Notify sender silent | No `NotifyRun` heartbeat from the notify Worker for 20 minutes (it runs every 5) |
-| Notify run crashed | A notify run threw (`NotifyRun.error`) |
+| Notify run crashed | A notify run threw (`NotifyRun.error`), other than a stop at a read limit (`QuotaExhausted`) |
+| Notify stopped by Firestore's quota | A notify run stopped because Firestore refused reads for the project's daily quota (`NotifyRun.quota`); every app is refused until midnight Pacific |
 | Push deliveries failing | More than 5 Web Push deliveries failed in an hour |
 
 CI failures on `main` are emailed by GitHub to whoever pushed.
@@ -203,7 +204,7 @@ app's repo instead (apps served from a site of their own; needs `gh` with admin 
 | Full platform users | 1 | 1 |
 | Ping monitors | Unlimited | 10 apps × 2 locations × 2/hour ≈ 29,000 checks/month, not billed |
 | Other synthetic checks | 500/month | 0 |
-| Alerts, dashboards, pipeline cloud rules | Included | 5 conditions, 1 dashboard, 5 rules |
+| Alerts, dashboards, pipeline cloud rules | Included | 6 conditions, 1 dashboard, 5 rules |
 
 Browser events are kept for New Relic's default retention (8 days for raw events at the time of
 writing), so the dashboard's month-long charts fill in over time and older detail ages out.
