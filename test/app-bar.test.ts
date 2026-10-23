@@ -1,13 +1,20 @@
-import { afterAll, describe, expect, test } from 'bun:test';
-import { GlobalRegistrator } from './dom';
-import { act, createElement } from 'react';
-import { createRoot } from 'react-dom/client';
-import { AppBar } from '../src/react/app-bar';
+import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
+import { useDom } from './dom';
 import { displayNameOf, initialOf, isSuite, sameSite, versionLabel } from '../src/app-bar';
 import { resetI18nForTests, setLangChoice } from '../src/i18n';
+import { resetThemeForTests } from '../src/theme';
 import { offerUpdate, resetUpdatesForTests, startUpdates } from '../src/update';
 import { BAR_PADDING_Y, BAR_TABS_HEIGHT } from '../src/bar-size';
 import { SHARE_HOST, SHARE_URL, shareData, shareQrSvg } from '../src/share';
+
+// Element tests share one DOM, removed afterwards so later test files see none.
+useDom('https://baby.example.com/');
+// <hh-app-bar> is defined in the window there was when ../src/app-bar was first imported: another
+// test file's, gone since, or none at all. A copy of the module loaded now defines it in this one.
+await import(`../src/app-bar.ts?dom=${Date.now()}`);
+const { act, createElement } = await import('react');
+const { createRoot } = await import('react-dom/client');
+const { AppBar } = await import('../src/react/app-bar');
 
 describe('app bar helpers', () => {
   test('the initial comes from the name, then the email', () => {
@@ -37,8 +44,14 @@ describe('app bar helpers', () => {
   });
 });
 
-// Element tests share one DOM, removed afterwards so later test files see none.
-afterAll(() => GlobalRegistrator.unregister());
+// A bar a test leaves on the page stays connected into the next test. The theme module keeps the
+// choice it read for the page (window is the same global for every test file's DOM), so another
+// file's Dark would otherwise still be the choice here.
+beforeEach(() => {
+  localStorage.clear();
+  resetThemeForTests();
+});
+afterEach(() => document.body.replaceChildren());
 
 describe('<hh-app-bar>', () => {
   type Bar = HTMLElementTagNameMap['hh-app-bar'];

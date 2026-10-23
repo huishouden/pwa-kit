@@ -1,6 +1,7 @@
-import { afterAll, describe, expect, mock, test } from 'bun:test';
+import { afterAll, afterEach, describe, expect, mock, test } from 'bun:test';
 import { GlobalRegistrator } from '@happy-dom/global-registrator';
 import { act, useState } from 'react';
+import type { Root } from 'react-dom/client';
 import type { EventPrep, EventRule } from '../src/schedule';
 
 if (typeof document === 'undefined') GlobalRegistrator.register({ url: 'https://home.example.com/' });
@@ -9,9 +10,19 @@ afterAll(() => GlobalRegistrator.unregister());
 const { createRoot } = await import('react-dom/client');
 const { RulePicker, PrepPicker, nextDatesText } = await import('../src/react/schedule');
 
+// A root left mounted keeps rendering after its test, into the next file once this DOM is gone.
+const roots: Root[] = [];
+const unmountAll = () => act(() => roots.splice(0).forEach((r) => r.unmount()));
+afterEach(() => {
+  unmountAll();
+  document.body.innerHTML = '';
+});
+
 function render(node: React.ReactNode) {
+  unmountAll();
   document.body.innerHTML = '<div id="app"></div>';
   const root = createRoot(document.getElementById('app')!);
+  roots.push(root);
   act(() => root.render(node));
   return root;
 }

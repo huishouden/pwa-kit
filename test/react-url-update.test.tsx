@@ -1,6 +1,7 @@
-import { afterAll, describe, expect, test } from 'bun:test';
+import { afterAll, afterEach, describe, expect, test } from 'bun:test';
 import { GlobalRegistrator } from '@happy-dom/global-registrator';
 import { act } from 'react';
+import type { Root } from 'react-dom/client';
 
 // React DOM decides at import whether it runs in a browser, so the DOM comes first.
 if (typeof document === 'undefined') GlobalRegistrator.register({ url: 'https://suite.example.com/pet/' });
@@ -24,9 +25,19 @@ function Screen({ legacyHash = false }: { legacyHash?: boolean }) {
   return null;
 }
 
+// A root left mounted keeps rendering after its test, into the next file once this DOM is gone.
+const roots: Root[] = [];
+const unmountAll = () => act(() => roots.splice(0).forEach((r) => r.unmount()));
+afterEach(() => {
+  unmountAll();
+  document.body.innerHTML = '';
+});
+
 function mount(node: React.ReactNode) {
+  unmountAll();
   document.body.innerHTML = '<div id="app"></div>';
   const root = createRoot(document.getElementById('app')!);
+  roots.push(root);
   act(() => root.render(node));
   return root;
 }

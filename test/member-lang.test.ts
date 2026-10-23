@@ -1,4 +1,4 @@
-import { afterAll, afterEach, describe, expect, test } from 'bun:test';
+import { afterAll, afterEach, beforeAll, describe, expect, test } from 'bun:test';
 import type { Firestore } from 'firebase/firestore';
 
 // Language changes are window events; without a DOM here, a bare EventTarget stands in for window.
@@ -7,7 +7,7 @@ const savedWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
 if (ownWindow) Object.defineProperty(globalThis, 'window', { configurable: true, writable: true, value: new EventTarget() });
 
 const { followMemberLang, resetMemberLangForTests } = await import('../src/member-lang');
-const { getLang, getLangChoice, setLangChoice, setLangForTests } = await import('../src/i18n');
+const { getLang, getLangChoice, loadLang, setLangChoice, setLangForTests } = await import('../src/i18n');
 
 const db = {} as Firestore;
 const ME = 'sam@example.com';
@@ -17,6 +17,9 @@ const memory = () => {
 };
 const settle = () => new Promise((r) => setTimeout(r, 0));
 
+// A switch the follower starts waits for its language's catalogues, imported the first time in the
+// run: longer than one settle(), so loaded here first, whichever test (or file) would load them.
+beforeAll(() => Promise.all([loadLang('es'), loadLang('nl')]));
 // Not resetI18nForTests: it forgets catalogues other test files registered (the household tools').
 afterEach(async () => {
   await setLangForTests('en');

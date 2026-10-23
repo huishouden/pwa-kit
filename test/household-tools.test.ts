@@ -1,9 +1,10 @@
-import { describe, expect, test } from 'bun:test';
+import { afterAll, describe, expect, test } from 'bun:test';
+import { setTimeZone } from './tz';
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { checkArgs, COVERAGE, coverageGaps, runTool, Session, TOOLS, toolNamed } from '../src/household-tools';
 
-process.env.TZ = 'UTC';
+afterAll(setTimeZone('UTC'));
 import en from '../src/household-tools/locales/en';
 import es from '../src/household-tools/locales/es';
 import nl from '../src/household-tools/locales/nl';

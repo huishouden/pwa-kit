@@ -1,11 +1,12 @@
-import { describe, expect, test } from 'bun:test';
+import { afterAll, describe, expect, test } from 'bun:test';
+import { setTimeZone } from './tz';
 import { runTool, Session, toolNamed } from '../src/household-tools';
 import { FirestoreError, Increment, type Doc, type FirestoreRest, type Write } from '../src/firestore-rest';
 
 // Health's writes through the shared tools, on an in-memory Firestore (no rules: those are tested in
 // huishouden/connector against the emulator). 13:00 UTC is 08:00 in New York: Nan's morning dose is due.
 // The tools run in a UTC process (Workers do; `hh` sets TZ), as LocalClock's frame needs.
-process.env.TZ = 'UTC';
+afterAll(setTimeZone('UTC'));
 
 const NOW = Date.UTC(2031, 0, 6, 13);
 const SAM = 'sam@example.com';
@@ -290,7 +291,8 @@ describe('Health conditions', () => {
     expect(visit[1]).not.toHaveProperty('specialty');
     const agenda = JSON.stringify([...docs.entries()].filter(([p]) => p.includes('/personalAgenda/') || p.includes('/personalReminders/')).map(([, d]) => d));
     expect(agenda).not.toContain('Pulmonology');
-    expect(agenda).not.toContain('k1');
+    // As a word: the visit's random document id, in its links, may hold the letters k1.
+    expect(agenda).not.toMatch(/\bk1\b/);
   });
 
   test('health_add_condition files it under the code, the name or the area given, and only for keepers', async () => {

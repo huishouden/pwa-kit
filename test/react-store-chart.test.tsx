@@ -1,6 +1,7 @@
-import { afterAll, describe, expect, test } from 'bun:test';
+import { afterAll, afterEach, describe, expect, test } from 'bun:test';
 import { GlobalRegistrator } from '@happy-dom/global-registrator';
 import { act } from 'react';
+import type { Root } from 'react-dom/client';
 import { sampleContacts, type Contact } from '../src/contacts';
 
 if (typeof document === 'undefined') GlobalRegistrator.register({ url: 'https://pet.example.com/' });
@@ -10,9 +11,19 @@ const { createRoot } = await import('react-dom/client');
 const { QuantityChart } = await import('../src/react/chart');
 const { useSampleStore } = await import('../src/react/store');
 
+// A root left mounted keeps rendering after its test, into the next file once this DOM is gone.
+const roots: Root[] = [];
+const unmountAll = () => act(() => roots.splice(0).forEach((r) => r.unmount()));
+afterEach(() => {
+  unmountAll();
+  document.body.innerHTML = '';
+});
+
 function render(node: React.ReactNode) {
+  unmountAll();
   document.body.innerHTML = '<div id="app"></div>';
   const root = createRoot(document.getElementById('app')!);
+  roots.push(root);
   act(() => root.render(node));
   return root;
 }

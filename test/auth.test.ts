@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, mock, test } from 'bun:test';
+import { afterAll, beforeEach, describe, expect, mock, test } from 'bun:test';
 
 const signInWithCredential = mock(async () => ({ user: { uid: 'u1' } }));
 mock.module('firebase/auth', () => ({
@@ -6,6 +6,10 @@ mock.module('firebase/auth', () => ({
   signInWithCredential,
 }));
 const { signInSilently } = await import('../src/auth');
+
+// Each test's window is a stand-in carrying Google's script; the real one (or none) is put back after.
+const savedWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+afterAll(() => (savedWindow ? Object.defineProperty(globalThis, 'window', savedWindow) : delete (globalThis as { window?: unknown }).window));
 
 type Moment = { isNotDisplayed: () => boolean; getNotDisplayedReason: () => string };
 let promptBehaviour: (cb: (r: { credential: string }) => void, listener: (m: Moment) => void) => void;

@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, mock, test } from 'bun:test';
+import { afterAll, beforeEach, describe, expect, mock, test } from 'bun:test';
 import * as real from 'firebase/firestore';
 
 // One push subscription per device for the suite: the portal's worker (scope /) owns it, and the
@@ -47,13 +47,28 @@ const db = {} as real.Firestore;
 const user = { email: 'Sam@Example.com' };
 const path = async (endpoint: string) => `households/h/pushSubscriptions/${await pushSubscriptionId('sam@example.com', endpoint)}`;
 
+// Every test starts on a device whose only subscription is Pet's own worker's, with nothing stored.
+beforeEach(() => {
+  store.clear();
+  deleted.length = 0;
+  subs['/'] = null;
+  subs['/pet/'] = sub('https://push.example.com/pet');
+});
+const perApp = async () => store.set(await path('https://push.example.com/pet'), { email: 'sam@example.com', app: 'pet' });
+// The device moved to the suite subscription, keeping Pet as its one app.
+const upgraded = async () => {
+  await perApp();
+  expect(await upgradePush(db, 'h', user, KEY)).toBe(true);
+};
+
 describe('suite-wide push subscription', () => {
   test('a device with only a per-app subscription is "legacy" and still delivering', async () => {
-    store.set(await path('https://push.example.com/pet'), { email: 'sam@example.com', app: 'pet' });
+    await perApp();
     expect(await pushMode(db, 'h', user)).toBe('legacy');
   });
 
   test('upgrading subscribes through the portal worker, stores app "suite" and deletes the per-app document', async () => {
+    await perApp();
     expect(await upgradePush(db, 'h', user, KEY)).toBe(true);
     // The move keeps the apps the device was for, so a shared tablet that notified for Pet does not start showing everything.
     expect(store.get(await path('https://push.example.com/suite'))).toMatchObject({ app: SUITE_PUSH_APP, email: 'sam@example.com', apps: ['pet'] });
@@ -63,12 +78,14 @@ describe('suite-wide push subscription', () => {
   });
 
   test('already on the suite subscription: nothing to upgrade, one document for the device', async () => {
+    await upgraded();
     expect(await upgradePush(db, 'h', user, KEY)).toBe(false);
     expect([...store.keys()]).toHaveLength(1);
   });
 
   test('enabling again on a device with a per-app subscription never leaves two documents, and an explicit tap widens it to every app', async () => {
-    store.set(await path('https://push.example.com/pet'), { email: 'sam@example.com', app: 'pet' });
+    await upgraded();
+    await perApp();
     await enablePush(db, 'h', user, KEY);
     expect([...store.keys()]).toEqual([await path('https://push.example.com/suite')]);
     expect(store.get(await path('https://push.example.com/suite'))).not.toHaveProperty('apps');
@@ -82,7 +99,7 @@ describe('suite-wide push subscription', () => {
 
 describe('a cut-short cleanup', () => {
   test('a suite document beside a per-app one is finished by upgradePush', async () => {
-    store.clear();
+    subs['/'] = sub('https://push.example.com/suite');
     store.set(await path('https://push.example.com/suite'), { email: 'sam@example.com', app: 'suite' });
     store.set(await path('https://push.example.com/pet'), { email: 'sam@example.com', app: 'pet' });
     expect(await pushMode(db, 'h', user)).toBe('legacy');
@@ -95,8 +112,6 @@ describe('a cut-short cleanup', () => {
 
 describe('the portal worker is not active yet', () => {
   test("a subscription made through the app's own worker says so: its app's name, no cleanup, not an upgrade", async () => {
-    store.clear();
-    subs['/'] = null;
     subs['/pet/'] = null;
     const inactive = { ...regs[0], active: null };
     const saved = regs[0];
@@ -116,14 +131,7 @@ describe('the portal worker is not active yet', () => {
 });
 
 describe('what a move keeps', () => {
-  const reset = () => {
-    store.clear();
-    subs['/'] = null;
-    subs['/pet/'] = sub('https://push.example.com/pet');
-  };
-
   test('a limited suite document plus a new per-app document for another app: both apps stay', async () => {
-    reset();
     subs['/'] = sub('https://push.example.com/suite');
     store.set(await path('https://push.example.com/suite'), { email: 'sam@example.com', app: 'suite', apps: ['pet'] });
     store.set(await path('https://push.example.com/pet'), { email: 'sam@example.com', app: 'home' });
@@ -133,14 +141,12 @@ describe('what a move keeps', () => {
   });
 
   test('a per-app document whose app cannot be read moves nothing, rather than widening the device', async () => {
-    reset();
     store.set(await path('https://push.example.com/pet'), { email: 'sam@example.com' });
     expect(await upgradePush(db, 'h', user, KEY)).toBe(false);
     expect([...store.keys()]).toEqual([await path('https://push.example.com/pet')]);
   });
 
   test('two moves at once are one move', async () => {
-    reset();
     store.set(await path('https://push.example.com/pet'), { email: 'sam@example.com', app: 'pet' });
     const [a, b] = await Promise.all([upgradePush(db, 'h', user, KEY), upgradePush(db, 'h', user, KEY)]);
     expect([a, b]).toEqual([true, true]);

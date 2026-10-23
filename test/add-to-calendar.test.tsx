@@ -1,6 +1,7 @@
-import { afterAll, describe, expect, test } from 'bun:test';
+import { afterAll, afterEach, describe, expect, test } from 'bun:test';
 import { GlobalRegistrator } from '@happy-dom/global-registrator';
 import { act } from 'react';
+import type { Root } from 'react-dom/client';
 
 if (typeof document === 'undefined') GlobalRegistrator.register({ url: 'https://home.example.com/' });
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -8,10 +9,21 @@ afterAll(() => GlobalRegistrator.unregister());
 const { createRoot } = await import('react-dom/client');
 const { AddToCalendar } = await import('../src/react/calendar');
 
+// A root left mounted keeps rendering after its test, into the next file once this DOM is gone.
+const roots: Root[] = [];
+const unmountAll = () => act(() => roots.splice(0).forEach((r) => r.unmount()));
+afterEach(() => {
+  unmountAll();
+  document.body.innerHTML = '';
+});
+
 function render(node: React.ReactNode): HTMLElement {
+  unmountAll();
   document.body.innerHTML = '<div id="app"></div>';
   const el = document.getElementById('app')!;
-  act(() => createRoot(el).render(node));
+  const root = createRoot(el);
+  roots.push(root);
+  act(() => root.render(node));
   return el;
 }
 

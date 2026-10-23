@@ -1,10 +1,11 @@
-import { describe, expect, test } from 'bun:test';
+import { afterAll, describe, expect, test } from 'bun:test';
+import { setTimeZone } from './tz';
 import { checkArgs, runTool, Session, toolNamed } from '../src/household-tools';
 import type { Doc, FirestoreRest, Write } from '../src/firestore-rest';
 
 // Baby's settings through the shared tools, on an in-memory Firestore. 13:00 UTC is 08:00 in New
 // York; 19:00 there is 00:00 UTC the next day.
-process.env.TZ = 'UTC';
+afterAll(setTimeZone('UTC'));
 
 const NOW = Date.UTC(2031, 0, 6, 13);
 const SAM = 'sam@example.com';

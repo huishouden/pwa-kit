@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from 'bun:test';
+import { afterAll, beforeEach, describe, expect, test } from 'bun:test';
 import responses from './fixtures/gis/token-responses.json';
 
 // A stand-in for Google Identity Services' token client. Each requestAccessToken records what was
@@ -40,6 +40,14 @@ let codeAnswer: (cfg: { scope: string; callback: (r: Record<string, unknown>) =>
 const { cachedGoogleToken, configureGoogleTokens, forgetGoogleToken, googleAccessToken, googleAuthCode, googleFetch, GoogleApiError, GoogleTokenError } = await import('../src/google-token');
 const { requestGmailToken, storedGmailToken, gmailMailbox, gmailError, GMAIL_READONLY_SCOPE } = await import('../src/gmail');
 const { googleWindowMessage, popupBlocked, popupCancelled } = await import('../src/feedback');
+
+// This file's page storage and window (Google's script on it) stand in for the page's, and are put
+// back after its tests, so later files see what they would have.
+const pageGlobals = (['localStorage', 'window'] as const).map((k) => [k, Object.getOwnPropertyDescriptor(globalThis, k)] as const);
+afterAll(() => {
+  delete (globalThis as unknown as { window?: { google?: unknown } }).window?.google;
+  for (const [k, d] of pageGlobals) d ? Object.defineProperty(globalThis, k, d) : delete (globalThis as Record<string, unknown>)[k];
+});
 
 const store = new Map<string, string>();
 (globalThis as unknown as { localStorage: Storage }).localStorage = {

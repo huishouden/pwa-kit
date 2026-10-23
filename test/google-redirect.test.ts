@@ -4,7 +4,11 @@ import { GlobalRegistrator } from '@happy-dom/global-registrator';
 // "Continue in this tab": Google's code client in redirect mode, stubbed, and the page Google sends
 // the person back to. The state kept in sessionStorage is what lets an answer in.
 if (typeof document === 'undefined') GlobalRegistrator.register({ url: 'https://suite.example.com/my-calendar' });
-afterAll(() => GlobalRegistrator.unregister());
+afterAll(() => {
+  // window is the global object under the DOM, so its Google stub outlives the DOM unless removed.
+  delete (window as unknown as { google?: unknown }).google;
+  return GlobalRegistrator.unregister();
+});
 
 const asked: Record<string, unknown>[] = [];
 (window as unknown as { google: unknown }).google = {

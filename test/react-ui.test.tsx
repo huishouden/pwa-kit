@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, mock, test } from 'bun:test';
+import { afterAll, afterEach, describe, expect, mock, test } from 'bun:test';
 import { GlobalRegistrator } from '@happy-dom/global-registrator';
 import { readdirSync, readFileSync } from 'node:fs';
 import { act, useState } from 'react';
@@ -20,10 +20,21 @@ const { ContactDialog, ContactCard, ContactSelect } = await import('../src/react
 const { PhotoPicker } = await import('../src/react/photo');
 const { SuggestionsCard } = await import('../src/react/suggestions');
 
+// A root left mounted keeps its window listeners (a dialog's Escape) and answers the next test's
+// events, so each render, and the end of each test, unmounts the ones before it.
+const roots: Root[] = [];
+const unmountAll = () => act(() => roots.splice(0).forEach((r) => r.unmount()));
+afterEach(() => {
+  unmountAll();
+  document.body.innerHTML = '';
+});
+
 function render(node: React.ReactNode): { root: Root; el: HTMLElement } {
+  unmountAll();
   document.body.innerHTML = '<div id="app"></div>';
   const el = document.getElementById('app')!;
   const root = createRoot(el);
+  roots.push(root);
   act(() => root.render(node));
   return { root, el };
 }

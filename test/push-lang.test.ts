@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, mock, test } from 'bun:test';
+import { afterAll, beforeEach, describe, expect, mock, test } from 'bun:test';
 import * as real from 'firebase/firestore';
 
 // Language changes are window events; without a DOM here, a bare EventTarget stands in for window.
@@ -41,6 +41,11 @@ const { setLangForTests } = await import('../src/i18n');
 const db = {} as real.Firestore;
 const user = { email: 'Sam@Example.com' };
 
+beforeEach(() => {
+  store.clear();
+  updates.length = 0;
+});
+
 describe('push subscription language', () => {
   test('rewrites only lang on the device own subscription, and only when it differs', async () => {
     const path = `households/h/pushSubscriptions/${await pushSubscriptionId('sam@example.com', ENDPOINT)}`;
@@ -60,10 +65,13 @@ describe('push subscription language', () => {
     const path = `households/h/pushSubscriptions/${await pushSubscriptionId('sam@example.com', ENDPOINT)}`;
     store.set(path, { email: 'sam@example.com', lang: 'en' });
     const stop = watchPushLang(db, 'h', user);
-    await setLangForTests('nl');
-    await new Promise((r) => setTimeout(r, 10));
-    expect(store.get(path)?.lang).toBe('nl');
-    stop();
-    await setLangForTests('en');
+    try {
+      await setLangForTests('nl');
+      await new Promise((r) => setTimeout(r, 10));
+      expect(store.get(path)?.lang).toBe('nl');
+    } finally {
+      stop();
+      await setLangForTests('en');
+    }
   });
 });

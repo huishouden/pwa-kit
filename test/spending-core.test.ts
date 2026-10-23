@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test';
+import { beforeEach, describe, expect, test } from 'bun:test';
 import fixtures from './fixtures/card-alerts.json';
 import readings from './fixtures/alert-readings.json';
 import { encodeBase64Url, toMailMessage, type GmailApiMessage, type Mailbox, type MailMessage } from '../src/mail-core';
@@ -192,6 +192,11 @@ const mailbox: Pick<Mailbox, 'search' | 'get'> = {
     return messages.find((m) => m.id === id)!;
   },
 };
+// What the stand-in mailbox was asked, from each test's start.
+beforeEach(() => {
+  searches.length = 0;
+  reads.length = 0;
+});
 const syncCards = [
   { name: 'Card One', last4: '1111', alertWords: ['alerts@bank.example.com'] },
   { name: 'Card Two', last4: '2222', alertWords: ['alerts@bank.example.com'] },
@@ -217,7 +222,6 @@ test('reads unseen alerts, skips payments and purchases already recorded', async
 });
 
 test('emails read in an earlier check are not read again', async () => {
-  reads.length = 0;
   await checkAlerts(mailbox, { cards: syncCards, labels: [], rules: [], existing: [], seen: new Set(['m0', 'm1', 'm2']) });
   expect(reads).toEqual(['m3']);
 });

@@ -34,6 +34,9 @@ const household = `${run}-h`;
 beforeAll(async () => {
   if (!emulator) return;
   const [host, port] = emulator.split(':');
+  // watchHousehold reads every household the member is in: an earlier run's, left in the same
+  // emulator, would be read too. Start from an empty database.
+  await fetch(`http://${emulator}/emulator/v1/projects/demo-kit-reads/databases/(default)/documents`, { method: 'DELETE' });
   app = initializeApp({ apiKey: 'demo', projectId: 'demo-kit-reads', appId: 'demo' }, `reads-${run}`);
   db = initializeFirestore(app, { localCache: memoryLocalCache() });
   connectFirestoreEmulator(db, host, Number(port));
