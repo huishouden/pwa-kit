@@ -204,7 +204,7 @@ app's repo instead (apps served from a site of their own; needs `gh` with admin 
 | Full platform users | 1 | 1 |
 | Ping monitors | Unlimited | 10 apps × 2 locations × 2/hour ≈ 29,000 checks/month, not billed |
 | Other synthetic checks | 500/month | 0 |
-| Alerts, dashboards, pipeline cloud rules | Included | 5 conditions, 1 dashboard, 5 rules |
+| Alerts, dashboards, pipeline cloud rules | Included | 6 conditions, 1 dashboard, 5 rules |
 
 Browser events are kept for New Relic's default retention (8 days for raw events at the time of
 writing), so the dashboard's month-long charts fill in over time and older detail ages out.
