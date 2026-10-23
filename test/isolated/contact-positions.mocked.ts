@@ -10,17 +10,18 @@ const store = new Map<string, Record<string, unknown>>();
 const listeners = new Set<() => void>();
 type Ref = { path: string; id: string };
 const DELETE = Symbol('deleteField');
+type Where = { field: string; op: string; value: unknown };
 mock.module('firebase/firestore', () => ({
   ...real,
   collection: (_db: unknown, ...parts: string[]) => ({ path: parts.join('/') }),
   doc: (col: { path: string }, id: string) => ({ path: `${col.path}/${id}`, id }),
   where: (field: string, op: string, value: unknown) => ({ field, op, value }),
-  query: (col: { path: string }, w: { field: string; value: unknown }) => ({ ...col, w }),
+  query: (col: { path: string }, ...ws: Where[]) => ({ ...col, ws }),
   deleteField: () => DELETE,
-  onSnapshot: (q: { path: string; w?: { field: string; value: unknown } }, _o: unknown, next: (s: unknown) => void) => {
+  onSnapshot: (q: { path: string; ws?: Where[] }, _o: unknown, next: (s: unknown) => void) => {
     const listener = () => {
       const docs = [...store.entries()]
-        .filter(([p, d]) => p.startsWith(`${q.path}/`) && (!q.w || d[q.w.field] === q.w.value))
+        .filter(([p, d]) => p.startsWith(`${q.path}/`) && (q.ws ?? []).every((w) => (w.op === 'array-contains' ? Array.isArray(d[w.field]) && (d[w.field] as unknown[]).includes(w.value) : d[w.field] === w.value)))
         .map(([p, d]) => ({ id: p.split('/').pop()!, data: () => d }));
       next({ docs, metadata: { fromCache: false }, docChanges: () => docs });
     };
@@ -88,7 +89,7 @@ afterEach(() => {
 describe('watchContacts backfillPositions', () => {
   test("an admin's or member's app writes the position and drops an old no-match mark", async () => {
     setHome(HOME);
-    const stop = watchContacts(db, 'h1', () => {}, { app: 'pet', backfillPositions: true });
+    const stop = watchContacts(db, 'h1', () => {}, { app: 'car', backfillPositions: true });
     await settle();
     expect(asked).toEqual(['12 Example Lane, Springfield']);
     expect(store.get('households/h1/contacts/old')).toMatchObject({ lat: 39.7817, lng: -89.6501 });

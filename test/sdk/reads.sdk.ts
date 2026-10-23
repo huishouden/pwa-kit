@@ -10,11 +10,12 @@ const real = await import('firebase/firestore');
 const counter = readCounter();
 mock.module('firebase/firestore', () => counter.sdk(real));
 
-const { connectFirestoreEmulator, doc, getFirestore, memoryLocalCache, initializeFirestore, setDoc, terminate } = await import('firebase/firestore');
+const { connectFirestoreEmulator, doc, getDoc, getFirestore, memoryLocalCache, initializeFirestore, setDoc, terminate } = await import('firebase/firestore');
 const { syncReminders, syncPersonalReminders } = await import('../../src/reminders');
 const { syncTodos } = await import('../../src/todos');
 const { syncAgenda } = await import('../../src/agenda');
-const { watchHousehold } = await import('../../src/household');
+const { saveMyProfile, watchHousehold, watchProfiles } = await import('../../src/household');
+const { watchContacts } = await import('../../src/contacts');
 
 const emulator = process.env.FIRESTORE_EMULATOR_HOST;
 const DAY = 24 * 3_600_000;
@@ -115,5 +116,87 @@ describe.skipIf(!emulator)('watchHousehold', () => {
       { max: 1, min: 1, counter, label: 'watchHousehold, a change' },
     );
     stop();
+  });
+});
+
+/** Resolves once `ready()` holds, polling the listeners' results (at most a second). */
+async function until(ready: () => boolean) {
+  for (let i = 0; i < 50 && !ready(); i++) await new Promise((r) => setTimeout(r, 20));
+  expect(ready()).toBe(true);
+}
+
+describe.skipIf(!emulator)('watchContacts', () => {
+  test("an app's list reads only the contacts it shows, and no pay details; the whole list reads them all", async () => {
+    const contacts = `households/${household}/contacts`;
+    const people = [
+      ['vet', { name: 'Example Vet', apps: ['pet'], private: false }],
+      ['groomer', { name: 'Example Groomer', apps: ['pet', 'home'], private: false }],
+      ['plumber', { name: 'Example Plumber', apps: ['home'], private: false }],
+      ['garage', { name: 'Example Garage', apps: ['car'], private: false }],
+      ['doctor', { name: 'Example Doctor', apps: ['health'], private: true }],
+    ] as const;
+    for (const [id, data] of people) await setDoc(doc(otherDb, `${contacts}/${id}`), { ...data, createdAt: NOW, by: ME });
+    await setDoc(doc(otherDb, `households/${household}/contactPay/plumber`), { zelle: 'plumber@example.com', updatedAt: NOW, by: ME });
+
+    const watch = async (options: Parameters<typeof watchContacts>[3], label: string, reads: number) => {
+      let seen: { id: string; pay?: unknown }[] | undefined;
+      let stop = () => {};
+      await expectReads(
+        async () => {
+          stop = watchContacts(db, household, (c) => (seen = c), options);
+          await until(() => seen !== undefined);
+        },
+        { max: reads, min: reads, counter, label },
+      );
+      stop();
+      return seen!;
+    };
+    // Pet's list: its 2 contacts (the 3 others aren't read).
+    expect((await watch({ app: 'pet' }, 'watchContacts, one app', 2)).map((c) => c.id).sort()).toEqual(['groomer', 'vet']);
+    // A helper's Health: the app's contacts not marked private, here none (billed 1, as an empty result is).
+    expect(await watch({ app: 'health', restricted: true }, "watchContacts, a helper's app", 1)).toEqual([]);
+    // Pay details on request: the app's contacts and every pay document.
+    expect((await watch({ app: 'home', pay: true }, 'watchContacts, one app with pay', 3)).find((c) => c.id === 'plumber')?.pay).toEqual({ zelle: 'plumber@example.com' });
+    // The portal's whole list: all 5 and the pay document.
+    expect(await watch({}, 'watchContacts, the whole list', 6)).toHaveLength(5);
+  });
+});
+
+describe.skipIf(!emulator)('saveMyProfile', () => {
+  test("writes only what changed, so a device following the profiles isn't billed for every app open; keeps the language and time zone", async () => {
+    const path = `households/${household}/profiles/${ME}`;
+    await setDoc(doc(otherDb, path), { lang: 'nl', timeZone: 'Europe/Amsterdam', updatedAt: NOW });
+    const notes = new Map<string, string>();
+    const published = { getItem: (k: string) => notes.get(k) ?? null, setItem: (k: string, v: string) => void notes.set(k, v), removeItem: (k: string) => void notes.delete(k), key: (i: number) => [...notes.keys()][i] ?? null, get length() { return notes.size; } };
+    const user = { email: ME, displayName: 'Alex Example', photoURL: 'https://example.com/alex.png' };
+
+    // Another member's device follows the profiles.
+    let changes = 0;
+    let names: (string | undefined)[] = [];
+    const stop = watchProfiles(otherDb, household, (profiles) => {
+      changes++;
+      names = [...profiles.values()].map((p) => p.name);
+    });
+    await until(() => changes > 0);
+
+    const opened = async (label: string, reads: number, next = user, at = NOW) => {
+      const before = changes;
+      await expectReads(
+        async () => {
+          await saveMyProfile(db, household, next, { now: at, published });
+          if (reads) await until(() => changes > before);
+          else await new Promise((r) => setTimeout(r, 200));
+        },
+        { max: reads, min: reads, counter, label },
+      );
+    };
+    await opened('saveMyProfile, first open', 1);
+    await opened('saveMyProfile, opened again', 0);
+    await opened('saveMyProfile, a new name', 1, { ...user, displayName: 'Alex E.' });
+    await opened('saveMyProfile, a day later', 1, { ...user, displayName: 'Alex E.' }, NOW + DAY);
+    stop();
+
+    expect(names).toEqual(['Alex E.']);
+    expect((await getDoc(doc(otherDb, path))).data()).toMatchObject({ name: 'Alex E.', photoURL: 'https://example.com/alex.png', lang: 'nl', timeZone: 'Europe/Amsterdam' });
   });
 });
