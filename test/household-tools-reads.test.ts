@@ -137,3 +137,24 @@ describe('read budgets of the shopping tools that find an item', () => {
     expect(call.result.text).toContain('was ticked off in the last 30 days');
   });
 });
+
+describe("the language an answer is in, and what it reads", () => {
+  // A profile written before the household kept each member's language (`langs`).
+  const PROFILE = doc(`households/h1/profiles/${ME}`, { lang: 'nl', updatedAt: 1 });
+  const withProfile = () => {
+    const inner = firestore();
+    return async (u: string, init?: RequestInit) =>
+      decodeURIComponent(u.split('/documents/')[1] ?? '') === `households/h1/profiles/${ME}` ? Response.json(PROFILE) : inner(u, init);
+  };
+  const signedIn = (fetch: (u: string, i?: RequestInit) => Promise<Response>, lang?: 'en' | 'es' | 'nl') =>
+    new Session({ uid: 'u1', email: ME, connectionId: 'hh-u1', timeZone: 'America/New_York', ...(lang ? { lang } : {}) }, new FirestoreRest({ projectId: 'demo-kit', token: async () => 't', fetch }), 'https://example.web.app', () => NOW);
+
+  test("without the member's language in the household: the one at sign-in, not the profile's old one, and no profile read", async () => {
+    const { value } = await expectReads((meter) => signedIn(meter(withProfile()), 'es').lang('h1'), { max: 1, min: 1, label: 'lang, sign-in' });
+    expect(value).toBe('es');
+  });
+
+  test('with neither: English', async () => {
+    expect(await signedIn(withProfile()).lang('h1')).toBe('en');
+  });
+});

@@ -15,7 +15,10 @@ export interface SessionProps {
    * `idempotency_key` it makes a retried write land on the same record.
    */
   connectionId: string;
-  /** The language and time zone the portal's device had at sign-in, until the profile says otherwise. */
+  /**
+   * The language and time zone the portal's device had at sign-in: the language until the
+   * household has the member's (`langs`), the zone until the profile has one.
+   */
   lang?: Lang;
   timeZone?: string;
   /**
@@ -68,7 +71,6 @@ export function defaultHousehold(households: Household[], email: string): Househ
 
 export interface Profile {
   name?: string;
-  lang?: Lang;
   timeZone?: string;
 }
 
@@ -149,7 +151,6 @@ export class Session {
           const data = d?.data ?? {};
           return {
             ...(typeof data.name === 'string' && data.name ? { name: data.name } : {}),
-            ...(isLang(data.lang) ? { lang: data.lang } : {}),
             ...(isTimeZone(data.timeZone) ? { timeZone: data.timeZone as string } : {}),
           };
         })
@@ -167,12 +168,12 @@ export class Session {
 
   /**
    * The language to answer in: the call's, the member's in the household (the apps' Language
-   * setting), the profile's, the one at sign-in, else English. Loaded.
+   * setting, which every app keeps), the one at sign-in, else English. Loaded. (A `lang` on the
+   * profile, from before the household kept them, is not read.)
    */
   async lang(householdId: string | undefined, asked?: string): Promise<Lang> {
     const member = householdId && !isLang(asked) ? (await this.households()).find((h) => h.id === householdId)?.langs?.[this.email] : undefined;
-    const profile = householdId && !isLang(asked) && !member ? await this.profile(householdId) : {};
-    const lang = isLang(asked) ? asked : (member ?? profile.lang ?? this.props.lang ?? 'en');
+    const lang = isLang(asked) ? asked : (member ?? this.props.lang ?? 'en');
     await loadLang(lang);
     return lang;
   }

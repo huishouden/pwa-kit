@@ -187,7 +187,7 @@ describe.skipIf(!emulator)('watchContacts', () => {
 });
 
 describe.skipIf(!emulator)('saveMyProfile', () => {
-  test("writes only what changed, so a device following the profiles isn't billed for every app open; keeps the language and time zone", async () => {
+  test("writes only what changed, so a device following the profiles isn't billed for every app open; keeps the time zone, drops an old language", async () => {
     const path = `households/${household}/profiles/${ME}`;
     await setDoc(doc(otherDb, path), { lang: 'nl', timeZone: 'Europe/Amsterdam', updatedAt: NOW });
     const notes = new Map<string, string>();
@@ -221,6 +221,8 @@ describe.skipIf(!emulator)('saveMyProfile', () => {
     stop();
 
     expect(names).toEqual(['Alex E.']);
-    expect((await getDoc(doc(otherDb, path))).data()).toMatchObject({ name: 'Alex E.', photoURL: 'https://example.com/alex.png', lang: 'nl', timeZone: 'Europe/Amsterdam' });
+    const saved = (await getDoc(doc(otherDb, path))).data();
+    expect(saved).toMatchObject({ name: 'Alex E.', photoURL: 'https://example.com/alex.png', timeZone: 'Europe/Amsterdam' });
+    expect(saved).not.toHaveProperty('lang');
   });
 });

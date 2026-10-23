@@ -258,7 +258,8 @@ export interface Profile {
  * visit's usage counts with the household's hash (`./observability`), so active households can be
  * counted without knowing which.
  *
- * Merged, so the language and time zone the portal saves for the member's assistant stay. Written
+ * Merged, so the time zone the portal saves for the member's assistant stays; a `lang` from before
+ * the household kept each member's language (`langs`) is removed. Written
  * only when the name or photo differ from what this device last wrote, or that was `FRESH_MS` ago
  * (`./published`): every write bills a read on each device following the profiles, and apps call
  * this on every open.
@@ -286,7 +287,7 @@ export async function saveMyProfile(
       setDoc(
         doc(db, COLLECTION, householdId, 'profiles', email),
         // A name or photo the account no longer has is removed.
-        { name: fields.name ?? deleteField(), photoURL: fields.photoURL ?? deleteField(), updatedAt: now },
+        { name: fields.name ?? deleteField(), photoURL: fields.photoURL ?? deleteField(), lang: deleteField(), updatedAt: now },
         { merge: true },
       ),
   );
