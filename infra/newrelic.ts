@@ -308,8 +308,14 @@ const CONDITIONS: Condition[] = [
   },
   {
     name: 'Notify run crashed',
-    description: 'A notify Worker run threw before finishing (the error is on the NotifyRun event). Check `bunx wrangler tail` in huishouden/notify.',
-    query: `SELECT filter(count(*), WHERE error IS NOT NULL) FROM NotifyRun`,
+    description: 'A notify Worker run threw before finishing (the error is on the NotifyRun event). Check `bunx wrangler tail` in huishouden/notify. A run stopped by a read limit (`QuotaExhausted`) is not a crash: see "Notify stopped by Firestore\'s quota".',
+    query: `SELECT filter(count(*), WHERE error IS NOT NULL AND error NOT LIKE 'QuotaExhausted:%') FROM NotifyRun`,
+    operator: 'ABOVE_OR_EQUALS', threshold: 1, window: 1800, duration: 1800,
+  },
+  {
+    name: "Notify stopped by Firestore's quota",
+    description: "A notify Worker run stopped because Firestore refused for the project's daily quota (`NotifyRun.quota`): on the free plan every app and Worker is refused reads until midnight Pacific, and due reminders go out late. Nothing in notify fixes it: find what read so much (the \"Firestore reads\" alerts, pwa-kit STANDARD.md \"Read budgets\").",
+    query: `SELECT filter(count(*), WHERE quota IS TRUE) FROM NotifyRun`,
     operator: 'ABOVE_OR_EQUALS', threshold: 1, window: 1800, duration: 1800,
   },
   {

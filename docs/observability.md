@@ -107,7 +107,8 @@ Policy **Huishouden**, emailed through the workflow **Huishouden alerts** (desti
 | App errors spike | More than 10 errors in one app within 30 minutes (one incident per app) |
 | Site down | An app's uptime check (its path on the suite's site) failed twice within 30 minutes (ping every 30 min from 2 locations) |
 | Notify sender silent | No `NotifyRun` heartbeat from the notify Worker for 20 minutes (it runs every 5) |
-| Notify run crashed | A notify run threw (`NotifyRun.error`) |
+| Notify run crashed | A notify run threw (`NotifyRun.error`), other than a stop at a read limit (`QuotaExhausted`) |
+| Notify stopped by Firestore's quota | A notify run stopped because Firestore refused reads for the project's daily quota (`NotifyRun.quota`); every app is refused until midnight Pacific |
 | Push deliveries failing | More than 5 Web Push deliveries failed in an hour |
 
 CI failures on `main` are emailed by GitHub to whoever pushed.
