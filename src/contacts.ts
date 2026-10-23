@@ -26,8 +26,14 @@ const contactsOf = (db: Firestore, householdId: string) => collection(db, 'house
 const payOf = (db: Firestore, householdId: string) => collection(db, 'households', householdId, CONTACT_PAY_COLLECTION);
 
 export interface WatchContactsOptions {
-  /** Only those shown in this app. */
+  /** Only those shown in this app: only those are read. */
   app?: string;
+  /**
+   * Whether each contact carries its pay details (`contactPay`), read whole: by default only
+   * without `app` (the portal, Bills), since an app's own list doesn't show them. Never with
+   * `restricted`. Only a whole-list watch removes the pay details of deleted contacts.
+   */
+  pay?: boolean;
   /**
    * A helper or kid (`isRestricted(role)`): only contacts not marked private, as the rules require,
    * and no pay details (never read, so no permission error either).
@@ -47,25 +53,28 @@ export interface WatchContactsOptions {
 }
 
 /**
- * Follows the household's contacts, optionally only those shown in one app, sorted by name. Pass
- * `restricted` for helpers and kids: the rules refuse them a list that could include private ones,
- * and pay details. For admins and members each contact carries its pay details (`contactPay`), the
- * first list waits for both, and once both have come from the server any pay details still on a
- * contact's own document are moved to `contactPay` and those of deleted contacts removed.
+ * Follows the household's contacts, optionally only those shown in one app (the only ones read),
+ * sorted by name. Pass `restricted` for helpers and kids: the rules refuse them a list that could
+ * include private ones, and pay details. With `pay` (the default without `app`) each contact carries
+ * its pay details (`contactPay`) and the first list waits for both; on the whole list (no `app`),
+ * once both have come from the server, any pay details still on a contact's own document are moved
+ * to `contactPay` and those of deleted contacts removed.
  */
 export function watchContacts(
   db: Firestore,
   householdId: string,
   onChange: (contacts: Contact[]) => void,
-  { app, restricted, by, backfillPositions: backfill, onError }: WatchContactsOptions = {},
+  { app, pay: withPay = !app, restricted, by, backfillPositions: backfill, onError }: WatchContactsOptions = {},
 ): Unsubscribe {
   const all = contactsOf(db, householdId);
+  const readPay = withPay && !restricted;
   let raw: { id: string; data: Record<string, unknown> }[] | null = null;
-  let payDocs: { id: string; data: Record<string, unknown> }[] | null = restricted ? [] : null;
-  let fromServer = { contacts: false, pay: !!restricted };
+  let payDocs: { id: string; data: Record<string, unknown> }[] | null = readPay ? null : [];
+  let fromServer = { contacts: false, pay: !readPay };
   let tidied = false;
   const tidy = () => {
-    if (restricted || tidied || !raw || !payDocs || !fromServer.contacts || !fromServer.pay) return;
+    // Only over the whole list: pay details of a contact another app shows aren't orphans.
+    if (!readPay || app || tidied || !raw || !payDocs || !fromServer.contacts || !fromServer.pay) return;
     tidied = true;
     tidyPay(db, householdId, raw, payDocs, by).catch((e) => console.warn('Moving contact pay details failed', e));
   };
@@ -104,13 +113,13 @@ export function watchContacts(
     onHomeChange(startBackfill),
     () => stopBackfill.abort(),
     onSnapshot(
-      restricted ? query(all, where('private', '==', false)) : all,
+      contactsQuery(all, app, restricted),
       { includeMetadataChanges: !restricted },
       (snap) => {
         const first = raw === null;
         raw = snap.docs.map((d) => ({ id: d.id, data: d.data() }));
         if (!snap.metadata.fromCache) fromServer = { ...fromServer, contacts: true };
-        // With metadata changes on (for the tidy), a snapshot that only says "now from the server" isn't a new list.
+        // With metadata changes on (for the tidy and the backfill), a snapshot that only says "now from the server" isn't a new list.
         if (first || snap.docChanges().length) emit();
         tidy();
         startBackfill();
@@ -118,7 +127,7 @@ export function watchContacts(
       (error) => onError?.(error),
     ),
   ];
-  if (!restricted) {
+  if (readPay) {
     unsubs.push(
       onSnapshot(
         payOf(db, householdId),
@@ -140,6 +149,12 @@ export function watchContacts(
     );
   }
   return () => unsubs.forEach((u) => u());
+}
+
+/** What `watchContacts` reads: one app's contacts, and for helpers and kids only those not private (both indexed single fields). */
+function contactsQuery(all: ReturnType<typeof contactsOf>, app: string | undefined, restricted: boolean | undefined) {
+  const filters = [...(app ? [where('apps', 'array-contains', app)] : []), ...(restricted ? [where('private', '==', false)] : [])];
+  return filters.length ? query(all, ...filters) : all;
 }
 
 /** Resolves true once the page is showing (at once when it is, or outside a browser); false when stopped first. */
@@ -233,8 +248,10 @@ export async function setContactPay(db: Firestore, householdId: string, id: stri
 }
 
 /**
- * Deletes a contact. With `pay` (an admin or member, whose contacts carry it) its pay details go
- * too; a helper's or kid's deletion leaves them for an admin's or member's app to remove a day later.
+ * Deletes a contact. With `pay` (an admin or member whose list carries them) its pay details go
+ * too. Without it (a helper or kid, or an app's own list, which doesn't read them) they stay, so
+ * Undo (`restoreContact`) finds them still there, until the next whole-list `watchContacts` (the
+ * portal's or Bills') removes them as orphans a day later (`tidyContactPay`).
  */
 export async function deleteContact(db: Firestore, householdId: string, id: string, { pay = false }: { pay?: boolean } = {}): Promise<void> {
   if (!pay) return deleteDoc(doc(contactsOf(db, householdId), id));
@@ -246,7 +263,8 @@ export async function deleteContact(db: Firestore, householdId: string, id: stri
 
 /**
  * What deleting a contact in one app means: it stops showing there, and is only deleted outright
- * when no other app shows it (the pediatrician stays in a health app after Baby drops it).
+ * when no other app shows it (the pediatrician stays in a health app after Baby drops it). Its pay
+ * details go with it only when the contact carries them (see `deleteContact`).
  */
 export async function removeContactFromApp(db: Firestore, householdId: string, contact: Contact, app: string, by: string): Promise<void> {
   const others = contact.apps.filter((a) => a !== app);

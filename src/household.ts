@@ -1,6 +1,7 @@
 import { collection, deleteField, doc, getDocs, onSnapshot, query, where, type Firestore, type Unsubscribe } from 'firebase/firestore';
 import { addDoc, arrayRemove, arrayUnion, setDoc, updateDoc } from './firestore.js';
 import { observeHousehold } from './observability.js';
+import { fingerprint, publishedKey, publishedStore, unlessPublished, type PublishedStorage } from './published.js';
 import { kt } from './i18n.js';
 import { isCurrencyCode, setCurrency } from './money.js';
 import { effectiveRoles, toRoles, type Role } from './roles.js';
@@ -256,19 +257,39 @@ export interface Profile {
  * Records the signed-in member's name and photo; cheap to call on every sign-in. Also tags this
  * visit's usage counts with the household's hash (`./observability`), so active households can be
  * counted without knowing which.
+ *
+ * Merged, so the language and time zone the portal saves for the member's assistant stay. Written
+ * only when the name or photo differ from what this device last wrote, or that was `FRESH_MS` ago
+ * (`./published`): every write bills a read on each device following the profiles, and apps call
+ * this on every open.
  */
 export async function saveMyProfile(
   db: Firestore,
   householdId: string,
   user: { email: string | null; displayName: string | null; photoURL: string | null },
+  { now = Date.now(), published }: { now?: number; published?: PublishedStorage | null } = {},
 ): Promise<void> {
   if (!user.email) return;
   const email = normalizeEmail(user.email);
-  const profile: Record<string, unknown> = { updatedAt: Date.now() };
-  if (user.displayName) profile.name = user.displayName.slice(0, 100);
-  if (user.photoURL?.startsWith('https://')) profile.photoURL = user.photoURL.slice(0, 500);
+  const fields: Record<string, unknown> = {};
+  if (user.displayName) fields.name = user.displayName.slice(0, 100);
+  if (user.photoURL?.startsWith('https://')) fields.photoURL = user.photoURL.slice(0, 500);
   void observeHousehold(householdId);
-  await setDoc(doc(db, COLLECTION, householdId, 'profiles', email), profile);
+  const store = publishedStore(published);
+  await unlessPublished(
+    store,
+    publishedKey(db, householdId, 'profiles', 'profile', email),
+    fingerprint([[email, fields]]),
+    now,
+    () => undefined,
+    () =>
+      setDoc(
+        doc(db, COLLECTION, householdId, 'profiles', email),
+        // A name or photo the account no longer has is removed.
+        { name: fields.name ?? deleteField(), photoURL: fields.photoURL ?? deleteField(), updatedAt: now },
+        { merge: true },
+      ),
+  );
 }
 
 /** Follows the profiles members have recorded, keyed by email. */
