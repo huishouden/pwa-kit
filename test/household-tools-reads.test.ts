@@ -1,9 +1,10 @@
-import { describe, expect, test } from 'bun:test';
+import { afterAll, describe, expect, test } from 'bun:test';
+import { setTimeZone } from './tz';
 import { FirestoreRest } from '../src/firestore-rest';
 import { runTool, Session, toolNamed } from '../src/household-tools';
 import { expectReads } from '../src/read-test';
 
-process.env.TZ = 'UTC';
+afterAll(setTimeZone('UTC'));
 
 // What the shopping tools that find an item bill, counted over the REST client as Firestore bills it
 // (`../src/read-test`). One household, 3 lists (2 shopping, 1 tasks), 5 open items.

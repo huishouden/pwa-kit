@@ -70,10 +70,17 @@ beforeEach(() => {
   delete window.__mockCalendarEvents;
   delete window.__mockCalendarToken;
 });
+// window is the global object under the DOM: what a test puts on it, and the fetch stub, would
+// otherwise outlive this file's DOM.
+const realFetch = globalThis.fetch;
 afterEach(() => {
   act(() => root?.unmount());
   root = null;
   setSystemTime();
+  globalThis.fetch = realFetch;
+  delete window.__mockCalendarEvents;
+  delete window.__mockCalendarToken;
+  delete (window as unknown as { google?: unknown }).google;
 });
 
 describe('suggestion helpers', () => {
@@ -133,7 +140,6 @@ describe('useCalendarSuggestions', () => {
     expect(calls).toHaveLength(0);
     expect(gis).not.toHaveBeenCalled();
     expect(card()).toBeNull();
-    delete (window as unknown as { google?: unknown }).google;
   });
 
   test('on open, scans the theme words with the cached token and leaves out what the app has', async () => {

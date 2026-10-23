@@ -1,5 +1,5 @@
 // Mocks Firebase and kit modules for the whole process, so it runs on its own (package.json "test").
-import { describe, expect, mock, test } from 'bun:test';
+import { beforeEach, describe, expect, mock, test } from 'bun:test';
 
 const calls: string[] = [];
 const fakeApp = { name: '[DEFAULT]' };
@@ -52,6 +52,11 @@ mock.module('../../src/observability.js', () => ({ startObservability: (o: { app
 
 const { initApp } = await import('../../src/app');
 
+// Each test reads only the calls its own initApp made.
+beforeEach(() => {
+  calls.length = 0;
+});
+
 describe('initApp', () => {
   const env = { VITE_FIREBASE_API_KEY: 'k', VITE_FIREBASE_PROJECT_ID: 'demo-p', VITE_FIREBASE_APP_ID: '1:2:web:3', VITE_GOOGLE_CLIENT_ID: 'client' };
 
@@ -81,7 +86,6 @@ describe('initApp', () => {
   });
 
   test('built for the emulators (the kit’s app-tests job): Auth and Firestore go to them, no Google preload', () => {
-    calls.length = 0;
     const handles = initApp({ app: 'pet', env: { ...env, VITE_USE_EMULATORS: 'true' } });
     void handles.db;
     expect(calls).toEqual([
@@ -95,7 +99,6 @@ describe('initApp', () => {
   });
 
   test('a production build never connects to the emulators', () => {
-    calls.length = 0;
     void initApp({ app: 'pet', env }).db;
     expect(calls.filter((c) => c.startsWith('connect'))).toEqual([]);
   });

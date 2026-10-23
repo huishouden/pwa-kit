@@ -19,7 +19,11 @@ import {
 } from '../src/theme';
 import { themeBoot } from '../src/vite';
 
-afterAll(() => GlobalRegistrator.unregister());
+afterAll(() => {
+  // The module's choice outlives this file's DOM: leave none for the next file to start from.
+  resetThemeForTests();
+  return GlobalRegistrator.unregister();
+});
 
 /** A stand-in for the device's light/dark setting that can flip like a real one. */
 let systemDark = false;

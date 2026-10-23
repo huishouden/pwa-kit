@@ -1,10 +1,11 @@
-import { afterEach, describe, expect, test } from 'bun:test';
+import { afterAll, afterEach, describe, expect, test } from 'bun:test';
+import { setTimeZone } from './tz';
 import { setLangForTests } from '../src/i18n';
 import { LocalClock } from '../src/local-clock';
 import { deviceCalendar, NEED_TODAY, needByChoiceLabel, needByChoices, needByOf, needByPatch, needByState, needByUrgency, needByUrgent, needByWords, pinNeedBy, STANDARD, WHENEVER } from '../src/need-by';
 import { toYmd } from '../src/time';
 
-process.env.TZ = 'UTC';
+afterAll(setTimeZone('UTC'));
 
 // 2031-01-04 is a Saturday.
 const SAT = '2031-01-04';

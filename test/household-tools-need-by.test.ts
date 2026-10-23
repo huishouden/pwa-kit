@@ -1,8 +1,9 @@
-import { describe, expect, test } from 'bun:test';
+import { afterAll, describe, expect, test } from 'bun:test';
+import { setTimeZone } from './tz';
 import { runTool, Session, toolNamed } from '../src/household-tools';
 import type { Doc, FirestoreRest, Write } from '../src/firestore-rest';
 
-process.env.TZ = 'UTC';
+afterAll(setTimeZone('UTC'));
 
 // The shopping tools and the day an item is needed by (`../src/need-by`). 2031-01-06 is a Monday;
 // the person is in New York.

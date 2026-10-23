@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, test } from 'bun:test';
+import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { GlobalRegistrator } from '@happy-dom/global-registrator';
 import { act } from 'react';
 import type { ParsedCourse } from '../src/dose';
@@ -9,6 +9,12 @@ if (typeof document === 'undefined') GlobalRegistrator.register({ url: 'https://
 afterAll(() => GlobalRegistrator.unregister());
 const { createRoot } = await import('react-dom/client');
 const { LabelScan } = await import('../src/react/dose');
+const { medicineNames } = await import('../src/medicine-names-match');
+
+// A scan matches against the medicine names, loaded once per run (a dynamic import). Whichever test
+// ran first, here or in another file, paid for that load, more than the one turn each test waits
+// for: load them before these tests.
+beforeAll(() => medicineNames());
 
 const LABEL = ['Lisinopril 10 mg tablets', 'Take 1 tablet by mouth once daily', 'Qty: 30', 'zq7 smudge', 'May cause dizziness'].join('\n');
 

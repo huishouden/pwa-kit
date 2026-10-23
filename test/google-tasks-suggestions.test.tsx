@@ -34,6 +34,9 @@ beforeEach(() => {
 afterEach(() => {
   act(() => root?.unmount());
   root = null;
+  // window is the global object under the DOM, so these would outlive this file's DOM.
+  delete window.__mockGoogleTasks;
+  delete window.__mockGoogleTasksToken;
 });
 
 describe('useGoogleTasksSuggestions', () => {

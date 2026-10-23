@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
+import { setTimeZone } from './tz';
 import cases from './fixtures/event-rules.json';
 import {
   cleanRule, describePrep, fitsRule, describeRule, eventOccurrences, happensOn, inferRule, isEventRule, isPrepOffset, nextOccurrence, nthWeekday, occurrenceStart,
@@ -165,14 +166,11 @@ describe('something to do before', () => {
 });
 
 describe('daylight saving time', () => {
-  let tz: string | undefined;
+  let restore = () => {};
   beforeAll(() => {
-    tz = process.env.TZ;
-    process.env.TZ = 'America/New_York';
+    restore = setTimeZone('America/New_York');
   });
-  afterAll(() => {
-    process.env.TZ = tz;
-  });
+  afterAll(() => restore());
 
   test('7 PM stays 7 PM on the wall across the change, in both directions', () => {
     // US clocks go back on Sunday 2 November 2031 and forward on Sunday 14 March 2032.

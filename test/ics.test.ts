@@ -1,4 +1,5 @@
-import { describe, expect, test } from 'bun:test';
+import { afterAll, describe, expect, test } from 'bun:test';
+import { setTimeZone } from './tz';
 import ICAL from 'ical.js';
 import * as nodeIcal from 'node-ical';
 import {
@@ -69,6 +70,10 @@ describe('VTIMEZONE', () => {
     expect(allDayOf(Date.parse('2031-03-30T00:00:00+01:00'), 'Europe/Amsterdam')).toBe('2031-03-30');
   });
 });
+
+// node-ical reads an all-day DTSTART as local midnight, which the dates below take in UTC: east of
+// UTC that is the day before. Run in UTC, whatever zone the run (or the file before) is in.
+afterAll(setTimeZone('UTC'));
 
 /** The same, expanded by node-ical's rrule.js, which handles BYSETPOS (ical.js does not). */
 function expandRrule(rule: EventRule, from: Ymd, to: Ymd): Ymd[] {

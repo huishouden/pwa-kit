@@ -1,4 +1,5 @@
-import { describe, expect, test } from 'bun:test';
+import { afterAll, describe, expect, test } from 'bun:test';
+import { setTimeZone } from './tz';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { planTodo, todoActionOps, TodoActionError, type TodoItem } from '../src/todo-core';
@@ -37,6 +38,8 @@ describe('server-safe modules', () => {
   }
 });
 
+// These modules run on servers, in UTC (Workers do): so do their tests, whatever zone the run is in.
+afterAll(setTimeZone('UTC'));
 const NOW = Date.UTC(2031, 0, 6, 15);
 const item = (over: Partial<TodoItem> = {}): TodoItem => ({
   id: 'home:job:j1',

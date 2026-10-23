@@ -1,5 +1,5 @@
-import { GlobalRegistrator } from './dom';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from 'bun:test';
+import { useDom } from './dom';
+import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import {
   LAUNCH_WINDOW_MS,
   RETURN_CHECK_MS,
@@ -19,10 +19,7 @@ import {
   type UpdateSignals,
 } from '../src/update';
 
-beforeAll(() => {
-  if (typeof document === 'undefined') GlobalRegistrator.register({ url: 'https://suite.example.com/pet/' });
-});
-afterAll(() => GlobalRegistrator.unregister());
+useDom('https://suite.example.com/pet/');
 
 const idle: UpdateSignals = { waiting: true, visible: true, launching: false, interacted: false, unsaved: false };
 

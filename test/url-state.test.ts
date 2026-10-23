@@ -1,11 +1,8 @@
-import { GlobalRegistrator } from './dom';
-import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
+import { useDom } from './dom';
+import { describe, expect, test } from 'bun:test';
 import { URL_CHANGE_EVENT, onUrlChange, setUrlParams, tabFromUrl, urlParam, withParams } from '../src/url-state';
 
-beforeAll(() => {
-  if (typeof document === 'undefined') GlobalRegistrator.register({ url: 'https://suite.example.com/pet/' });
-});
-afterAll(() => GlobalRegistrator.unregister());
+useDom('https://suite.example.com/pet/');
 
 describe('url-state', () => {
   test('withParams sets and removes parameters, keeping the path, the rest of the query and the fragment', () => {
